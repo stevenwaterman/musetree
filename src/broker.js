@@ -1,7 +1,6 @@
 import axios from "axios";
 import {configStore} from "./settings.js";
 import {instruments} from "./constants.js";
-import {selectedTrackEncodingStore} from "./selectedTrack.js";
 
 export async function request(params){
 	return axios.post("https://musenet.openai.com/sample", params)

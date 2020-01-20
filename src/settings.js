@@ -4,7 +4,8 @@ import {firstLetterUC} from "./utils.js";
 
 function createInstrumentStore(){
 	const initialState = {};
-	instruments.forEach(instrument => initialState[instrument] = true);
+	instruments.forEach(instrument => initialState[instrument] = false);
+	instruments.piano = true;
 
 	const {subscribe, update} = writable(initialState);
 	const store = {subscribe};
@@ -21,7 +22,7 @@ function createInstrumentStore(){
 };
 export const instrumentStore = createInstrumentStore();
 
-export const generationLengthStore = writable(400);
+export const generationLengthStore = writable(100);
 	
 function createGenreStore(){
 	const {subscribe, set} = writable("video");
