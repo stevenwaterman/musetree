@@ -29,7 +29,7 @@ export const instruments = Object.keys(instrumentSettings);
 export const yScaleStore = writable(50);
 
   export const pitchMin = 20;
-  const pitchMax = 85;
+  const pitchMax = 100;
   const pitchRange = pitchMax - pitchMin;
-  export const canvasWidth = 500;
+  export const canvasWidth = 700;
   export const xScale = canvasWidth / pitchRange;

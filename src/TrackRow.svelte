@@ -12,8 +12,6 @@
   $: children = $trackStore.children ? $trackStore.children : [];
   $: track = $trackStore.track ? $trackStore.track : null;
   $: duration = track ? track.duration : 0;
-  $: selected = $trackStore.selected;
-  $: text = path.length ? path[path.length - 1] : null;
 
   function loadMore() {
     const pathCapture = path;
@@ -26,14 +24,6 @@
       .finally(_ => trackTreeStore.setRequestStatus(pathCapture, false));
   }
   $: if (children.length === 0 && !$trackStore.pendingLoad) loadMore();
-
-  function buttonClass(idx) {
-    if (idx === selected) {
-      return "selected";
-    } else {
-      return "unselected";
-    }
-  }
 </script>
 
 <style>
@@ -56,8 +46,8 @@
   {#if children.length === 0 && $trackStore.pendingLoad}
     <p>Loading...</p>
   {:else}
-    {#if selected !== null}
-      <TrackCanvas path={[...path, selected]} />
+    {#if $trackStore.selected !== null}
+      <TrackCanvas path={[...path, $trackStore.selected]} />
     {:else}
       <div style={'width:' + canvasWidth + 'px'} />
     {/if}

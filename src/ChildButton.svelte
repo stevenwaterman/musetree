@@ -11,8 +11,7 @@
 
   function select() {
     trackTreeStore.select(parent, siblingId);
-    audio.seek(startsAt);
-    audio.play();
+    audio.play(startsAt);
   }
 
   $: buttonClass = "childButton " + (selected ? "selected" : "unselected");

@@ -3,17 +3,19 @@ import { selectedTrackAudioStore } from "./trackTree.js";
 const htmlAudio = new Audio();
 selectedTrackAudioStore.subscribe(track => {
   if (track === "") return;
+  htmlAudio.pause();
   htmlAudio.src = track;
 });
 
+export function addAudioStatusListener(callback){
+  htmlAudio.addEventListener("play", () => callback({startTime: htmlAudio.currentTime, playing: true}));
+  htmlAudio.addEventListener("pause", () => callback({startTime: htmlAudio.currentTime, playing: false}));
+}
+
 export const audio = {
-  play: () => {
-    htmlAudio.play();
-  },
-  stop: () => {
+  play: time => {
     htmlAudio.pause();
-  },
-  seek: time => {
     htmlAudio.currentTime = time;
+    htmlAudio.play();
   }
 };

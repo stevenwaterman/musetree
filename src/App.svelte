@@ -5,22 +5,28 @@
     selectedTrackStore
   } from "./trackTree.js";
   import TrackRow from "./TrackRow.svelte";
-  import {audio} from "./audio.js";
+  import { audio } from "./audio.js";
+  import Timeline from "./Timeline.svelte";
 
   $: paths = $selectedPathStore.map((element, idx, array) =>
     array.slice(0, idx + 1)
   );
-
-	function play(){
-		audio.seek(0);
-		audio.play();
-	}
 </script>
 
+<style>
+  .container {
+    position: relative;
+  }
+</style>
+
 <main>
-	<button on:click={play}>Play from Start</button>
-  <TrackRow path={[]} />
-  {#each paths as path}
-    <TrackRow {path} />
-  {/each}
+  <button on:click={() => audio.play(0)}>Play from Start</button>
+
+  <div class="container">
+    <Timeline />
+    <TrackRow path={[]} />
+    {#each paths as path}
+      <TrackRow {path} />
+    {/each}
+  </div>
 </main>
