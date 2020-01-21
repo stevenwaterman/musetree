@@ -1,39 +1,25 @@
 <script>
-	import {request} from "./broker.js";
-	import {deriveTrackStore, trackTreeStore, selectedPathStore, selectedTrackAudioStore, selectedTrackEncodingStore} from "./trackTree.js";
-	import {configStore} from "./settings.js";
-	import Track from "./Track.svelte";
-	
-	export let path;
-	$: trackStore = deriveTrackStore(path);
+  import { request } from "./broker.js";
+  import {
+    deriveTrackStore,
+    trackTreeStore,
+    selectedPathStore,
+    selectedTrackAudioStore,
+    selectedTrackEncodingStore
+  } from "./trackTree.js";
+  import { configStore } from "./settings.js";
 
-	async function loadMore(){
-		const track = $trackStore.track;
-		const encoding = track ? track.musenetEncoding : "";
-		const params = {...$configStore, encoding};
-		const tracks = await request(params);
-		trackStore.addTracks(tracks);
-	}
+  export let parent;
+  export let siblingId;
+  $: path = [...parent, siblingId];
+  $: trackStore = deriveTrackStore(path);
+  $: children = $trackStore.children ? $trackStore.children : [];
 
-	function select(){
-		selectedPathStore.set(path);
-	}
-	
-	$: children = $trackStore.children;
+  function select() {
+    trackTreeStore.select(parent, siblingId);
+  }
 </script>
 
 <main>
-	<button on:click={loadMore} on:mouseenter={select}>Track {JSON.stringify(path)}</button>
-	<div class="trackRow">
-	{#each children as child, i}
-		<Track path={[...path, i]}/>
-	{/each}
-	</div>
+  <button on:click={select}>{siblingId}</button>
 </main>
-
-<style>
-	.trackRow{
-		display: flex;
-		flex-direction: row;
-	}
-</style>
