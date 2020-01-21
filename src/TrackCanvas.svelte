@@ -16,6 +16,7 @@
     canvasWidth,
     xScale
   } from "./constants.js";
+  import { audio } from "./audio.js";
 
   export let path;
   let canvas;
@@ -38,7 +39,13 @@
     instruments.forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
       const color = instrumentSettings[instrument].color;
-      drawInstrument(ctx, instrumentNotes, color, yScale, idx / instruments.length);
+      drawInstrument(
+        ctx,
+        instrumentNotes,
+        color,
+        yScale,
+        idx / instruments.length
+      );
     });
   }
 
@@ -52,11 +59,19 @@
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
     });
   }
+
+  function play({ clientY }) {
+    const fraction = clientY / height;
+    const addDuration = $trackStore.track.sectionDuration * fraction;
+    const totalDuration = $trackStore.track.duration - $trackStore.track.sectionDuration + addDuration;
+    audio.seek(totalDuration);
+    audio.play();
+  }
 </script>
 
-<style>
-  .trackCanvas {
-  }
-</style>
-
-<canvas class="trackCanvas" bind:this={canvas} width={canvasWidth} {height} />
+<canvas
+  class="trackCanvas"
+  on:click={play}
+  bind:this={canvas}
+  width={canvasWidth}
+  {height} />

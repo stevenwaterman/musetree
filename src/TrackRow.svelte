@@ -33,11 +33,6 @@
     console.log(path);
     console.log(JSON.stringify($trackStore));
   }
-
-  function play(){
-      audio.seek(duration);
-      audio.play();
-  }
 </script>
 
 <style>
@@ -61,7 +56,6 @@
     {#each children as child, i}
       <Track parent={path} siblingId={i} />
     {/each}
-    <button on:click={play} disabled={selected === null}>Play</button>
   {/if}
 
 </div>
