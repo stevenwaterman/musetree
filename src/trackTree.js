@@ -1,7 +1,12 @@
 import { writable, derived } from "svelte/store";
 
 function createTrackTreeStore() {
-  const initial = { selected: null, children: [], track: null, pendingLoad: false};
+  const initial = {
+    selected: null,
+    children: [],
+    track: null,
+    pendingLoad: false
+  };
   const { subscribe, set, update } = writable(initial);
 
   return {
@@ -14,12 +19,13 @@ function createTrackTreeStore() {
         const parent = getNode(state, path);
         parent.selected = idx;
         return state;
-	  }),
-	  setRequestStatus: (path, pending) => update(state => {
-		  const node = getNode(state, path);
-		  node.pendingLoad = pending;
-		  return state;
-	  })
+      }),
+    setRequestStatus: (path, pending) =>
+      update(state => {
+        const node = getNode(state, path);
+        node.pendingLoad = pending;
+        return state;
+      })
   };
 }
 
@@ -31,9 +37,9 @@ export function deriveTrackStore(path) {
   );
   return {
     ...store,
-	select: idx => trackTreeStore.select(path, idx),
-	requestStart: () => trackTreeStore.setRequestStatus(path, true),
-	requestDone: () => trackTreeStore.setRequestStatus(path, false),
+    select: idx => trackTreeStore.select(path, idx),
+    requestStart: () => trackTreeStore.setRequestStatus(path, true),
+    requestDone: () => trackTreeStore.setRequestStatus(path, false)
   };
 }
 
@@ -44,7 +50,12 @@ function getNode(trackTree, path) {
 function addChildren(trackTree, path, tracks) {
   const leaf = getNode(trackTree, path);
   leaf.children.push(
-    ...tracks.map(track => ({ selected: null, children: [], track, pendingLoad: false }))
+    ...tracks.map(track => ({
+      selected: null,
+      children: [],
+      track,
+      pendingLoad: false
+    }))
   );
   return trackTree;
 }
@@ -53,7 +64,7 @@ function getSelectedPath(trackTree) {
   const path = [];
   let tree = trackTree;
   while (true) {
-	const selected = tree.selected;
+    const selected = tree.selected;
     if (selected === null) return path;
     path.push(selected);
     tree = tree.children[selected];

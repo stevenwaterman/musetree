@@ -60,14 +60,27 @@
     });
   }
 
-  function play({ clientY }) {
-    const fraction = clientY / height;
+  function play(event) {
+      const rect = event.target.getBoundingClientRect();
+      const y = event.clientY - rect.top;
+    const fraction = y / height;
     const addDuration = $trackStore.track.sectionDuration * fraction;
-    const totalDuration = $trackStore.track.duration - $trackStore.track.sectionDuration + addDuration;
+    const totalDuration =
+      $trackStore.track.duration -
+      $trackStore.track.sectionDuration +
+      addDuration;
     audio.seek(totalDuration);
     audio.play();
   }
 </script>
+
+<style>
+  .trackCanvas {
+    background-color: #ccf;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+</style>
 
 <canvas
   class="trackCanvas"

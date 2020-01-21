@@ -1,11 +1,10 @@
 <script>
-  import Track from "./Track.svelte";
   import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
   import { configStore } from "./settings.js";
   import { request } from "./broker.js";
-  import { onMount } from "svelte";
   import TrackCanvas from "./TrackCanvas.svelte";
-  import {audio} from "./audio.js";
+  import { canvasWidth } from "./constants.js";
+  import ChildButton from "./ChildButton.svelte";
 
   export let path;
   $: trackStore = deriveTrackStore(path);
@@ -15,11 +14,10 @@
   $: duration = track ? track.duration : 0;
   $: selected = $trackStore.selected;
   $: text = path.length ? path[path.length - 1] : null;
-  
+
   function loadMore() {
     const pathCapture = path;
     const encoding = track ? track.encoding : "";
-    
 
     trackStore.requestStart();
 
@@ -29,9 +27,12 @@
   }
   $: if (children.length === 0 && !$trackStore.pendingLoad) loadMore();
 
-  function log() {
-    console.log(path);
-    console.log(JSON.stringify($trackStore));
+  function buttonClass(idx) {
+    if (idx === selected) {
+      return "selected";
+    } else {
+      return "unselected";
+    }
   }
 </script>
 
@@ -40,22 +41,33 @@
     display: flex;
     flex-direction: row;
   }
+  .buttonRow {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .loadMoreButton {
+    flex-basis: content;
+    margin: 0;
+  }
 </style>
 
 <div class="trackRow">
-  {#if $trackStore.pendingLoad}
+  {#if children.length === 0 && $trackStore.pendingLoad}
     <p>Loading...</p>
   {:else}
-    <button on:click={log} disabled={children.length === 0}>Log</button>
-    <button on:click={loadMore} disabled={$trackStore.pendingLoad}>
-      Load More
-    </button>
     {#if selected !== null}
       <TrackCanvas path={[...path, selected]} />
+    {:else}
+      <div style={'width:' + canvasWidth + 'px'} />
     {/if}
-    {#each children as child, i}
-      <Track parent={path} siblingId={i} />
-    {/each}
+    <div>
+      <div class="buttonRow">
+        {#each children as _, idx}
+          <ChildButton parent={path} siblingId={idx} />
+        {/each}
+        <button class="loadMoreButton" on:click={loadMore}>Load More</button>
+      </div>
+    </div>
   {/if}
-
 </div>

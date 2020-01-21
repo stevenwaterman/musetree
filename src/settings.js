@@ -21,7 +21,7 @@ function createInstrumentStore(){
 };
 export const instrumentStore = createInstrumentStore();
 
-export const generationLengthStore = writable(400);
+export const generationLengthStore = writable(100);
 	
 function createGenreStore(){
 	const {subscribe, set} = writable("video");
