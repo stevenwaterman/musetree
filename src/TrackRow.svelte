@@ -4,29 +4,40 @@
   import { configStore } from "./settings.js";
   import { request } from "./broker.js";
   import { onMount } from "svelte";
+  import TrackCanvas from "./TrackCanvas.svelte";
+  import {audio} from "./audio.js";
 
   export let path;
   $: trackStore = deriveTrackStore(path);
-  $: children = $trackStore.children ? $trackStore.children : [];
-  $: if (children.length === 0 && !$trackStore.pendingLoad) loadMore();
 
+  $: children = $trackStore.children ? $trackStore.children : [];
+  $: track = $trackStore.track ? $trackStore.track : null;
+  $: duration = track ? track.duration : 0;
+  $: selected = $trackStore.selected;
+  $: text = path.length ? path[path.length - 1] : null;
+  
   function loadMore() {
     const pathCapture = path;
-    const track = $trackStore.track;
-    const encoding = track ? track.musenetEncoding : "";
-    const params = { ...$configStore, encoding };
+    const encoding = track ? track.encoding : "";
+    
+
     trackStore.requestStart();
-    return request(params)
+
+    return request($configStore, encoding, duration)
       .then(tracks => trackTreeStore.addTracks(pathCapture, tracks))
       .finally(_ => trackTreeStore.setRequestStatus(pathCapture, false));
   }
+  $: if (children.length === 0 && !$trackStore.pendingLoad) loadMore();
 
   function log() {
     console.log(path);
     console.log(JSON.stringify($trackStore));
   }
 
-  $: text = path.length ? path[path.length - 1] : null;
+  function play(){
+      audio.seek(duration);
+      audio.play();
+  }
 </script>
 
 <style>
@@ -36,15 +47,21 @@
   }
 </style>
 
-<main>
-  <div class="trackRow">
-    {#if text != null}
-      <div>{text}</div>
+<div class="trackRow">
+  {#if $trackStore.pendingLoad}
+    <p>Loading...</p>
+  {:else}
+    <button on:click={log} disabled={children.length === 0}>Log</button>
+    <button on:click={loadMore} disabled={$trackStore.pendingLoad}>
+      Load More
+    </button>
+    {#if selected !== null}
+      <TrackCanvas path={[...path, selected]} />
     {/if}
-    <button on:click={log}>Log</button>
-    <button on:click={loadMore} disabled={$trackStore.pendingLoad}>Load More</button>
     {#each children as child, i}
       <Track parent={path} siblingId={i} />
     {/each}
-  </div>
-</main>
+    <button on:click={play} disabled={selected === null}>Play</button>
+  {/if}
+
+</div>

@@ -4,8 +4,7 @@ import {firstLetterUC} from "./utils.js";
 
 function createInstrumentStore(){
 	const initialState = {};
-	instruments.forEach(instrument => initialState[instrument] = false);
-	initialState.piano = true;
+	instruments.forEach(instrument => initialState[instrument] = true);
 
 	const {subscribe, update} = writable(initialState);
 	const store = {subscribe};

@@ -20,6 +20,4 @@
   }
 </script>
 
-<main>
   <button on:click={select}>{siblingId}</button>
-</main>
