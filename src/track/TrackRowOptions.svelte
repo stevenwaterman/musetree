@@ -8,12 +8,11 @@
   } from "./trackTree.js";
   import { request } from "../broker.js";
   import { afterUpdate } from "svelte";
-  import { configStore, autoRequestStore } from "../settings.js";
+  import { configStore, autoRequestStore, yScaleStores } from "../settings.js";
   import {
     instruments,
     instrumentSettings,
     pitchMin,
-    yScaleStore,
     canvasWidth,
     xScale
   } from "../constants.js";

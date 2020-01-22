@@ -1,7 +1,8 @@
 <script>
-  import { canvasWidth, yScaleStore } from "../constants.js";
+  import { canvasWidth } from "../constants.js";
   import { selectedTrackStore } from "./trackTree.js";
   import {addAudioStatusListener} from "./audio.js";
+  import {yScaleStore} from "../settings.js";
 
   function traverse(node, { track, startTime }) {
     if (track == null) return;

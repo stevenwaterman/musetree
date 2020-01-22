@@ -1,11 +1,11 @@
 <script>
   import Track from "./track/Track.svelte";
   import Options from "./Options.svelte";
-  import {audio} from "./track/audio.js";
+  import { audio } from "./track/audio.js";
 </script>
 
 <style>
-  .columns{
+  .columns {
     display: flex;
     flex-direction: row;
   }
@@ -13,7 +13,7 @@
 
 <main>
   <div class="columns">
-  <Track/>
-  <Options/>
+    <Track />
+    <Options />
   </div>
 </main>

@@ -1,5 +1,3 @@
-import { writable } from "svelte/store";
-
 export const instrumentSettings = {
   bass: {
     color: "rgba(255, 0, 0, 1)"
@@ -66,8 +64,6 @@ export const genres = [
   "bluegrass",
   "tchaikovsky"
 ];
-
-export const yScaleStore = writable(50);
 
 export const pitchMin = 20;
 const pitchMax = 110;

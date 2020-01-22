@@ -5,9 +5,10 @@
     instrumentStores,
     truncationStore,
     temperatureStore,
-    autoRequestStore
+    autoRequestStore,
+    preplayStore,
+    yScaleStore
   } from "./settings.js";
-  import { yScaleStore } from "./constants.js";
   import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
   import { genres, instruments } from "./constants.js";
   import {audio} from "./track/audio.js";
@@ -15,6 +16,7 @@
 
 <style>
   .options {
+      padding: 12px;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -97,6 +99,12 @@
     <label for="yScale">Y Scale:</label>
     <input id="yScale" bind:value={$yScaleStore} type="range" min="10" max="250" step="5" />
     <span>{$yScaleStore}</span>
+  </div>
+
+  <div class="optionElement">
+    <label for="preplay">Pre-Play (s):</label>
+    <input id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5" />
+    <span>{$preplayStore}</span>
   </div>
 
   <button on:click={() => audio.play(0)}>Play from Start</button>

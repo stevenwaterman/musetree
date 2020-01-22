@@ -24,6 +24,10 @@ export const truncationStore = writable(27);
 
 export const autoRequestStore = writable(false);
 
+export const preplayStore = writable(1);
+
+export const yScaleStore = writable(50);
+
 export const configStore = derived(
   [
     generationLengthStore,

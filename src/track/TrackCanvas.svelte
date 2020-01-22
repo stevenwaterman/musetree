@@ -7,12 +7,11 @@
     selectedTrackEncodingStore
   } from "./trackTree.js";
   import { afterUpdate } from "svelte";
-  import { configStore } from "../settings.js";
+  import { configStore, yScaleStore } from "../settings.js";
   import {
     instruments,
     instrumentSettings,
     pitchMin,
-    yScaleStore,
     canvasWidth,
     xScale
   } from "../constants.js";

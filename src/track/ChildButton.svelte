@@ -1,6 +1,7 @@
 <script>
   import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
   import { audio } from "./audio.js";
+  import {preplayStore} from "../settings.js"
 
   export let path;
   export let siblingId;
@@ -11,7 +12,7 @@
 
   function select() {
     trackTreeStore.select(path, siblingId);
-    const playFrom = Math.max(0, startsAt - 3)
+    const playFrom = Math.max(0, startsAt - $preplayStore)
     audio.play(playFrom);
   }
 
