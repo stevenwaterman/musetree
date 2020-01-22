@@ -35,8 +35,8 @@
 <style>
   .line {
     position: absolute;
-    height: 5px;
-    background-color: rgba(255, 255, 255, 1);
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.5);
     z-index: 2;
     transform: translateY(0px);
   }
