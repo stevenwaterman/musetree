@@ -1,15 +1,15 @@
 <script>
   import { canvasWidth } from "../constants.js";
   import { selectedTrackStore } from "./trackTree.js";
-  import {addAudioStatusListener} from "./audio.js";
-  import {yScaleStore} from "../settings.js";
+  import { audioStatusStore } from "./audio.js";
+  import { yScaleStore } from "../settings.js";
 
   function traverse(node, { track, startTime }) {
     if (track == null) return;
 
     const endTime = track.duration;
     const transTime = endTime - startTime;
-    
+
     const startPx = startTime * $yScaleStore;
     const endPx = endTime * $yScaleStore;
     const transPx = endPx - startPx;
@@ -23,13 +23,13 @@
 
   let visible = -1;
   let startTime = 0;
-  addAudioStatusListener(state => {
-      if(state.playing){
-          visible = (visible + 1) % 2;
-      } else {
-          visible = -1;
-      }
-      startTime = state.startTime;
+  audioStatusStore.subscribe(({playing, time}) => {
+    if (playing) {
+      visible = (visible + 1) % 2;
+    } else {
+      visible = -1;
+    }
+    startTime = time;
   });
 </script>
 
@@ -51,8 +51,7 @@
     in:traverse={{ track: $selectedTrackStore.track, startTime }}
     on:introend={() => {
       visible = -1;
-    }}>
-    </div>
+    }} />
 {/if}
 {#if visible === 1}
   <div
@@ -61,6 +60,5 @@
     in:traverse={{ track: $selectedTrackStore.track, startTime }}
     on:introend={() => {
       visible = -1;
-    }}>
-    </div>
+    }} />
 {/if}
