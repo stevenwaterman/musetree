@@ -2,8 +2,8 @@ import { selectedTrackAudioStore } from "./trackTree.js";
 
 const htmlAudio = new Audio();
 selectedTrackAudioStore.subscribe(track => {
-  if (track === "") return;
   htmlAudio.pause();
+  if (track === "") return;
   htmlAudio.src = track;
 });
 

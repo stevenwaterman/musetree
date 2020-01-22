@@ -33,14 +33,8 @@
 
   function draw(canvas, notes, yScale) {
     if (canvas == null) return;
+
     const ctx = canvas.getContext("2d");
-
-    ctx["imageSmoothingEnabled"] = false; /* standard */
-    ctx["mozImageSmoothingEnabled"] = false; /* Firefox */
-    ctx["oImageSmoothingEnabled"] = false; /* Opera */
-    ctx["webkitImageSmoothingEnabled"] = false; /* Safari */
-    ctx["msImageSmoothingEnabled"] = false; /* IE */
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const background = "black";
@@ -108,6 +102,7 @@
   <canvas
     class="trackCanvas"
     on:click={play}
+    on:contextmenu|preventDefault={trackStore.deselect}
     bind:this={canvas}
     width={canvasWidth}
     style={"width: " + canvasWidth + "px; height: " + height + "px;"}

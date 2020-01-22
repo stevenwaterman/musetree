@@ -6,7 +6,7 @@ function createTrackTreeStore() {
     children: {},
     childOffset: 0,
     track: null,
-    pendingLoad: false,
+    pendingLoad: 0,
   };
   const { subscribe, set, update } = writable(initial);
 
@@ -21,13 +21,20 @@ function createTrackTreeStore() {
         parent.selected = idx;
         return state;
       }),
-    setRequestStatus: (path, pending) =>
+    requestStart: path =>
       update(state => {
         const node = getNode(state, path);
-        node.pendingLoad = pending;
+        node.pendingLoad++;
         return state;
       }),
-      deleteChild: (path, childId) => update(state => {
+    requestDone: path =>
+      update(state => {
+        const node = getNode(state, path);
+        node.pendingLoad--;
+        return state;
+      }),
+    deleteChild: (path, childId) =>
+      update(state => {
         const node = getNode(state, path);
         delete node.children[childId];
         return state;
@@ -44,9 +51,10 @@ export function deriveTrackStore(path) {
   return {
     ...store,
     select: idx => trackTreeStore.select(path, idx),
-    requestStart: () => trackTreeStore.setRequestStatus(path, true),
-    requestDone: () => trackTreeStore.setRequestStatus(path, false),
-    deleteChild: (childId) => trackTreeStore.deleteChild(path, childId)
+    requestStart: () => trackTreeStore.requestStart(path),
+    requestDone: () => trackTreeStore.requestDone(path),
+    deleteChild: childId => trackTreeStore.deleteChild(path, childId),
+    deselect: () => trackTreeStore.select(path.slice(0, -1), null)
   };
 }
 

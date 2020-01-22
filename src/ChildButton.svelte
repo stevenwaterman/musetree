@@ -2,15 +2,15 @@
   import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
   import { audio } from "./audio.js";
 
-  export let parent;
+  export let path;
   export let siblingId;
 
-  $: parentStore = deriveTrackStore(parent);
+  $: parentStore = deriveTrackStore(path);
   $: selected = $parentStore.selected === siblingId;
   $: startsAt = $parentStore.track ? $parentStore.track.duration : 0;
 
   function select() {
-    trackTreeStore.select(parent, siblingId);
+    trackTreeStore.select(path, siblingId);
     const playFrom = Math.max(0, startsAt - 3)
     audio.play(playFrom);
   }
@@ -23,7 +23,7 @@
 <style>
   .childButton {
     font-weight: 700;
-    min-width: 25px;
+    min-width: 40px;
     background: white;
     margin: 4px;
     padding: 4px;
@@ -36,10 +36,10 @@
   }
 </style>
 
-<div
+<button
   class="childButton"
   class:selected
   on:click={select}
   on:contextmenu|preventDefault={remove}>
-  {siblingId}
-</div>
+  {1 + parseInt(siblingId)}
+</button>
