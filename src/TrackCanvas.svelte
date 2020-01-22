@@ -35,28 +35,28 @@
     if (canvas == null) return;
     const ctx = canvas.getContext("2d");
 
-    ctx['imageSmoothingEnabled'] = false;       /* standard */
-    ctx['mozImageSmoothingEnabled'] = false;    /* Firefox */
-    ctx['oImageSmoothingEnabled'] = false;      /* Opera */
-    ctx['webkitImageSmoothingEnabled'] = false; /* Safari */
-    ctx['msImageSmoothingEnabled'] = false;     /* IE */
+    ctx["imageSmoothingEnabled"] = false; /* standard */
+    ctx["mozImageSmoothingEnabled"] = false; /* Firefox */
+    ctx["oImageSmoothingEnabled"] = false; /* Opera */
+    ctx["webkitImageSmoothingEnabled"] = false; /* Safari */
+    ctx["msImageSmoothingEnabled"] = false; /* IE */
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const background = "black";
     ctx.fillStyle = background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(-0.5, -0.5, canvas.width + 1, canvas.height + 1);
 
     const border = "white";
     ctx.strokeStyle = border;
     ctx.lineWidth = 1;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeRect(-0.5, -0.5, canvas.width + 1, canvas.height + 1);
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
       const settings = instrumentSettings[instrument];
       const { color } = settings;
-      
+
       drawInstrument(
         ctx,
         instrumentNotes,
@@ -65,7 +65,7 @@
         idx / instruments.length,
         background
       );
-    })
+    });
   }
 
   function drawInstrument(ctx, notes, color, yScale, xOffset, background) {
@@ -74,10 +74,11 @@
     ctx.lineWidth = 1;
 
     notes.forEach(note => {
-      const xStart = (xOffset + note.pitch - pitchMin) * xScale;
-      const yStart = note.time_on * yScale;
-      const noteWidth = xScale;
-      const noteHeight = note.duration * yScale;
+      const xStart =
+        Math.round((xOffset + note.pitch - pitchMin) * xScale) + 0.5;
+      const yStart = Math.round(note.time_on * yScale) + 0.5;
+      const noteWidth = Math.round(xScale);
+      const noteHeight = Math.round(note.duration * yScale);
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
       ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
     });
@@ -104,9 +105,11 @@
   }
 </style>
 
-<canvas
-  class="trackCanvas"
-  on:click={play}
-  bind:this={canvas}
-  width={canvasWidth}
-  {height} />
+<div>
+  <canvas
+    class="trackCanvas"
+    on:click={play}
+    bind:this={canvas}
+    width={canvasWidth}
+    {height} />
+</div>
