@@ -20,7 +20,7 @@
     };
   }
 
-  let visible = 0;
+  let visible = -1;
   let startTime = 0;
   addAudioStatusListener(state => {
       if(state.playing){
@@ -36,7 +36,7 @@
   .line {
     position: absolute;
     height: 5px;
-    background-color: #0005;
+    background-color: rgba(255, 255, 255, 1);
     z-index: 2;
     transform: translateY(0px);
   }

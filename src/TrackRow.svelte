@@ -1,6 +1,6 @@
 <script>
   import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
-  import { configStore } from "./settings.js";
+  import { configStore, autoRequestStore } from "./settings.js";
   import { request } from "./broker.js";
   import TrackCanvas from "./TrackCanvas.svelte";
   import { canvasWidth } from "./constants.js";
@@ -23,7 +23,7 @@
       .then(tracks => trackTreeStore.addTracks(pathCapture, tracks))
       .finally(_ => trackTreeStore.setRequestStatus(pathCapture, false));
   }
-  $: if (children.length === 0 && !$trackStore.pendingLoad) loadMore();
+  $: if ($autoRequestStore && children.length === 0 && !$trackStore.pendingLoad) loadMore();
 </script>
 
 <style>
@@ -57,6 +57,7 @@
           <ChildButton parent={path} siblingId={idx} />
         {/each}
         <button class="loadMoreButton" on:click={loadMore}>Load More</button>
+        <button class="loadMoreButton" on:click={() => console.log(JSON.stringify($trackStore))}>Log</button>
       </div>
     </div>
   {/if}

@@ -36,9 +36,17 @@
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
     instruments.forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
-      const color = instrumentSettings[instrument].color;
+      const settings = instrumentSettings[instrument];
+      const { color } = settings;
+      
       drawInstrument(
         ctx,
         instrumentNotes,
@@ -75,7 +83,6 @@
 
 <style>
   .trackCanvas {
-    background-color: #ccf;
     flex-grow: 0;
     flex-shrink: 0;
     cursor: pointer;

@@ -21,7 +21,7 @@ function createInstrumentStore(){
 };
 export const instrumentStore = createInstrumentStore();
 
-export const generationLengthStore = writable(400);
+export const generationLengthStore = writable(800);
 	
 function createGenreStore(){
 	const {subscribe, set} = writable("video");
@@ -33,6 +33,8 @@ function createGenreStore(){
 export const genreStore = createGenreStore();
 export const temperatureStore = writable(1);
 export const truncationStore = writable(27);
+
+export const autoRequestStore = writable(false);
 
 export const configStore = derived([generationLengthStore, genreStore, instrumentStore, temperatureStore, truncationStore], ([$generationLengthStore, $genreStore, $instrumentStore, $temperatureStore, $truncationStore]) => ({
 	audioFormat: "mp3",

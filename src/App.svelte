@@ -21,7 +21,6 @@
 
 <main>
   <button on:click={() => audio.play(0)}>Play from Start</button>
-
   <div class="container">
     <Timeline />
     <TrackRow path={[]} />

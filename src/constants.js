@@ -20,7 +20,7 @@ export const instrumentSettings = {
         color: "rgba(255, 0, 255, 1)"
     },
     winds: {
-        color: "rgba(0, 0, 0, 1)"
+        color: "rgba(255, 255, 255, 1)"
     }
 }
 
@@ -29,7 +29,7 @@ export const instruments = Object.keys(instrumentSettings);
 export const yScaleStore = writable(50);
 
   export const pitchMin = 20;
-  const pitchMax = 100;
+  const pitchMax = 110;
   const pitchRange = pitchMax - pitchMin;
   export const canvasWidth = 700;
   export const xScale = canvasWidth / pitchRange;

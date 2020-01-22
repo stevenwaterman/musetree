@@ -49,6 +49,7 @@ function getNode(trackTree, path) {
 
 function addChildren(trackTree, path, tracks) {
   const leaf = getNode(trackTree, path);
+  leaf.audio = null;
   leaf.children.push(
     ...tracks.map(track => ({
       selected: null,

@@ -8,7 +8,7 @@ selectedTrackAudioStore.subscribe(track => {
 });
 
 export function addAudioStatusListener(callback){
-  htmlAudio.addEventListener("play", () => callback({startTime: htmlAudio.currentTime, playing: true}));
+  htmlAudio.addEventListener("playing", () => callback({startTime: htmlAudio.currentTime, playing: true}));
   htmlAudio.addEventListener("pause", () => callback({startTime: htmlAudio.currentTime, playing: false}));
 }
 
