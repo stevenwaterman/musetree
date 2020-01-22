@@ -46,21 +46,30 @@
 </script>
 
 <style>
-  .line {
+  .anchor {
     position: relative;
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.5);
-    z-index: 2;
-    top: 0px;
-    pointer-events: none;
+    top: 0;
+    height: 0;
     width: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .line {
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
   }
 </style>
 
-<div
-  bind:this={element}
-  hidden={!visible}
-  class={'line'}
-  on:introend={() => {
-    visible = false;
-  }} />
+<div bind:this={element} class="anchor">
+  <div
+    hidden={!visible}
+    class="line"
+    on:introend={() => {
+      visible = false;
+    }} />
+</div>
