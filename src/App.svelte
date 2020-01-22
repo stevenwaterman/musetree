@@ -2,14 +2,18 @@
   import Track from "./track/Track.svelte";
   import Options from "./Options.svelte";
   import {audio} from "./track/audio.js";
-
-  
 </script>
 
-
+<style>
+  .columns{
+    display: flex;
+    flex-direction: row;
+  }
+</style>
 
 <main>
-  <button on:click={() => audio.play(0)}>Play from Start</button>
+  <div class="columns">
   <Track/>
   <Options/>
+  </div>
 </main>

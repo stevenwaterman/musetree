@@ -22,7 +22,6 @@
 
   let visible = -1;
   let startTime = 0;
-  $: console.log(visible);
   addAudioStatusListener(state => {
       if(state.playing){
           visible = (visible + 1) % 2;
