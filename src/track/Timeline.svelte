@@ -3,8 +3,10 @@
   import { selectedTrackStore } from "./trackTree.js";
   import { audioStatusStore } from "./audio.js";
   import { yScaleStore } from "../settings.js";
+  import { create_in_transition } from "svelte/internal";
 
-  function traverse(node, { track, startTime }) {
+  function traverse(node, { startTime }) {
+    const track = $selectedTrackStore.track;
     if (track == null) return;
 
     const endTime = track.duration;
@@ -15,50 +17,48 @@
     const transPx = endPx - startPx;
     return {
       duration: transTime * 1000,
-      css: t => {
-        return `transform: translateY(${startPx + t * transPx}px);`;
+      tick: t => {
+        const y = startPx + t * transPx;
+        node.style = `top:${y}px;`
+        node.scrollIntoView({
+          block: "center",
+          behaviour: "smooth"
+        });
       }
     };
   }
 
-  let visible = -1;
-  let startTime = 0;
-  audioStatusStore.subscribe(({playing, time}) => {
-    if (playing) {
-      visible = (visible + 1) % 2;
-    } else {
-      visible = -1;
+  let element;
+  let transition;
+  let visible = false;
+  audioStatusStore.subscribe(({ playing, time }) => {
+    if (transition) transition.end();
+    visible = playing;
+    if (visible) {
+      transition = create_in_transition(element, traverse, {
+        startTime: time
+      });
+      transition.start();
     }
-    startTime = time;
   });
 </script>
 
 <style>
   .line {
-    position: absolute;
+    position: relative;
     height: 2px;
     background-color: rgba(255, 255, 255, 0.5);
     z-index: 2;
-    transform: translateY(0px);
+    top: 0px;
     pointer-events: none;
+    width: 100%;
   }
 </style>
 
-{#if visible === 0}
-  <div
-    class={'line'}
-    style={'width:' + canvasWidth + 'px'}
-    in:traverse={{ track: $selectedTrackStore.track, startTime }}
-    on:introend={() => {
-      visible = -1;
-    }} />
-{/if}
-{#if visible === 1}
-  <div
-    class={'line'}
-    style={'width:' + canvasWidth + 'px'}
-    in:traverse={{ track: $selectedTrackStore.track, startTime }}
-    on:introend={() => {
-      visible = -1;
-    }} />
-{/if}
+<div
+  bind:this={element}
+  hidden={!visible}
+  class={'line'}
+  on:introend={() => {
+    visible = false;
+  }} />

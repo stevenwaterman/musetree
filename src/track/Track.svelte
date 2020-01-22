@@ -4,6 +4,7 @@
     selectedTrackAudioStore,
     selectedTrackStore
   } from "./trackTree.js";
+  import {canvasWidth} from "../constants.js";
   import TrackRow from "./TrackRow.svelte";
   import Timeline from "./Timeline.svelte";
 
@@ -14,7 +15,9 @@
 
 <style>
   .container {
-    position: relative;
+    overflow-y: auto;
+    flex-shrink: 0;
+    height: 50vh;
   }
 </style>
 
