@@ -53,7 +53,6 @@
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
     Object.keys(notes).forEach((instrument, idx) => {
-      console.log(instrument);
       const instrumentNotes = notes[instrument];
       const settings = instrumentSettings[instrument];
       const { color } = settings;

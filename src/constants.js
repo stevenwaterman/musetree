@@ -31,6 +31,9 @@ export const instrumentSettings = {
     trumpet: {
         color: "rgba(255, 255, 255, 1)"
     },
+    clarinet: {
+        color: "rgba(255, 255, 255, 1)"
+    },
     winds: {
         color: "rgba(255, 255, 255, 1)"
     }

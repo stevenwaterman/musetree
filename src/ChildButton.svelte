@@ -11,7 +11,8 @@
 
   function select() {
     trackTreeStore.select(parent, siblingId);
-    audio.play(startsAt);
+    const playFrom = Math.max(0, startsAt - 3)
+    audio.play(playFrom);
   }
 
   function remove(){
