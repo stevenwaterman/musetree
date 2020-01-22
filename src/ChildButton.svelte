@@ -23,7 +23,7 @@
 <style>
   .childButton {
     font-weight: 700;
-    min-width: 50px;
+    min-width: 25px;
     background: white;
     margin: 4px;
     padding: 4px;
