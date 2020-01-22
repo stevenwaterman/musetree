@@ -54,12 +54,10 @@
     flex-grow: 0;
     flex-shrink: 0;
     background: black;
-    border: 1px solid white;
   }
   .rowButton {
     margin: 4px;
     padding: 4px;
-    border: 1px solid black;
     cursor: pointer;
   }
 </style>
