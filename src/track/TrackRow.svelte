@@ -1,10 +1,10 @@
 <script>
   import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
-  import { configStore, autoRequestStore } from "./settings.js";
+  import { configStore, autoRequestStore } from "../settings.js";
   
   import TrackCanvas from "./TrackCanvas.svelte";
   import TrackRowOptions from "./TrackRowOptions.svelte";
-  import { canvasWidth } from "./constants.js";
+  import { canvasWidth } from "../constants.js";
   import ChildButton from "./ChildButton.svelte";
 
   export let path;

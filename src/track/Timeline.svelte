@@ -1,16 +1,16 @@
 <script>
-  import { canvasWidth } from "./constants.js";
-  import { yScaleStore } from "./constants.js";
+  import { canvasWidth, yScaleStore } from "../constants.js";
   import { selectedTrackStore } from "./trackTree.js";
   import {addAudioStatusListener} from "./audio.js";
 
-  function traverse(node, { track, startTime, yScale }) {
+  function traverse(node, { track, startTime }) {
     if (track == null) return;
 
-    const startPx = startTime * yScale;
     const endTime = track.duration;
-    const endPx = endTime * yScale;
     const transTime = endTime - startTime;
+    
+    const startPx = startTime * $yScaleStore;
+    const endPx = endTime * $yScaleStore;
     const transPx = endPx - startPx;
     return {
       duration: transTime * 1000,
@@ -22,6 +22,7 @@
 
   let visible = -1;
   let startTime = 0;
+  $: console.log(visible);
   addAudioStatusListener(state => {
       if(state.playing){
           visible = (visible + 1) % 2;
@@ -47,7 +48,7 @@
   <div
     class={'line'}
     style={'width:' + canvasWidth + 'px'}
-    in:traverse={{ track: $selectedTrackStore.track, startTime, yScale: $yScaleStore }}
+    in:traverse={{ track: $selectedTrackStore.track, startTime }}
     on:introend={() => {
       visible = -1;
     }}>
@@ -57,7 +58,7 @@
   <div
     class={'line'}
     style={'width:' + canvasWidth + 'px'}
-    in:traverse={{ track: $selectedTrackStore.track, startTime, yScale: $yScaleStore }}
+    in:traverse={{ track: $selectedTrackStore.track, startTime }}
     on:introend={() => {
       visible = -1;
     }}>

@@ -6,9 +6,9 @@
     selectedTrackAudioStore,
     selectedTrackEncodingStore
   } from "./trackTree.js";
-  import { request } from "./broker.js";
+  import { request } from "../broker.js";
   import { afterUpdate } from "svelte";
-  import { configStore, autoRequestStore } from "./settings.js";
+  import { configStore, autoRequestStore } from "../settings.js";
   import {
     instruments,
     instrumentSettings,
@@ -16,7 +16,7 @@
     yScaleStore,
     canvasWidth,
     xScale
-  } from "./constants.js";
+  } from "../constants.js";
   import { audio } from "./audio.js";
   import ChildButton from "./ChildButton.svelte";
 

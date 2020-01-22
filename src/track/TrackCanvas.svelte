@@ -7,7 +7,7 @@
     selectedTrackEncodingStore
   } from "./trackTree.js";
   import { afterUpdate } from "svelte";
-  import { configStore } from "./settings.js";
+  import { configStore } from "../settings.js";
   import {
     instruments,
     instrumentSettings,
@@ -15,7 +15,7 @@
     yScaleStore,
     canvasWidth,
     xScale
-  } from "./constants.js";
+  } from "../constants.js";
   import { audio } from "./audio.js";
 
   export let path;
@@ -39,12 +39,14 @@
 
     const background = "black";
     ctx.fillStyle = background;
-    ctx.fillRect(-0.5, -0.5, canvas.width + 1, canvas.height + 1);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const border = "white";
     ctx.strokeStyle = border;
     ctx.lineWidth = 1;
-    ctx.strokeRect(-0.5, -0.5, canvas.width + 1, canvas.height + 1);
+    ctx.moveTo(0, canvas.height - 0.5)
+    ctx.lineTo(canvas.width, canvas.height - 0.5)
+    ctx.stroke();
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
