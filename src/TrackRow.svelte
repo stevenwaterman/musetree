@@ -9,7 +9,7 @@
   export let path;
   $: trackStore = deriveTrackStore(path);
 
-  $: children = $trackStore.children ? $trackStore.children : [];
+  $: children = $trackStore.children ? $trackStore.children : {};
   $: track = $trackStore.track ? $trackStore.track : null;
   $: duration = track ? track.duration : 0;
 
@@ -23,7 +23,7 @@
       .then(tracks => trackTreeStore.addTracks(pathCapture, tracks))
       .finally(_ => trackTreeStore.setRequestStatus(pathCapture, false));
   }
-  $: if ($autoRequestStore && children.length === 0 && !$trackStore.pendingLoad) loadMore();
+  $: if ($autoRequestStore && !$trackStore.childOffset && !$trackStore.pendingLoad) loadMore();
 </script>
 
 <style>
@@ -36,14 +36,16 @@
     flex-direction: row;
     flex-wrap: wrap;
   }
-  .loadMoreButton {
-    flex-basis: content;
-    margin: 0;
+  .rowButton {
+    margin: 4px;
+    padding: 4px;
+    border: 1px solid black;
+    cursor: pointer;
   }
 </style>
 
 <div class="trackRow">
-  {#if children.length === 0 && $trackStore.pendingLoad}
+  {#if !$trackStore.childOffset && $trackStore.pendingLoad}
     <p>Loading...</p>
   {:else}
     {#if $trackStore.selected !== null}
@@ -53,11 +55,11 @@
     {/if}
     <div>
       <div class="buttonRow">
-        {#each children as _, idx}
+        {#each Object.keys(children) as idx}
           <ChildButton parent={path} siblingId={idx} />
         {/each}
-        <button class="loadMoreButton" on:click={loadMore}>Load More</button>
-        <button class="loadMoreButton" on:click={() => console.log(JSON.stringify($trackStore))}>Log</button>
+        <div class="rowButton" on:click={loadMore}>Load More</div>
+        <div class="rowButton" on:click={() => console.log(JSON.stringify($trackStore))}>Log</div>
       </div>
     </div>
   {/if}

@@ -3,9 +3,10 @@ import { writable, derived } from "svelte/store";
 function createTrackTreeStore() {
   const initial = {
     selected: null,
-    children: [],
+    children: {},
+    childOffset: 0,
     track: null,
-    pendingLoad: false
+    pendingLoad: false,
   };
   const { subscribe, set, update } = writable(initial);
 
@@ -25,6 +26,11 @@ function createTrackTreeStore() {
         const node = getNode(state, path);
         node.pendingLoad = pending;
         return state;
+      }),
+      deleteChild: (path, childId) => update(state => {
+        const node = getNode(state, path);
+        delete node.children[childId];
+        return state;
       })
   };
 }
@@ -39,7 +45,8 @@ export function deriveTrackStore(path) {
     ...store,
     select: idx => trackTreeStore.select(path, idx),
     requestStart: () => trackTreeStore.setRequestStatus(path, true),
-    requestDone: () => trackTreeStore.setRequestStatus(path, false)
+    requestDone: () => trackTreeStore.setRequestStatus(path, false),
+    deleteChild: (childId) => trackTreeStore.deleteChild(path, childId)
   };
 }
 
@@ -49,15 +56,21 @@ function getNode(trackTree, path) {
 
 function addChildren(trackTree, path, tracks) {
   const leaf = getNode(trackTree, path);
-  leaf.audio = null;
-  leaf.children.push(
-    ...tracks.map(track => ({
+  delete leaf.audio;
+
+  const children = leaf.children;
+  tracks
+    .map(track => ({
       selected: null,
-      children: [],
+      children: {},
+      childOffset: 0,
       track,
       pendingLoad: false
     }))
-  );
+    .forEach(track => {
+      children[leaf.childOffset] = track;
+      leaf.childOffset++;
+    });
   return trackTree;
 }
 

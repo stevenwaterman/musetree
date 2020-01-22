@@ -16,15 +16,27 @@ export const instrumentSettings = {
     piano: {
         color: "rgba(0, 255, 255, 1)"
     },
+    violin: {
+        color: "rgba(255, 0, 255, 1)"
+    },
     strings: {
         color: "rgba(255, 0, 255, 1)"
+    },
+    cello: {
+        color: "rgba(255, 0, 255, 1)"
+    },
+    flute: {
+        color: "rgba(255, 255, 255, 1)"
+    },
+    trumpet: {
+        color: "rgba(255, 255, 255, 1)"
     },
     winds: {
         color: "rgba(255, 255, 255, 1)"
     }
 }
 
-export const instruments = Object.keys(instrumentSettings);
+export const instruments = ["bass", "drums", "guitar", "harp", "piano", "strings", "winds"];
 
 export const yScaleStore = writable(50);
 

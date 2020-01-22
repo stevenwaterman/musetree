@@ -34,15 +34,26 @@
   function draw(canvas, notes, yScale) {
     if (canvas == null) return;
     const ctx = canvas.getContext("2d");
+
+    ctx['imageSmoothingEnabled'] = false;       /* standard */
+    ctx['mozImageSmoothingEnabled'] = false;    /* Firefox */
+    ctx['oImageSmoothingEnabled'] = false;      /* Opera */
+    ctx['webkitImageSmoothingEnabled'] = false; /* Safari */
+    ctx['msImageSmoothingEnabled'] = false;     /* IE */
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "black";
+    const background = "black";
+    ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "white";
+
+    const border = "white";
+    ctx.strokeStyle = border;
     ctx.lineWidth = 1;
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    instruments.forEach((instrument, idx) => {
+    Object.keys(notes).forEach((instrument, idx) => {
+      console.log(instrument);
       const instrumentNotes = notes[instrument];
       const settings = instrumentSettings[instrument];
       const { color } = settings;
@@ -52,19 +63,24 @@
         instrumentNotes,
         color,
         yScale,
-        idx / instruments.length
+        idx / instruments.length,
+        background
       );
-    });
+    })
   }
 
-  function drawInstrument(ctx, notes, color, yScale, xOffset) {
+  function drawInstrument(ctx, notes, color, yScale, xOffset, background) {
     ctx.fillStyle = color;
+    ctx.strokeStyle = background;
+    ctx.lineWidth = 1;
+
     notes.forEach(note => {
       const xStart = (xOffset + note.pitch - pitchMin) * xScale;
       const yStart = note.time_on * yScale;
-      const noteWidth = xScale - 1;
-      const noteHeight = note.duration * yScale - 1;
+      const noteWidth = xScale;
+      const noteHeight = note.duration * yScale;
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
+      ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
     });
   }
 

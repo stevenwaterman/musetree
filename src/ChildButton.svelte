@@ -1,6 +1,6 @@
 <script>
   import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
-  import {audio} from "./audio.js";
+  import { audio } from "./audio.js";
 
   export let parent;
   export let siblingId;
@@ -14,22 +14,31 @@
     audio.play(startsAt);
   }
 
-  $: buttonClass = "childButton " + (selected ? "selected" : "unselected");
+  function remove(){
+    parentStore.deleteChild(siblingId);
+  }
 </script>
 
 <style>
   .childButton {
-    flex-basis: content;
-    margin: 0;
     font-weight: 700;
     min-width: 50px;
+    background: white;
+    margin: 4px;
+    padding: 4px;
+    border: 1px solid black;
+    cursor: pointer;
+    text-align: center;
   }
   .selected {
     background: #aaa;
   }
-  .unselected {
-    background: white;
-  }
 </style>
 
-<button class={buttonClass} on:click={select}>{siblingId}</button>
+<div
+  class="childButton"
+  class:selected
+  on:click={select}
+  on:contextmenu|preventDefault={remove}>
+  {siblingId}
+</div>
