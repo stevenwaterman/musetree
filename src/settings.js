@@ -2,7 +2,7 @@ import { writable, derived } from "svelte/store";
 import { instruments, genres } from "./constants.js";
 
 export const instrumentStores = instruments.reduce((acc, instrument) => {
-  acc[instrument] = writable(false);
+  acc[instrument] = writable(instrument === "piano");
   return acc;
 }, {});
 
@@ -10,13 +10,13 @@ const instrumentsStore = derived(
   // @ts-ignore
   Object.values(instrumentStores),
   enabledArray =>
-    enabledArray.reduce((acc, entry) => {
-      acc[entry[0]] = entry[1];
+    enabledArray.reduce((acc, enabled, idx) => {
+      acc[instruments[idx]] = enabled;
       return acc;
     }, {})
 );
 
-export const generationLengthStore = writable(100);
+export const generationLengthStore = writable(200);
 
 export const genreStore = writable(genres[0]);
 export const temperatureStore = writable(1);

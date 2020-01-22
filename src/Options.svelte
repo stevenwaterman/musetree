@@ -78,7 +78,7 @@
     <InstrumentCheckbox {instrument} />
   {/each}
 
-  <div class="optionElement">
+  <!-- <div class="optionElement">
     <label for="temperature">Temperature:</label>
     <input id="temperature" bind:value={$temperatureStore} type="range" min="1" max="100" />
     <span>{$temperatureStore}</span>
@@ -88,7 +88,7 @@
     <label for="truncation">Truncation:</label>
     <input id="truncation" bind:value={$truncationStore} type="range" min="1" max="100" />
     <span>{$truncationStore}</span>
-  </div>
+  </div> -->
 
   <div class="optionElement">
     <label for="autoRequest">Auto Request</label>

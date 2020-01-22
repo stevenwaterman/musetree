@@ -75,7 +75,7 @@
       const noteWidth = Math.round(xScale);
       const noteHeight = Math.round(note.duration * yScale);
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
-      if(noteHeight > 3) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
+      if(noteHeight > 2) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
     });
   }
 
