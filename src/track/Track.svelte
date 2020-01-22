@@ -17,7 +17,7 @@
   .container {
     overflow-y: auto;
     flex-shrink: 0;
-    height: 50vh;
+    height: 90vh;
   }
 </style>
 
