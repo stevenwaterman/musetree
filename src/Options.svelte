@@ -6,6 +6,7 @@
     truncationStore,
     temperatureStore,
     autoRequestStore,
+    autoScrollStore,
     preplayStore,
     yScaleStore
   } from "./settings.js";
@@ -105,6 +106,11 @@
     <label for="preplay">Pre-Play (s):</label>
     <input id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5" />
     <span>{$preplayStore}</span>
+  </div>
+
+   <div class="optionElement">
+    <label for="autoScroll">Auto Scroll</label>
+    <input id="autoScroll" type="checkbox" bind:checked={$autoScrollStore} />
   </div>
 
   <button on:click={() => audio.play(0)}>Play from Start</button>

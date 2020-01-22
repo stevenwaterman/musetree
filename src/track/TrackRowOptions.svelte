@@ -1,21 +1,8 @@
 <script>
-  import {
-    deriveTrackStore,
-    trackTreeStore,
-    selectedPathStore,
-    selectedTrackAudioStore,
-    selectedTrackEncodingStore
-  } from "./trackTree.js";
+  import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
   import { request } from "../broker.js";
-  import { afterUpdate } from "svelte";
-  import { configStore, autoRequestStore, yScaleStores } from "../settings.js";
-  import {
-    instruments,
-    instrumentSettings,
-    pitchMin,
-    canvasWidth,
-    xScale
-  } from "../constants.js";
+  import { configStore, autoRequestStore } from "../settings.js";
+  import { canvasWidth } from "../constants.js";
   import { audio } from "./audio.js";
   import ChildButton from "./ChildButton.svelte";
 

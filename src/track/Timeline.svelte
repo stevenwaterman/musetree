@@ -2,7 +2,7 @@
   import { canvasWidth } from "../constants.js";
   import { selectedTrackStore } from "./trackTree.js";
   import { audioStatusStore } from "./audio.js";
-  import { yScaleStore } from "../settings.js";
+  import { yScaleStore, autoScrollStore } from "../settings.js";
   import { create_in_transition } from "svelte/internal";
 
   function traverse(node, { startTime }) {
@@ -19,11 +19,13 @@
       duration: transTime * 1000,
       tick: t => {
         const y = startPx + t * transPx;
-        node.style = `top:${y}px;`
-        node.scrollIntoView({
-          block: "center",
-          behaviour: "smooth"
-        });
+        node.style = `top:${y}px;`;
+        if ($autoScrollStore) {
+          node.scrollIntoView({
+            block: "center",
+            behaviour: "smooth"
+          });
+        }
       }
     };
   }
