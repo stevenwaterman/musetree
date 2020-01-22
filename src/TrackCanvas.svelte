@@ -105,11 +105,10 @@
   }
 </style>
 
-<div>
   <canvas
     class="trackCanvas"
     on:click={play}
     bind:this={canvas}
     width={canvasWidth}
+    style={"width: " + canvasWidth + "px; height: " + height + "px;"}
     {height} />
-</div>
