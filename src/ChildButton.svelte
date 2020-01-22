@@ -6,7 +6,7 @@
   export let siblingId;
 
   $: parentStore = deriveTrackStore(path);
-  $: selected = $parentStore.selected === siblingId;
+  $: highlight = $parentStore.lastSelected === siblingId;
   $: startsAt = $parentStore.track ? $parentStore.track.duration : 0;
 
   function select() {
@@ -31,14 +31,14 @@
     cursor: pointer;
     text-align: center;
   }
-  .selected {
+  .highlight {
     background: #aaa;
   }
 </style>
 
 <button
   class="childButton"
-  class:selected
+  class:highlight
   on:click={select}
   on:contextmenu|preventDefault={remove}>
   {1 + parseInt(siblingId)}

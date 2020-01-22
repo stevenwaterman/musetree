@@ -47,16 +47,14 @@
 </script>
 
 <style>
-  .placeholder {
-    flex-grow: 0;
-    flex-shrink: 0;
-    background: black;
-    border: 1px solid white;
-  }
   .buttonRow {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background: black;
+    border: 1px solid white;
   }
   .rowButton {
     margin: 4px;
@@ -66,16 +64,16 @@
   }
 </style>
 
-<div class="placeholder" style={"width: " + canvasWidth + "px"}>
-  <div class="buttonRow">
-    {#each Object.keys(children) as idx}
-      <ChildButton {path} siblingId={idx} />
-    {/each}
-    <button class="rowButton" on:click={loadMore}>Load More{$trackStore.pendingLoad ? " (" + $trackStore.pendingLoad * 4 + " pending)" : ""}</button>
-    <button
-      class="rowButton"
-      on:click={() => console.log(JSON.stringify($trackStore))}>
-      Log
-    </button>
-  </div>
+<div class="buttonRow" style={'width: ' + canvasWidth + 'px'}>
+  {#each Object.keys(children) as idx}
+    <ChildButton {path} siblingId={idx} />
+  {/each}
+  <button class="rowButton" on:click={loadMore}>
+    Load More{$trackStore.pendingLoad ? ' (' + $trackStore.pendingLoad * 4 + ' pending)' : ''}
+  </button>
+  <button
+    class="rowButton"
+    on:click={() => console.log(JSON.stringify($trackStore))}>
+    Log
+  </button>
 </div>

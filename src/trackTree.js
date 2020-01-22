@@ -3,6 +3,7 @@ import { writable, derived } from "svelte/store";
 function createTrackTreeStore() {
   const initial = {
     selected: null,
+    lastSelected: null,
     children: {},
     childOffset: 0,
     track: null,
@@ -19,6 +20,9 @@ function createTrackTreeStore() {
       update(state => {
         const parent = getNode(state, path);
         parent.selected = idx;
+        if(idx != null){
+          parent.lastSelected = idx;
+        }
         return state;
       }),
     requestStart: path =>
@@ -70,6 +74,7 @@ function addChildren(trackTree, path, tracks) {
   tracks
     .map(track => ({
       selected: null,
+      lastSelected: null,
       children: {},
       childOffset: 0,
       track,
