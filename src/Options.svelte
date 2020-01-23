@@ -79,39 +79,8 @@
     <InstrumentCheckbox {instrument} />
   {/each}
 
-  <!-- <div class="optionElement">
-    <label for="temperature">Temperature:</label>
-    <input id="temperature" bind:value={$temperatureStore} type="range" min="1" max="100" />
-    <span>{$temperatureStore}</span>
-  </div>
-
-  <div class="optionElement">
-    <label for="truncation">Truncation:</label>
-    <input id="truncation" bind:value={$truncationStore} type="range" min="1" max="100" />
-    <span>{$truncationStore}</span>
-  </div> -->
-
   <div class="optionElement">
     <label for="autoRequest">Auto Request</label>
     <input id="autoRequest" type="checkbox" bind:checked={$autoRequestStore} />
   </div>
-
-  <div class="optionElement">
-    <label for="yScale">Y Scale:</label>
-    <input id="yScale" bind:value={$yScaleStore} type="range" min="10" max="250" step="5" />
-    <span>{$yScaleStore}</span>
-  </div>
-
-  <div class="optionElement">
-    <label for="preplay">Pre-Play (s):</label>
-    <input id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5" />
-    <span>{$preplayStore}</span>
-  </div>
-
-   <div class="optionElement">
-    <label for="autoScroll">Auto Scroll</label>
-    <input id="autoScroll" type="checkbox" bind:checked={$autoScrollStore} />
-  </div>
-
-  <button on:click={() => audio.play(0)}>Play from Start</button>
 </div>

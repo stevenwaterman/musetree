@@ -41,17 +41,16 @@
     flex-grow: 0;
     flex-shrink: 0;
     background: black;
+    border-top: 1px solid white;
+    justify-content: center;
   }
   .rowButton {
     margin: 4px;
     padding: 4px;
-    cursor: pointer;
   }
 </style>
 
-<div
-  class="buttonRow"
-  style={'width: ' + canvasWidth + 'px'}>
+<div class="buttonRow">
   {#each Object.keys(children) as idx}
     <ChildButton {path} siblingId={idx} />
   {/each}

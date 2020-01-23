@@ -97,6 +97,7 @@
     flex-grow: 0;
     flex-shrink: 0;
     cursor: pointer;
+    margin-bottom: -4px;
   }
 </style>
 

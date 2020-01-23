@@ -25,7 +25,6 @@ function pause() {
   htmlAudio.pause();
 }
 
-;
 htmlAudio.onplaying = () => audioStatusStore.setPlaying(true);
 htmlAudio.onended = () => audioStatusStore.setPlaying(false);
 
@@ -35,5 +34,6 @@ export const audio = {
     pause();
     htmlAudio.currentTime = time;
     htmlAudio.play();
-  }
+  },
+  pause,
 };

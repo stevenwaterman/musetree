@@ -20,22 +20,35 @@
   .container {
     overflow-y: scroll;
     flex-shrink: 0;
-    height: 90vh;
+    max-height: 90vh;
+    background-color: black;
   }
 
   .negativeMargin {
     margin-bottom: -4px;
+  }
+
+  .staticSize {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .placeholder {
+    color: white;
+    text-align: center;
   }
 </style>
 
 <div class="container">
   <Timeline />
   {#each rows as { path, selected }, idx (JSON.stringify(path) + selected)}
-    <div class="trackRow negativeMargin" transition:slide|local>
+    <div class="negativeMargin staticSize" transition:slide|local>
       <TrackCanvas path={[...path, selected]} />
     </div>
+  {:else}
+    <div style={'width:' + canvasWidth + 'px'}>
+      <p class="placeholder">No track selected</p>
+    </div>
   {/each}
-  <div class="trackRow">
-    <TrackRowOptions path={$selectedPathStore} />
-  </div>
 </div>
+<TrackRowOptions path={$selectedPathStore} />
