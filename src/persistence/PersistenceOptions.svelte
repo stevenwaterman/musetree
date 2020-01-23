@@ -60,7 +60,7 @@
       style="display:none" />
   </label>
   <div class="dropdown">
-    <button class="dropbtn">Export</button>
+    <button disabled={$selectedTrackEncodingStore === ''} class="dropbtn">Export</button>
     <div class="dropdown-content">
       <button
         disabled={$selectedTrackEncodingStore === ''}
