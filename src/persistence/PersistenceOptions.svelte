@@ -23,6 +23,8 @@
   function exportAudio(format) {
     downloadAudio($selectedTrackEncodingStore, format, "export");
   }
+
+  $: trackLoaded = $selectedTrackEncodingStore === ''
 </script>
 
 <style>
@@ -60,25 +62,25 @@
       style="display:none" />
   </label>
   <div class="dropdown">
-    <button disabled={$selectedTrackEncodingStore === ''} class="dropbtn">Export</button>
+    <button disabled={trackLoaded} class="dropbtn">Export</button>
     <div class="dropdown-content">
       <button
-        disabled={$selectedTrackEncodingStore === ''}
+        disabled={trackLoaded}
         on:click={() => exportAudio('mp3')}>
         .mp3
       </button>
       <button
-        disabled={$selectedTrackEncodingStore === ''}
+        disabled={trackLoaded}
         on:click={() => exportAudio('wav')}>
         .wav
       </button>
       <button
-        disabled={$selectedTrackEncodingStore === ''}
+        disabled={trackLoaded}
         on:click={() => exportAudio('ogg')}>
         .ogg
       </button>
       <button
-        disabled={$selectedTrackEncodingStore === ''}
+        disabled={trackLoaded}
         on:click={() => exportAudio('midi')}>
         .midi
       </button>
