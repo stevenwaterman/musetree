@@ -42,8 +42,8 @@
 <div class="container">
   <Timeline />
   {#each rows as { path, selected }, idx (JSON.stringify(path) + selected)}
-    <div class="negativeMargin staticSize" transition:slide|local>
-      <TrackCanvas path={[...path, selected]} />
+    <div class="staticSize" transition:slide|local>
+      <TrackCanvas path={[...path, selected]} last={idx === rows.length - 1}/>
     </div>
   {:else}
     <div style={'width:' + canvasWidth + 'px'}>

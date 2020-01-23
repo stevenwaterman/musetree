@@ -18,6 +18,7 @@
   import { audio } from "./audio.js";
 
   export let path;
+  export let last;
   let canvas;
 
   $: trackStore = deriveTrackStore(path);
@@ -40,12 +41,14 @@
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const border = "white";
-    ctx.strokeStyle = border;
-    ctx.lineWidth = 1;
-    ctx.moveTo(0, canvas.height - 0.5)
-    ctx.lineTo(canvas.width, canvas.height - 0.5)
-    ctx.stroke();
+    if (!last) {
+      const border = "white";
+      ctx.strokeStyle = border;
+      ctx.lineWidth = 1;
+      ctx.moveTo(0, canvas.height - 0.5);
+      ctx.lineTo(canvas.width, canvas.height - 0.5);
+      ctx.stroke();
+    }
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
@@ -80,7 +83,7 @@
       const noteWidth = Math.round(xScale);
       const noteHeight = Math.round(note.duration * yScale);
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
-      if(noteHeight > 2) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
+      if (noteHeight > 2) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
     });
   }
 
@@ -106,11 +109,11 @@
   }
 </style>
 
-  <canvas
-    class="trackCanvas"
-    on:click={play}
-    on:contextmenu|preventDefault={trackStore.deselect}
-    bind:this={canvas}
-    width={canvasWidth}
-    style={"width: " + canvasWidth + "px; height: " + height + "px;"}
-    {height} />
+<canvas
+  class="trackCanvas"
+  on:click={play}
+  on:contextmenu|preventDefault={trackStore.deselect}
+  bind:this={canvas}
+  width={canvasWidth}
+  style={'width: ' + canvasWidth + 'px; height: ' + height + 'px;'}
+  {height} />
