@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
+    "retry-axios": "^2.1.1",
     "sirv-cli": "^0.4.4"
   }
 }
