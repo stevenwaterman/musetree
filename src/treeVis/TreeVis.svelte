@@ -1,11 +1,13 @@
 <script>
   import * as d3 from "d3";
-  import { d3TreeStore } from "../track/trackTree.js";
+  import { d3TreeStore, trackTreeStore, selectedPathStore } from "../track/trackTree.js";
   import { onMount } from "svelte";
+  import { autoPlayStore, preplayStore } from "../settings.js";
+  import {audio} from "../track/audio.js";
 
   const width = 500;
   const height = 500;
-  const dx = 50;
+  const dx = 25;
   const dy = 50;
   const linkGenerator = d3.linkVertical();
 
@@ -38,25 +40,38 @@
   }
 
   onMount(() => {
-    let tree = d3.select("#tree");
-    let svg = d3.select("svg").call(
+    const tree = d3.select("#tree");
+    d3.select("svg").call(
       d3.zoom().on("zoom", function() {
         tree.attr("transform", d3.event.transform);
       })
     );
   });
 
-  function nodeColor({wasSelected, isSelected, onSelectedPath}){
-      if(onSelectedPath){
-          return "#f00";
-      }
-      if(isSelected){
-          return "#f90";
-      }
-      if(wasSelected){
-          return "#ff0";
-      }
-      return "#fff";
+  function nodeColor({ wasSelected, isSelected, onSelectedPath }) {
+    if (onSelectedPath) {
+      return "#f00";
+    }
+    if (isSelected) {
+      return "#f90";
+    }
+    if (wasSelected) {
+      return "#ff0";
+    }
+    return "#fff";
+  }
+
+  function select(path, startsAt) {
+    trackTreeStore.selectFullPath(path);
+    const playFrom = Math.max(0, startsAt - $preplayStore);
+    if ($autoPlayStore) {
+      audio.play(playFrom);
+    }
+  }
+
+  function remove(path, idx) {
+      console.log(path);
+    trackTreeStore.deleteChild(path.slice(0, -1), idx);
   }
 </script>
 
@@ -65,6 +80,9 @@
     width: 500px;
     height: 500px;
     border: 1px solid black;
+  }
+  .label {
+      pointer-events: none;
   }
 </style>
 
@@ -82,12 +100,13 @@
       </g>
       <g class="node">
         {#each root.descendants() as d}
-          {#if !d.data.isRoot}
-            <g transform={`translate(${d.x},${d.y})`}>
+            <g
+              transform={`translate(${d.x},${d.y})`}
+              on:click={() => select(d.data.path, d.data.name, d.data.startsAt)}
+              on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
               <circle stroke="black" fill={nodeColor(d.data)} r="10" />
-              <text dy="0.31em" text-anchor="middle">{d.data.name}</text>
+              <text class="label" dy="0.31em" text-anchor="middle">{d.data.name}</text>
             </g>
-          {/if}
         {/each}
       </g>
     </g>

@@ -26,6 +26,15 @@ function createTrackTreeStore() {
         }
         return state;
       }),
+    selectFullPath: (path) => update(state => {
+      let tree = state;
+      path.forEach(direction => {
+        tree.selected = direction;
+        tree.lastSelected = direction;
+        tree = tree.children[direction];
+      });
+      return state;
+    }),
     requestStart: path =>
       update(state => {
         const node = getNode(state, path);
@@ -121,11 +130,12 @@ export const selectedTrackAudioStore = derived(
 
 export const d3TreeStore = derived([trackTreeStore], ([$trackTreeStore]) =>
   toD3data($trackTreeStore, {
-    name: null,
+    name: "",
     wasSelected: true,
     isSelected: true,
     onSelectedPath: true,
-    isRoot: true,
+    path: [],
+    startsAt: 0
   })
 );
 
@@ -137,7 +147,8 @@ function toD3data(tree, config) {
       wasSelected: idx === lastSelected,
       isSelected: idx === selected,
       onSelectedPath: idx === selected && config.onSelectedPath,
-      isRoot: false
+      path: [...config.path, idx],
+      startsAt: config.startsAt + child.track.sectionDuration
     })
   );
   return {
