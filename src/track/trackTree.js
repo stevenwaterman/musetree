@@ -5,7 +5,7 @@ function createTrackTreeStore() {
     selected: null,
     lastSelected: null,
     children: {},
-    childOffset: 0,
+    childOffset: 1,
     track: null,
     pendingLoad: 0,
   };
@@ -76,7 +76,7 @@ function addChildren(trackTree, path, tracks) {
       selected: null,
       lastSelected: null,
       children: {},
-      childOffset: 0,
+      childOffset: 1,
       track,
       pendingLoad: false
     }))

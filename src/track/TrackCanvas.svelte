@@ -67,10 +67,10 @@
     });
 
     ctx.fillStyle = "white";
-    ctx.textAlign = "left";
+    ctx.textAlign = "right";
     ctx.font = "14px arial";
-    const text = `Section ${section}: ${path[path.length - 1]}`; 
-    ctx.fillText(text, 2.5, 12.5);
+    const text = `Section ${section + 1}: ${path[path.length - 1]}`; 
+    ctx.fillText(text, canvas.width - 2.5, 12.5);
   }
 
   function drawInstrument(ctx, notes, color, yScale, xOffset, background) {

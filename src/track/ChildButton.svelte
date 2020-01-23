@@ -44,5 +44,5 @@
   class:highlight
   on:click={select}
   on:contextmenu|preventDefault={remove}>
-  {1 + parseInt(siblingId)}
+  {siblingId}
 </button>
