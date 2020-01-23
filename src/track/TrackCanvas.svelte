@@ -18,6 +18,7 @@
   import { audio } from "./audio.js";
 
   export let path;
+  export let section;
   export let last;
   let canvas;
 
@@ -67,8 +68,9 @@
 
     ctx.fillStyle = "white";
     ctx.textAlign = "left";
-    ctx.font = "12px arial";
-    ctx.fillText(path[path.length - 1], 2.5, 12.5);
+    ctx.font = "14px arial";
+    const text = `Section ${section}: ${path[path.length - 1]}`; 
+    ctx.fillText(text, 2.5, 12.5);
   }
 
   function drawInstrument(ctx, notes, color, yScale, xOffset, background) {
