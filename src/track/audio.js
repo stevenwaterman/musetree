@@ -1,16 +1,6 @@
 import { selectedTrackAudioStore } from "./trackTree.js";
-import {writable} from "svelte/store";
+import { writable } from "svelte/store";
 import { yScaleStore } from "../settings.js";
-
-const htmlAudio = new Audio();
-selectedTrackAudioStore.subscribe(track => {
-  htmlAudio.pause();
-  if (track === "") return;
-  htmlAudio.src = track;
-});
-yScaleStore.subscribe(() => {
-  htmlAudio.pause();
-});
 
 function createAudioStatusStore() {
   const { subscribe, update } = writable({ playing: false, time: 0 });
@@ -21,14 +11,28 @@ function createAudioStatusStore() {
   };
 }
 export const audioStatusStore = createAudioStatusStore();
+
+const htmlAudio = new Audio();
+selectedTrackAudioStore.subscribe(track => {
+  pause();
+  if (track === "") return;
+  htmlAudio.src = track;
+});
+yScaleStore.subscribe(pause);
+
+function pause() {
+  audioStatusStore.setPlaying(false);
+  htmlAudio.pause();
+}
+
+;
 htmlAudio.onplaying = () => audioStatusStore.setPlaying(true);
-htmlAudio.onpause = () => audioStatusStore.setPlaying(false);
 htmlAudio.onended = () => audioStatusStore.setPlaying(false);
 
 export const audio = {
   play: time => {
     audioStatusStore.setTime(time);
-    htmlAudio.pause();
+    pause();
     htmlAudio.currentTime = time;
     htmlAudio.play();
   }

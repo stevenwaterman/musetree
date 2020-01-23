@@ -65,11 +65,11 @@
   }
 </style>
 
-<div bind:this={element} class="anchor">
-  <div
-    hidden={!visible}
-    class="line"
-    on:introend={() => {
-      visible = false;
-    }} />
+<div
+  bind:this={element}
+  on:introend={() => {
+    visible = false;
+  }}
+  class="anchor">
+  <div hidden={!visible} class="line" />
 </div>
