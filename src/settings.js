@@ -24,6 +24,7 @@ export const truncationStore = writable(27);
 
 export const autoRequestStore = writable(false);
 export const autoScrollStore = writable(true);
+export const isScrollingStore = writable(false);
 export const autoPlayStore = writable(true);
 
 export const preplayStore = writable(2.5);
