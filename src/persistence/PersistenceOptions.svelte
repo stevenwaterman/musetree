@@ -3,7 +3,6 @@
   import {
     trackTreeStore,
     selectedTrackStore,
-    selectedTrackAudioStore,
     selectedTrackEncodingStore
   } from "../track/trackTree.js";
   import download from "downloadjs";
@@ -45,16 +44,44 @@
 </style>
 
 <div class="container">
-  <button on:click={save}>Save</button>
-  <input type="file" accept="application/json" on:change={load} />
-  Load
+  <button
+    disabled={Object.keys($trackTreeStore.children).length === 0}
+    on:click={save}>
+    Save
+  </button>
+  <label for="upload">
+  <span>Load</span>
+    <input
+      id="upload"
+      type="file"
+      accept=".json"
+      multiple={false}
+      on:change={load}
+      style="display:none" />
+  </label>
   <div class="dropdown">
     <button class="dropbtn">Export</button>
     <div class="dropdown-content">
-      <button on:click={() => exportAudio('mp3')}>.mp3</button>
-      <button on:click={() => exportAudio('wav')}>.wav</button>
-      <button on:click={() => exportAudio('ogg')}>.ogg</button>
-      <button on:click={() => exportAudio('midi')}>.midi</button>
+      <button
+        disabled={$selectedTrackEncodingStore === ''}
+        on:click={() => exportAudio('mp3')}>
+        .mp3
+      </button>
+      <button
+        disabled={$selectedTrackEncodingStore === ''}
+        on:click={() => exportAudio('wav')}>
+        .wav
+      </button>
+      <button
+        disabled={$selectedTrackEncodingStore === ''}
+        on:click={() => exportAudio('ogg')}>
+        .ogg
+      </button>
+      <button
+        disabled={$selectedTrackEncodingStore === ''}
+        on:click={() => exportAudio('midi')}>
+        .midi
+      </button>
     </div>
   </div>
 </div>
