@@ -1,5 +1,5 @@
 <script>
-  import { instrumentStores } from "./settings.js";
+  import { instrumentStores } from "../settings.js";
   export let instrument;
   $: enabledStore = instrumentStores[instrument];
   $: id = "instrument-" + instrument;

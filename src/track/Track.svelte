@@ -24,10 +24,6 @@
     background-color: black;
   }
 
-  .negativeMargin {
-    margin-bottom: -4px;
-  }
-
   .staticSize {
     flex-grow: 0;
     flex-shrink: 0;
@@ -47,7 +43,7 @@
     </div>
   {:else}
     <div style={'width:' + canvasWidth + 'px'}>
-      <p class="placeholder">No track selected</p>
+      <p class="placeholder">Use the controls below to begin</p>
     </div>
   {/each}
 </div>

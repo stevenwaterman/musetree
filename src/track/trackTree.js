@@ -110,7 +110,7 @@ export const selectedTrackStore = derived(
 export const selectedTrackEncodingStore = derived(
   [selectedTrackStore],
   ([$selectedTrackStore]) =>
-    $selectedTrackStore.track ? $selectedTrackStore.track.musenetEncoding : ""
+    $selectedTrackStore.track ? $selectedTrackStore.track.encoding : ""
 );
 export const selectedTrackAudioStore = derived(
   [selectedTrackStore],

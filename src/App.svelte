@@ -1,6 +1,7 @@
 <script>
   import Track from "./track/Track.svelte";
-  import Options from "./Options.svelte";
+  import GenerationOptions from "./generationOptions/GenerationOptions.svelte";
+  import PersistenceOptions from "./persistence/PersistenceOptions.svelte";
   import { audio } from "./track/audio.js";
   import TrackControls from "./track/TrackControls.svelte";
 </script>
@@ -23,6 +24,9 @@
       <Track />
       <TrackControls />
     </div>
-    <Options />
+    <div class="col">
+      <GenerationOptions />
+      <PersistenceOptions />
+    </div>
   </div>
 </main>

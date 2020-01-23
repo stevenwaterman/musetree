@@ -63,7 +63,7 @@
 
   <div class="col margin">
     <label for="yScale">Zoom: {$yScaleStore}%</label>
-    <input class="slider" id="yScale" bind:value={$yScaleStore} type="range" min="10" max="250" step="5" />
+    <input class="slider" id="yScale" bind:value={$yScaleStore} type="range" min="10" max="500" step="10" />
   </div>
 
    <div class="col center margin">

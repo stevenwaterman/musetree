@@ -3,8 +3,7 @@
     deriveTrackStore,
     trackTreeStore,
     selectedPathStore,
-    selectedTrackAudioStore,
-    selectedTrackEncodingStore
+    selectedTrackAudioStore
   } from "./trackTree.js";
   import { afterUpdate } from "svelte";
   import { configStore, yScaleStore } from "../settings.js";

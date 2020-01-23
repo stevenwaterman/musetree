@@ -1,8 +1,25 @@
 import axios from "axios";
 import * as rax from "retry-axios";
 import { instruments } from "./constants.js";
+import download from "downloadjs";
 
 rax.attach();
+
+export async function downloadAudio(encoding, format, name) {
+  // Use fetch because `.blob` is great
+  return fetch("https://musenet.openai.com/audio", {
+    method: "POST",
+    body: JSON.stringify({
+      audioFormat: format,
+      encoding
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+    .then(res => res.blob())
+    .then(blob => download(blob, `${name}.${format}`));
+}
 
 export async function request(config, prevEncoding, prevDuration) {
   const data = {
@@ -10,23 +27,23 @@ export async function request(config, prevEncoding, prevDuration) {
     encoding: prevEncoding
   };
 
+  // @ts-ignore
   return axios({
     method: "POST",
     url: "https://musenet.openai.com/sample",
     data,
     raxConfig: {
-		retry: 3,
-		noResponseRetries: 2,
-		retryDelay: 0,
-		backoffType: "static",
-		onRetryAttempt: err => {
-			console.warn("retrying:", err);
-		}
-	}
-  })
-    .then(res => res.data)
-    .then(data => data.completions)
-    .then(tracks => tracks.map(track => parseTrack(track, prevDuration)));
+      retry: 3,
+      noResponseRetries: 2,
+      retryDelay: 0,
+      backoffType: "static",
+      onRetryAttempt: async err => {
+        console.warn("retrying:", err);
+      }
+    }
+  }).then(res =>
+    res.data.completions.map(track => parseTrack(track, prevDuration))
+  );
 }
 
 function parseTrack(track, prevDuration) {
@@ -61,5 +78,5 @@ function parseNotes({ tracks }, prevDuration) {
 
 function parseAudio({ audioFile }) {
   const trimmed = audioFile.substring(2, audioFile.length - 1);
-  return "data:audio/mp3;base64," + trimmed;
+  return `data:audio/mp3;base64,${trimmed}`;
 }

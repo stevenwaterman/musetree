@@ -1,8 +1,8 @@
 import { writable, derived } from "svelte/store";
-import { instruments, genres } from "./constants.js";
+import { instruments } from "./constants.js";
 
 export const instrumentStores = instruments.reduce((acc, instrument) => {
-  acc[instrument] = writable(instrument === "piano");
+  acc[instrument] = writable(instrument === "piano" || instrument === "drums");
   return acc;
 }, {});
 
@@ -16,9 +16,9 @@ const instrumentsStore = derived(
     }, {})
 );
 
-export const generationLengthStore = writable(200);
+export const generationLengthStore = writable(225);
 
-export const genreStore = writable(genres[0]);
+export const genreStore = writable("video");
 export const temperatureStore = writable(1);
 export const truncationStore = writable(27);
 
@@ -26,9 +26,9 @@ export const autoRequestStore = writable(false);
 export const autoScrollStore = writable(true);
 export const autoPlayStore = writable(true);
 
-export const preplayStore = writable(1);
+export const preplayStore = writable(2.5);
 
-export const yScaleStore = writable(50);
+export const yScaleStore = writable(100);
 
 export const configStore = derived(
   [

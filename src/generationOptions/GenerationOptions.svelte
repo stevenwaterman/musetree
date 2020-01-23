@@ -9,10 +9,10 @@
     autoScrollStore,
     preplayStore,
     yScaleStore
-  } from "./settings.js";
+  } from "../settings.js";
   import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
-  import { genres, instruments } from "./constants.js";
-  import {audio} from "./track/audio.js";
+  import { genres, instruments } from "../constants.js";
+  import {audio} from "../track/audio.js";
 </script>
 
 <style>
@@ -21,6 +21,10 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+  }
+
+  .slider {
+      width: 100px;
   }
 
   .optionElement {
@@ -65,6 +69,7 @@
   <div class="optionElement">
     <label for="generationlength">Generation Length:</label>
     <input
+    class="slider"
     id="generationLength"
       bind:value={$generationLengthStore}
       type="range"
