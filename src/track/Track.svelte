@@ -18,7 +18,7 @@
 
 <style>
   .container {
-    overflow-y: auto;
+    overflow-y: scroll;
     flex-shrink: 0;
     height: 90vh;
   }
