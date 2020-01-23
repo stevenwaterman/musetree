@@ -106,6 +106,7 @@
               on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
               <circle stroke="black" fill={nodeColor(d.data)} r="10" />
               <text class="label" dy="0.31em" text-anchor="middle">{d.data.name}</text>
+              {#if d.data.pendingLoad}
             </g>
         {/each}
       </g>
