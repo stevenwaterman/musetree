@@ -61,6 +61,11 @@
         background
       );
     });
+
+    ctx.fillStyle = "white";
+    ctx.textAlign = "left";
+    ctx.font = "12px arial";
+    ctx.fillText(path[path.length - 1], 2.5, 12.5);
   }
 
   function drawInstrument(ctx, notes, color, yScale, xOffset, background) {
