@@ -1,6 +1,6 @@
 <script>
   import { audio, audioStatusStore } from "./audio.js";
-  import {preplayStore, autoScrollStore, yScaleStore} from "../settings.js";
+  import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../settings.js";
 </script>
 
 <style>
@@ -64,5 +64,10 @@
   <div class="col margin">
     <label for="yScale">Zoom: {$yScaleStore}%</label>
     <input class="slider" id="yScale" bind:value={$yScaleStore} type="range" min="10" max="250" step="5" />
+  </div>
+
+   <div class="col center margin">
+    <label for="autoPlay">Auto Play</label>
+    <input id="autoPlay" type="checkbox" bind:checked={$autoPlayStore} />
   </div>
 </div>
