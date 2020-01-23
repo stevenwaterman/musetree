@@ -13,6 +13,7 @@ function createTrackTreeStore() {
 
   return {
     subscribe,
+    set,
     reset: () => set(initial),
     addTracks: (path, tracks) =>
       update(state => addChildren(state, path, tracks)),

@@ -1,13 +1,28 @@
 <script>
   import { downloadAudio } from "../broker.js";
-  import {selectedTrackStore, selectedTrackAudioStore, selectedTrackEncodingStore} from "../track/trackTree.js";
+  import {
+    trackTreeStore,
+    selectedTrackStore,
+    selectedTrackAudioStore,
+    selectedTrackEncodingStore
+  } from "../track/trackTree.js";
+  import download from "downloadjs";
 
-  function save() {}
+  function save() {
+    download(JSON.stringify($trackTreeStore), "save.json");
+  }
 
-  function load() {}
+  const reader = new FileReader();
+  reader.onload = event => {
+    trackTreeStore.set(JSON.parse(event.target.result));
+  };
+
+  function load(event) {
+    reader.readAsText(event.target.files[0]);
+  }
 
   function exportAudio(format) {
-      downloadAudio($selectedTrackEncodingStore, format, "export");
+    downloadAudio($selectedTrackEncodingStore, format, "export");
   }
 </script>
 
@@ -31,7 +46,8 @@
 
 <div class="container">
   <button on:click={save}>Save</button>
-  <button on:click={load}>Load</button>
+  <input type="file" accept="application/json" on:change={load} />
+  Load
   <div class="dropdown">
     <button class="dropbtn">Export</button>
     <div class="dropdown-content">
