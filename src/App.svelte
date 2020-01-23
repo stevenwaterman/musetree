@@ -4,6 +4,7 @@
   import PersistenceOptions from "./persistence/PersistenceOptions.svelte";
   import { audio } from "./track/audio.js";
   import TrackControls from "./track/TrackControls.svelte";
+  import TreeVis from "./treeVis/TreeVis.svelte";
 </script>
 
 <style>
@@ -23,6 +24,9 @@
     <div class="col">
       <Track />
       <TrackControls />
+    </div>
+    <div class="col">
+      <TreeVis/>
     </div>
     <div class="col">
       <GenerationOptions />

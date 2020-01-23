@@ -7,7 +7,7 @@ function createTrackTreeStore() {
     children: {},
     childOffset: 1,
     track: null,
-    pendingLoad: 0,
+    pendingLoad: 0
   };
   const { subscribe, set, update } = writable(initial);
 
@@ -21,7 +21,7 @@ function createTrackTreeStore() {
       update(state => {
         const parent = getNode(state, path);
         parent.selected = idx;
-        if(idx != null){
+        if (idx != null) {
           parent.lastSelected = idx;
         }
         return state;
@@ -81,8 +81,8 @@ function addChildren(trackTree, path, tracks) {
       track,
       pendingLoad: false
     }))
-    .forEach(track => {
-      children[leaf.childOffset] = track;
+    .forEach(node => {
+      children[leaf.childOffset] = node;
       leaf.childOffset++;
     });
   return trackTree;
@@ -118,3 +118,30 @@ export const selectedTrackAudioStore = derived(
   ([$selectedTrackStore]) =>
     $selectedTrackStore.track ? $selectedTrackStore.track.audio : ""
 );
+
+export const d3TreeStore = derived([trackTreeStore], ([$trackTreeStore]) =>
+  toD3data($trackTreeStore, {
+    name: null,
+    wasSelected: true,
+    isSelected: true,
+    onSelectedPath: true,
+    isRoot: true,
+  })
+);
+
+function toD3data(tree, config) {
+  const {selected, lastSelected, children: treeChildren} = tree;
+  const d3Children = Object.entries(treeChildren).map(([idx, child]) =>
+    toD3data(child, {
+      name: idx,
+      wasSelected: idx === lastSelected,
+      isSelected: idx === selected,
+      onSelectedPath: idx === selected && config.onSelectedPath,
+      isRoot: false
+    })
+  );
+  return {
+    ...config,
+    children: d3Children
+  };
+}

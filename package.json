@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
+    "d3": "^5.15.0",
     "downloadjs": "^1.4.7",
     "retry-axios": "^2.1.1",
     "sirv-cli": "^0.4.4"
