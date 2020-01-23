@@ -3,6 +3,7 @@
   import { request } from "../broker.js";
   import { configStore, autoRequestStore } from "../settings.js";
   import { canvasWidth } from "../constants.js";
+  import { slide } from "svelte/transition";
   import { audio } from "./audio.js";
   import ChildButton from "./ChildButton.svelte";
 
@@ -48,7 +49,9 @@
   }
 </style>
 
-<div class="buttonRow" style={'width: ' + canvasWidth + 'px'}>
+<div
+  class="buttonRow"
+  style={'width: ' + canvasWidth + 'px'}>
   {#each Object.keys(children) as idx}
     <ChildButton {path} siblingId={idx} />
   {/each}
