@@ -60,7 +60,7 @@
     if (target.wasSelected) {
       return "#f90";
     }
-    return "#555";
+    return "#fff";
   }
 
   function nodeColor({ wasSelected, isSelected }) {
@@ -88,10 +88,11 @@
 
 <style>
   svg {
-    border: 1px solid black;
+    border-left: 1px solid white;
     height: 100%;
     width: 100%;
     flex-shrink: 0;
+    background-color: black;
   }
   .label {
     pointer-events: none;
@@ -102,7 +103,7 @@
 </style>
 
 {#if root != null}
-  <svg viewBox="0, 0, 500, 500">
+  <svg>
     <g
       id="tree"
       transform={`translate(${dx - xMin},${dy / 3})`}

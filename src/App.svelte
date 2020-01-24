@@ -10,7 +10,7 @@
 <style>
   .columns {
     display: grid;
-    grid-template-columns: 1fr 1fr 200px;
+    grid-template-columns: 1fr 1fr 300px;
     grid-template-rows: auto;
     width: 100vw;
     height: 100vh;
@@ -33,16 +33,13 @@
 
 <div class="columns">
   <div class="col">
-  <!-- 1 -->
     <Track />
     <TrackControls />
   </div>
   <div class="col">
-  <!-- 2 -->
     <TreeVis />
   </div>
   <div class="col">
-  <!-- 3 -->
     <GenerationOptions />
     <PersistenceOptions />
   </div>

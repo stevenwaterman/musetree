@@ -55,7 +55,7 @@
 </style>
 
 <div class="options">
-  <h1 class="header">Options:</h1>
+  <h1 class="header">Generator:</h1>
   <div class="optionElement">
     <label for="genre">Genre:</label>
     <select id="genre" bind:value={$genreStore}>

@@ -41,7 +41,7 @@
   <Timeline />
   {#each rows as { path, selected }, idx (JSON.stringify(path) + selected)}
     <div class="staticSize" transition:slide|local>
-      <TrackCanvas path={[...path, selected]} section={idx} last={idx === rows.length - 1}/>
+      <TrackCanvas path={[...path, selected]} section={idx}/>
     </div>
   {:else}
       <span class="placeholder">Use the controls below to begin</span>

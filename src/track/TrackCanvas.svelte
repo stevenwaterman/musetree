@@ -17,7 +17,6 @@
 
   export let path;
   export let section;
-  export let last;
   let canvas;
 
   let clientWidth;
@@ -47,14 +46,12 @@
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    if (!last) {
       const border = "white";
       ctx.strokeStyle = border;
       ctx.lineWidth = 1;
       ctx.moveTo(0, canvas.height - 0.5);
       ctx.lineTo(canvas.width, canvas.height - 0.5);
       ctx.stroke();
-    }
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];

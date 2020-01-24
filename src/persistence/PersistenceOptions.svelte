@@ -23,11 +23,14 @@
     downloadAudio($selectedTrackEncodingStore, format, "export");
   }
 
-  $: trackLoaded = $selectedTrackEncodingStore === ''
+  $: trackLoaded = $selectedTrackEncodingStore === "";
 </script>
 
 <style>
   .container {
+    padding: 12px;
+  }
+  .row {
     display: flex;
     flex-direction: row;
   }
@@ -45,44 +48,39 @@
 </style>
 
 <div class="container">
-  <button
-    disabled={Object.keys($trackTreeStore.children).length === 0}
-    on:click={save}>
-    Save
-  </button>
-  <label for="upload">
-  <span>Load</span>
-    <input
-      id="upload"
-      type="file"
-      accept=".json"
-      multiple={false}
-      on:change={load}
-      style="display:none" />
-  </label>
-  <div class="dropdown">
-    <button disabled={trackLoaded} class="dropbtn">Export</button>
-    <div class="dropdown-content">
-      <button
-        disabled={trackLoaded}
-        on:click={() => exportAudio('mp3')}>
-        .mp3
-      </button>
-      <button
-        disabled={trackLoaded}
-        on:click={() => exportAudio('wav')}>
-        .wav
-      </button>
-      <button
-        disabled={trackLoaded}
-        on:click={() => exportAudio('ogg')}>
-        .ogg
-      </button>
-      <button
-        disabled={trackLoaded}
-        on:click={() => exportAudio('midi')}>
-        .midi
-      </button>
+  <h1>Persistence</h1>
+  <div class="row">
+    <button
+      disabled={Object.keys($trackTreeStore.children).length === 0}
+      on:click={save}>
+      Save
+    </button>
+    <label for="upload">
+      <span>Load</span>
+      <input
+        id="upload"
+        type="file"
+        accept=".json"
+        multiple={false}
+        on:change={load}
+        style="display:none" />
+    </label>
+    <div class="dropdown">
+      <button disabled={trackLoaded} class="dropbtn">Export</button>
+      <div class="dropdown-content">
+        <button disabled={trackLoaded} on:click={() => exportAudio('mp3')}>
+          .mp3
+        </button>
+        <button disabled={trackLoaded} on:click={() => exportAudio('wav')}>
+          .wav
+        </button>
+        <button disabled={trackLoaded} on:click={() => exportAudio('ogg')}>
+          .ogg
+        </button>
+        <button disabled={trackLoaded} on:click={() => exportAudio('midi')}>
+          .midi
+        </button>
+      </div>
     </div>
   </div>
 </div>
