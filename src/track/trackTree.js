@@ -26,13 +26,17 @@ function createTrackTreeStore() {
         }
         return state;
       }),
-    selectFullPath: (path) => update(state => {
+    selectFullPath: (path, exact) => update(state => {
       let tree = state;
       path.forEach(direction => {
         tree.selected = direction;
         tree.lastSelected = direction;
         tree = tree.children[direction];
       });
+      if(exact){
+        tree.lastSelected = tree.selected;
+        tree.selected = null;
+      }
       return state;
     }),
     requestStart: path =>

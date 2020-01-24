@@ -62,7 +62,7 @@
   }
 
   function select(path, startsAt) {
-    trackTreeStore.selectFullPath(path);
+    trackTreeStore.selectFullPath(path, true);
     const playFrom = Math.max(0, startsAt - $preplayStore);
     if ($autoPlayStore) {
       audio.play(playFrom);
