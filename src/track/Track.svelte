@@ -3,7 +3,6 @@
     selectedPathStore,
     selectedTrackAudioStore,
   } from "./trackTree.js";
-  import { canvasWidth } from "../constants.js";
   import Timeline from "./Timeline.svelte";
   import TrackRowOptions from "./TrackRowOptions.svelte";
   import TrackCanvas from "./TrackCanvas.svelte";
@@ -18,10 +17,13 @@
 
 <style>
   .container {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    /* justify-content: center; */
     overflow-y: scroll;
-    flex-shrink: 0;
-    max-height: 90vh;
     background-color: black;
+    height: 100%;
   }
 
   .staticSize {
@@ -42,9 +44,7 @@
       <TrackCanvas path={[...path, selected]} section={idx} last={idx === rows.length - 1}/>
     </div>
   {:else}
-    <div style={'width:' + canvasWidth + 'px'}>
-      <p class="placeholder">Use the controls below to begin</p>
-    </div>
+      <span class="placeholder">Use the controls below to begin</span>
   {/each}
 </div>
 <TrackRowOptions path={$selectedPathStore} />

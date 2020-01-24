@@ -13,7 +13,8 @@
 
   $: children = $nodeStore.children ? $nodeStore.children : {};
   $: track = $nodeStore.track ? $nodeStore.track : null;
-  $: duration = track ? track.duration : 0;
+  $: duration = track ? track.endsAt : 0;
+  $: pendingLoad = $nodeStore.pendingLoad;
 
   function loadMore() {
     const pathCapture = path;
@@ -28,9 +29,11 @@
   $: if (
     $autoRequestStore &&
     !$nodeStore.childOffset &&
-    !$nodeStore.pendingLoad
+    !pendingLoad
   )
     loadMore();
+
+    $: console.log($nodeStore);
 </script>
 
 <style>
@@ -55,7 +58,7 @@
     <ChildButton {path} siblingId={idx} />
   {/each}
   <button class="rowButton" on:click={loadMore}>
-    Load More{$nodeStore.pendingLoad ? ` (${nodeStore.pendingLoad * 4} pending)` : ''}
+    Load More{pendingLoad ? ` (${pendingLoad * 4} pending)` : ''}
   </button>
   <button
     class="rowButton"

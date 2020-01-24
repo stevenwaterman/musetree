@@ -9,28 +9,41 @@
 
 <style>
   .columns {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr 200px;
+    grid-template-rows: auto;
+    width: 100vw;
+    height: 100vh;
   }
 
   .col {
     display: flex;
     flex-direction: column;
+    height: 100vh;
+  }
+
+  :global(body) {
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
   }
 </style>
 
-<main>
-  <div class="columns">
-    <div class="col">
-      <Track />
-      <TrackControls />
-    </div>
-    <div class="col">
-      <TreeVis/>
-    </div>
-    <div class="col">
-      <GenerationOptions />
-      <PersistenceOptions />
-    </div>
+<div class="columns">
+  <div class="col">
+  <!-- 1 -->
+    <Track />
+    <TrackControls />
   </div>
-</main>
+  <div class="col">
+  <!-- 2 -->
+    <TreeVis />
+  </div>
+  <div class="col">
+  <!-- 3 -->
+    <GenerationOptions />
+    <PersistenceOptions />
+  </div>
+</div>

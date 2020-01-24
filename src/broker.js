@@ -48,12 +48,11 @@ export async function request(config, prevEncoding, prevDuration) {
 
 function parseTrack(track, prevDuration) {
   const { totalTime: newDuration } = track;
-  const sectionDuration = newDuration - prevDuration;
 
   const output = {
     encoding: track.encoding,
-    sectionDuration,
-    duration: newDuration,
+    startsAt: prevDuration,
+    endsAt: newDuration,
     notes: parseNotes(track, prevDuration),
     audio: parseAudio(track)
   };

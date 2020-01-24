@@ -116,7 +116,6 @@ function getSelectedPath(trackTree) {
 function getSelectedNode(trackTree){
   let node = trackTree;
   while (true) {
-    console.log(node);
     const selected = node.selected;
     if (selected == null) return node;
     const newTree = node.children[selected];
@@ -167,7 +166,7 @@ function toD3data(tree, config) {
       isSelected: idx === selected && config.isSelected,
       wasSelected: idx === selected || idx === lastSelected,
       path: [...config.path, idx],
-      startsAt: config.startsAt + child.track.sectionDuration,
+      startsAt: child.track.startsAt,
       pendingLoad: child.pendingLoad
     })
   );

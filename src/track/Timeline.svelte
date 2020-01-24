@@ -9,7 +9,7 @@
     const track = $selectedTrackStore;
     if (track == null) return;
 
-    const endTime = track.duration;
+    const endTime = track.endsAt;
     const transTime = endTime - startTime;
 
     const startPx = startTime * $yScaleStore;

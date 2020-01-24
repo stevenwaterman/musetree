@@ -82,16 +82,16 @@
   }
 
   function remove(path, idx) {
-    console.log(path);
     trackTreeStore.deleteChild(path.slice(0, -1), idx);
   }
 </script>
 
 <style>
   svg {
-    width: 500px;
-    height: 500px;
     border: 1px solid black;
+    height: 100%;
+    width: 100%;
+    flex-shrink: 0;
   }
   .label {
     pointer-events: none;
@@ -119,7 +119,7 @@
             transform={`translate(${d.x},${d.y})`}
             on:mousedown={e => {
               if (e.button === 0) {
-                select(d.data.path, d.data.name, d.data.startsAt);
+                select(d.data.path, d.data.startsAt);
               }
             }}
             on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
@@ -129,7 +129,7 @@
             </text>
             {#if d.data.pendingLoad}
               <text class="label" dy="2.31em" text-anchor="middle">
-                +{d.data.pendingLoad * 4}
+                +{parseInt(d.data.pendingLoad) * 4}
               </text>
             {/if}
           </g>

@@ -5,7 +5,6 @@
 
 <style>
   .container {
-    width: 100%;
     background-color: black;
     border-top: 1px solid white;
     flex-shrink: 0;

@@ -24,7 +24,7 @@
   $: nodeStore = deriveNodeStore(path);
   $: track = $nodeStore ? $nodeStore.track : null;
   $: notes = track ? track.notes : null;
-  $: sectionDuration = track ? track.sectionDuration : 0;
+  $: sectionDuration = track ? track.endsAt - track.startsAt : 0;
   $: height = sectionDuration * $yScaleStore;
   $: draw(canvas, notes, $yScaleStore);
 
@@ -94,11 +94,8 @@
     const rect = event.target.getBoundingClientRect();
     const y = event.clientY - rect.top;
     const fraction = y / height;
-    const addDuration = $nodeStore.track.sectionDuration * fraction;
-    const totalDuration =
-      $nodeStore.track.duration -
-      $nodeStore.track.sectionDuration +
-      addDuration;
+    const addDuration = sectionDuration * fraction;
+    const totalDuration = track.startsAt + addDuration;
     audio.play(totalDuration);
   }
 </script>
@@ -109,6 +106,8 @@
     flex-shrink: 0;
     cursor: pointer;
     margin-bottom: -4px;
+    width: 100%;
+    height: 100%;
   }
 </style>
 
@@ -119,6 +118,5 @@
     on:contextmenu|preventDefault={nodeStore.deselect}
     bind:this={canvas}
     width={canvasWidth}
-    style={'width: ' + canvasWidth + 'px; height: ' + height + 'px;'}
     {height} />
 {/if}

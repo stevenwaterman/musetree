@@ -6,9 +6,9 @@
   export let path;
   export let siblingId;
 
-  $: parentStore = deriveNodeStore(path);
-  $: highlight = $parentStore.lastSelected === siblingId;
-  $: startsAt = $parentStore.track ? $parentStore.track.duration : 0;
+  $: parentNodeStore = deriveNodeStore(path);
+  $: highlight = $parentNodeStore.lastSelected === siblingId;
+  $: startsAt = $parentNodeStore.track ? $parentNodeStore.track.endsAt : 0;
 
   function select() {
     trackTreeStore.select(path, siblingId);

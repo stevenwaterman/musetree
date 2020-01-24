@@ -7,7 +7,6 @@
     temperatureStore,
     autoRequestStore,
     autoScrollStore,
-    preplayStore,
     yScaleStore
   } from "../settings.js";
   import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
