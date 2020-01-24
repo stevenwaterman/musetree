@@ -5,6 +5,7 @@
   import { audio } from "./track/audio.js";
   import TrackControls from "./track/TrackControls.svelte";
   import TreeVis from "./treeVis/TreeVis.svelte";
+  import Links from "./links/Links.svelte";
 </script>
 
 <style>
@@ -42,5 +43,6 @@
   <div class="col">
     <GenerationOptions />
     <PersistenceOptions />
+    <Links />
   </div>
 </div>
