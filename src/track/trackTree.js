@@ -62,7 +62,7 @@ function createTrackTreeStore() {
 
 export const trackTreeStore = createTrackTreeStore();
 
-export function deriveTrackStore(path) {
+export function deriveNodeStore(path) {
   const store = derived([trackTreeStore], ([$trackTreeStore]) =>
     getNode($trackTreeStore, path)
   );
@@ -113,14 +113,26 @@ function getSelectedPath(trackTree) {
   }
 }
 
+function getSelectedNode(trackTree){
+  let node = trackTree;
+  while (true) {
+    console.log(node);
+    const selected = node.selected;
+    if (selected == null) return node;
+    const newTree = node.children[selected];
+    if (newTree == null) return node;
+    node = newTree;
+  }
+}
+
 export const selectedPathStore = derived(
   [trackTreeStore],
   ([$trackTreeStore]) => getSelectedPath($trackTreeStore)
 );
 export const selectedNodeStore = derived(
-  [trackTreeStore, selectedPathStore],
-  ([$trackTreeStore, $selectedPathStore]) =>
-    getNode($trackTreeStore, $selectedPathStore)
+  [trackTreeStore],
+  ([$trackTreeStore]) =>
+    getSelectedNode($trackTreeStore)
 );
 
 export const selectedTrackStore = derived([selectedNodeStore], ([$selectedNodeStore]) => $selectedNodeStore ? $selectedNodeStore.track : null)

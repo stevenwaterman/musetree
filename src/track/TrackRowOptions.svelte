@@ -1,5 +1,5 @@
 <script>
-  import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
+  import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
   import { request } from "../broker.js";
   import { configStore, autoRequestStore } from "../settings.js";
   import { canvasWidth } from "../constants.js";
@@ -9,17 +9,17 @@
 
   export let path;
 
-  $: trackStore = deriveTrackStore(path);
+  $: nodeStore = deriveNodeStore(path);
 
-  $: children = $trackStore.children ? $trackStore.children : {};
-  $: track = $trackStore.track ? $trackStore.track : null;
+  $: children = $nodeStore.children ? $nodeStore.children : {};
+  $: track = $nodeStore.track ? $nodeStore.track : null;
   $: duration = track ? track.duration : 0;
 
   function loadMore() {
     const pathCapture = path;
     const encoding = track ? track.encoding : "";
 
-    trackStore.requestStart();
+    nodeStore.requestStart();
 
     return request($configStore, encoding, duration)
       .then(tracks => trackTreeStore.addTracks(pathCapture, tracks))
@@ -27,8 +27,8 @@
   }
   $: if (
     $autoRequestStore &&
-    !$trackStore.childOffset &&
-    !$trackStore.pendingLoad
+    !$nodeStore.childOffset &&
+    !$nodeStore.pendingLoad
   )
     loadMore();
 </script>
@@ -55,11 +55,11 @@
     <ChildButton {path} siblingId={idx} />
   {/each}
   <button class="rowButton" on:click={loadMore}>
-    Load More{$trackStore.pendingLoad ? ' (' + $trackStore.pendingLoad * 4 + ' pending)' : ''}
+    Load More{$nodeStore.pendingLoad ? ` (${nodeStore.pendingLoad * 4} pending)` : ''}
   </button>
   <button
     class="rowButton"
-    on:click={() => console.log(JSON.stringify($trackStore))}>
+    on:click={() => console.log(JSON.stringify($nodeStore))}>
     Log
   </button>
 </div>

@@ -1,12 +1,12 @@
 <script>
-  import { deriveTrackStore, trackTreeStore } from "./trackTree.js";
+  import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
   import { audio } from "./audio.js";
   import { preplayStore, autoPlayStore } from "../settings.js";
 
   export let path;
   export let siblingId;
 
-  $: parentStore = deriveTrackStore(path);
+  $: parentStore = deriveNodeStore(path);
   $: highlight = $parentStore.lastSelected === siblingId;
   $: startsAt = $parentStore.track ? $parentStore.track.duration : 0;
 

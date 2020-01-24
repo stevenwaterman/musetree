@@ -1,6 +1,6 @@
 <script>
   import {
-    deriveTrackStore,
+    deriveNodeStore,
     trackTreeStore,
     selectedPathStore,
     selectedTrackAudioStore
@@ -21,10 +21,11 @@
   export let last;
   let canvas;
 
-  $: trackStore = deriveTrackStore(path);
-  $: notes = $trackStore.track.notes;
-
-  $: height = $trackStore.track.sectionDuration * $yScaleStore;
+  $: nodeStore = deriveNodeStore(path);
+  $: track = $nodeStore ? $nodeStore.track : null;
+  $: notes = track ? track.notes : null;
+  $: sectionDuration = track ? track.sectionDuration : 0;
+  $: height = sectionDuration * $yScaleStore;
   $: draw(canvas, notes, $yScaleStore);
 
   afterUpdate(async () => {
@@ -33,6 +34,7 @@
 
   function draw(canvas, notes, yScale) {
     if (canvas == null) return;
+    if (notes == null) return;
 
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -68,7 +70,7 @@
     ctx.fillStyle = "white";
     ctx.textAlign = "right";
     ctx.font = "14px arial";
-    const text = `Section ${section + 1}: ${path[path.length - 1]}`; 
+    const text = `Section ${section + 1}: ${path[path.length - 1]}`;
     ctx.fillText(text, canvas.width - 2.5, 12.5);
   }
 
@@ -92,10 +94,10 @@
     const rect = event.target.getBoundingClientRect();
     const y = event.clientY - rect.top;
     const fraction = y / height;
-    const addDuration = $trackStore.track.sectionDuration * fraction;
+    const addDuration = $nodeStore.track.sectionDuration * fraction;
     const totalDuration =
-      $trackStore.track.duration -
-      $trackStore.track.sectionDuration +
+      $nodeStore.track.duration -
+      $nodeStore.track.sectionDuration +
       addDuration;
     audio.play(totalDuration);
   }
@@ -110,11 +112,13 @@
   }
 </style>
 
-<canvas
-  class="trackCanvas"
-  on:click={play}
-  on:contextmenu|preventDefault={trackStore.deselect}
-  bind:this={canvas}
-  width={canvasWidth}
-  style={'width: ' + canvasWidth + 'px; height: ' + height + 'px;'}
-  {height} />
+{#if notes}
+  <canvas
+    class="trackCanvas"
+    on:click={play}
+    on:contextmenu|preventDefault={nodeStore.deselect}
+    bind:this={canvas}
+    width={canvasWidth}
+    style={'width: ' + canvasWidth + 'px; height: ' + height + 'px;'}
+    {height} />
+{/if}
