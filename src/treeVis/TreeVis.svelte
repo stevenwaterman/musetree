@@ -1,9 +1,13 @@
 <script>
   import * as d3 from "d3";
-  import { d3TreeStore, trackTreeStore, selectedPathStore } from "../track/trackTree.js";
+  import {
+    d3TreeStore,
+    trackTreeStore,
+    selectedPathStore
+  } from "../track/trackTree.js";
   import { onMount } from "svelte";
   import { autoPlayStore, preplayStore } from "../settings.js";
-  import {audio} from "../track/audio.js";
+  import { audio } from "../track/audio.js";
 
   const width = 500;
   const height = 500;
@@ -35,7 +39,8 @@
       d: linkGenerator({
         source: [link.source.x, link.source.y],
         target: [link.target.x, link.target.y]
-      })
+      }),
+      color: linkColor(link.source, link.target)
     }));
   }
 
@@ -48,15 +53,22 @@
     );
   });
 
-  function nodeColor({ wasSelected, isSelected, onSelectedPath }) {
-    if (onSelectedPath) {
+  function linkColor({ data: source }, { data: target }) {
+    if (source.isSelected && target.isSelected) {
       return "#f00";
     }
-    if (isSelected) {
+    if (target.wasSelected) {
       return "#f90";
     }
+    return "#555";
+  }
+
+  function nodeColor({ wasSelected, isSelected }) {
+    if (isSelected) {
+      return "#f00";
+    }
     if (wasSelected) {
-      return "#ff0";
+      return "#f90";
     }
     return "#fff";
   }
@@ -70,7 +82,7 @@
   }
 
   function remove(path, idx) {
-      console.log(path);
+    console.log(path);
     trackTreeStore.deleteChild(path.slice(0, -1), idx);
   }
 </script>
@@ -82,7 +94,10 @@
     border: 1px solid black;
   }
   .label {
-      pointer-events: none;
+    pointer-events: none;
+  }
+  circle {
+    cursor: pointer;
   }
 </style>
 
@@ -93,23 +108,31 @@
       transform={`translate(${dx - xMin},${dy / 3})`}
       font-family="sans-serif"
       font-size="10">
-      <g fill="none" stroke="#555" stroke-opacity="0.4" stroke-width="1.5">
+      <g fill="none" stroke-opacity="0.4" stroke-width="1.5">
         {#each links as link}
-          <path d={link.d} />
+          <path d={link.d} stroke={link.color} />
         {/each}
       </g>
       <g class="node">
         {#each root.descendants() as d}
-            <g
-              transform={`translate(${d.x},${d.y})`}
-              on:click={() => select(d.data.path, d.data.name, d.data.startsAt)}
-              on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
-              <circle stroke="black" fill={nodeColor(d.data)} r="10" />
-              <text class="label" dy="0.31em" text-anchor="middle">{d.data.name}</text>
-              {#if d.data.pendingLoad}
-            <text class="label" dy="2.31em" text-anchor="middle">+{d.data.pendingLoad * 4}</text>
+          <g
+            transform={`translate(${d.x},${d.y})`}
+            on:mousedown={e => {
+              if (e.button === 0) {
+                select(d.data.path, d.data.name, d.data.startsAt);
+              }
+            }}
+            on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
+            <circle stroke="black" fill={nodeColor(d.data)} r="10" />
+            <text class="label" dy="0.31em" text-anchor="middle">
+              {d.data.name}
+            </text>
+            {#if d.data.pendingLoad}
+              <text class="label" dy="2.31em" text-anchor="middle">
+                +{d.data.pendingLoad * 4}
+              </text>
             {/if}
-            </g>
+          </g>
         {/each}
       </g>
     </g>

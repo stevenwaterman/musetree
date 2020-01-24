@@ -151,9 +151,8 @@ export const selectedTrackAudioStore = derived(
 export const d3TreeStore = derived([trackTreeStore], ([$trackTreeStore]) =>
   toD3data($trackTreeStore, {
     name: "",
-    wasSelected: true,
     isSelected: true,
-    onSelectedPath: true,
+    wasSelected: true,
     path: [],
     startsAt: 0,
     pendingLoad: $trackTreeStore.pendingLoad
@@ -165,9 +164,8 @@ function toD3data(tree, config) {
   const d3Children = Object.entries(treeChildren).map(([idx, child]) =>
     toD3data(child, {
       name: idx,
-      wasSelected: idx === lastSelected,
-      isSelected: idx === selected,
-      onSelectedPath: idx === selected && config.onSelectedPath,
+      isSelected: idx === selected && config.isSelected,
+      wasSelected: idx === selected || idx === lastSelected,
       path: [...config.path, idx],
       startsAt: config.startsAt + child.track.sectionDuration,
       pendingLoad: child.pendingLoad
