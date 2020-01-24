@@ -1,5 +1,4 @@
 <script>
-  import { canvasWidth } from "../constants.js";
   import { selectedTrackStore } from "./trackTree.js";
   import { audioStatusStore } from "./audio.js";
   import { yScaleStore, autoScrollStore, isScrollingStore } from "../settings.js";

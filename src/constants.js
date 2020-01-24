@@ -66,7 +66,5 @@ export const genres = [
 ];
 
 export const pitchMin = 20;
-const pitchMax = 110;
-const pitchRange = pitchMax - pitchMin;
-export const canvasWidth = 700;
-export const xScale = canvasWidth / pitchRange;
+export const pitchMax = 110;
+export const pitchRange = pitchMax - pitchMin;

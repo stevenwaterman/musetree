@@ -11,8 +11,7 @@
     instruments,
     instrumentSettings,
     pitchMin,
-    canvasWidth,
-    xScale
+    pitchRange,
   } from "../constants.js";
   import { audio } from "./audio.js";
 
@@ -20,6 +19,11 @@
   export let section;
   export let last;
   let canvas;
+
+  let clientWidth;
+  let clientHeight;
+  $: xScale = clientWidth / pitchRange;
+
 
   $: nodeStore = deriveNodeStore(path);
   $: track = $nodeStore ? $nodeStore.track : null;
@@ -113,10 +117,12 @@
 
 {#if notes}
   <canvas
+    bind:clientWidth
+    bind:clientHeight
     class="trackCanvas"
     on:click={play}
     on:contextmenu|preventDefault={nodeStore.deselect}
     bind:this={canvas}
-    width={canvasWidth}
+    width={clientWidth}
     {height} />
 {/if}
