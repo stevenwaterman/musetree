@@ -2,7 +2,6 @@
   import {
     selectedPathStore,
     selectedTrackAudioStore,
-    selectedTrackStore
   } from "./trackTree.js";
   import { canvasWidth } from "../constants.js";
   import Timeline from "./Timeline.svelte";

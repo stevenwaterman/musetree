@@ -2,7 +2,6 @@
   import { downloadAudio } from "../broker.js";
   import {
     trackTreeStore,
-    selectedTrackStore,
     selectedTrackEncodingStore
   } from "../track/trackTree.js";
   import download from "downloadjs";

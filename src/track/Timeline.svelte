@@ -6,7 +6,7 @@
   import { create_in_transition } from "svelte/internal";
 
   function traverse(node, { startTime }) {
-    const track = $selectedTrackStore.track;
+    const track = $selectedTrackStore;
     if (track == null) return;
 
     const endTime = track.duration;

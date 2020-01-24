@@ -106,9 +106,10 @@ function getSelectedPath(trackTree) {
   let tree = trackTree;
   while (true) {
     const selected = tree.selected;
-    if (selected === null) return path;
-    path.push(selected);
+    if (selected == null) return path;
     tree = tree.children[selected];
+    if (tree == null) return path;
+    path.push(selected);
   }
 }
 
@@ -116,20 +117,23 @@ export const selectedPathStore = derived(
   [trackTreeStore],
   ([$trackTreeStore]) => getSelectedPath($trackTreeStore)
 );
-export const selectedTrackStore = derived(
+export const selectedNodeStore = derived(
   [trackTreeStore, selectedPathStore],
   ([$trackTreeStore, $selectedPathStore]) =>
     getNode($trackTreeStore, $selectedPathStore)
 );
+
+export const selectedTrackStore = derived([selectedNodeStore], ([$selectedNodeStore]) => $selectedNodeStore ? $selectedNodeStore.track : null)
+
 export const selectedTrackEncodingStore = derived(
   [selectedTrackStore],
   ([$selectedTrackStore]) =>
-    $selectedTrackStore.track ? $selectedTrackStore.track.encoding : ""
+    $selectedTrackStore ? $selectedTrackStore.encoding : ""
 );
 export const selectedTrackAudioStore = derived(
   [selectedTrackStore],
   ([$selectedTrackStore]) =>
-    $selectedTrackStore.track ? $selectedTrackStore.track.audio : ""
+    $selectedTrackStore ? $selectedTrackStore.audio : ""
 );
 
 export const d3TreeStore = derived([trackTreeStore], ([$trackTreeStore]) =>
