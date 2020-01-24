@@ -63,6 +63,7 @@
     z-index: 2;
     background-color: rgba(255, 255, 255, 0.5);
     pointer-events: none;
+    margin: 0 -1.5px;
   }
 </style>
 

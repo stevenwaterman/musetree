@@ -15,7 +15,6 @@ export const audioStatusStore = createAudioStatusStore();
 const htmlAudio = new Audio();
 selectedTrackAudioStore.subscribe(track => {
   pause();
-  if (track === "") return;
   htmlAudio.src = track;
 });
 yScaleStore.subscribe(pause);

@@ -32,8 +32,9 @@ function createTrackTreeStore() {
         tree.selected = direction;
         tree.lastSelected = direction;
         tree = tree.children[direction];
+        if(tree == null) return;
       });
-      if(exact){
+      if(exact && tree != null){
         tree.lastSelected = tree.selected;
         tree.selected = null;
       }
@@ -77,7 +78,7 @@ export function deriveNodeStore(path) {
 }
 
 function getNode(trackTree, path) {
-  return path.reduce((node, direction) => node.children[direction], trackTree);
+  return path.reduce((node, direction) => node ? node.children[direction]: null, trackTree);
 }
 
 function addChildren(trackTree, path, tracks) {
