@@ -5,7 +5,7 @@
     selectedPathStore,
     selectedTrackAudioStore
   } from "./trackTree.js";
-  import { afterUpdate } from "svelte";
+  import { afterUpdate, onMount } from "svelte";
   import { configStore, yScaleStore } from "../settings.js";
   import {
     instruments,
@@ -29,13 +29,9 @@
   $: notes = track ? track.notes : null;
   $: sectionDuration = track ? track.endsAt - track.startsAt : 0;
   $: height = sectionDuration * $yScaleStore;
-  $: draw(canvas, notes, $yScaleStore);
+  $: setTimeout(() => draw(canvas, notes, $yScaleStore), 0);
 
-  afterUpdate(async () => {
-    draw(canvas, notes, $yScaleStore);
-  });
-
-  function draw(canvas, notes, yScale) {
+  async function draw(canvas, notes, yScale) {
     if (canvas == null) return;
     if (notes == null) return;
 
@@ -103,8 +99,6 @@
 
 <style>
   .trackCanvas {
-    flex-grow: 0;
-    flex-shrink: 0;
     cursor: pointer;
     margin-bottom: -4px;
     width: 100%;
