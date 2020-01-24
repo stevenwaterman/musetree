@@ -66,5 +66,5 @@ export const genres = [
 ];
 
 export const pitchMin = 20;
-export const pitchMax = 110;
+export const pitchMax = 120;
 export const pitchRange = pitchMax - pitchMin;
