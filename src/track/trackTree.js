@@ -155,7 +155,8 @@ export const d3TreeStore = derived([trackTreeStore], ([$trackTreeStore]) =>
     wasSelected: true,
     path: [],
     startsAt: 0,
-    pendingLoad: $trackTreeStore.pendingLoad
+    pendingLoad: $trackTreeStore.pendingLoad,
+    encoding: ""
   })
 );
 
@@ -168,7 +169,8 @@ function toD3data(tree, config) {
       wasSelected: idx === selected || idx === lastSelected,
       path: [...config.path, idx],
       startsAt: child.track.startsAt,
-      pendingLoad: child.pendingLoad
+      pendingLoad: child.pendingLoad,
+      encoding: child.track.encoding
     })
   );
   return {

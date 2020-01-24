@@ -6,9 +6,10 @@
     selectedPathStore
   } from "../track/trackTree.js";
   import { onMount, afterUpdate } from "svelte";
-  import { autoPlayStore, preplayStore } from "../settings.js";
+  import { autoPlayStore, preplayStore, configStore } from "../settings.js";
   import { audio } from "../track/audio.js";
   import { fade } from "svelte/transition";
+  import { request } from "../broker.js";
 
   const width = 500;
   const height = 500;
@@ -85,12 +86,21 @@
     return "#fff";
   }
 
-  function select(path, startsAt) {
+  function select({path, startsAt}) {
     trackTreeStore.selectFullPath(path, true);
     const playFrom = Math.max(0, startsAt - $preplayStore);
     if ($autoPlayStore) {
       audio.play(playFrom);
     }
+  }
+
+  function loadMore({ path, encoding, endsAt }) {
+    const pathCapture = path;
+    trackTreeStore.requestStart(path);
+
+    return request($configStore, encoding, endsAt)
+      .then(tracks => trackTreeStore.addTracks(pathCapture, tracks))
+      .finally(_ => trackTreeStore.requestDone(pathCapture));
   }
 
   function remove(path, idx) {
@@ -132,7 +142,11 @@
             transform={`translate(${d.x},${d.y})`}
             on:mousedown={e => {
               if (e.button === 0) {
-                select(d.data.path, d.data.startsAt);
+                if (e.ctrlKey) {
+                  loadMore(d.data);
+                } else {
+                  select(d.data);
+                }
               }
             }}
             on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
