@@ -5,9 +5,10 @@
     trackTreeStore,
     selectedPathStore
   } from "../track/trackTree.js";
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import { autoPlayStore, preplayStore } from "../settings.js";
   import { audio } from "../track/audio.js";
+  import { fade } from "svelte/transition";
 
   const width = 500;
   const height = 500;
@@ -40,17 +41,28 @@
         source: [link.source.x, link.source.y],
         target: [link.target.x, link.target.y]
       }),
-      color: linkColor(link.source, link.target)
+      color: linkColor(link.source, link.target),
+      key:
+        JSON.stringify(link.source.data.path) +
+        "," +
+        JSON.stringify(link.target.data.path)
     }));
   }
 
+  let transform = null;
   onMount(() => {
     const tree = d3.select("#tree");
     d3.select("svg").call(
       d3.zoom().on("zoom", function() {
-        tree.attr("transform", d3.event.transform);
+        transform = d3.event.transform;
+        tree.attr("transform", transform);
       })
     );
+  });
+
+  afterUpdate(() => {
+    const tree = d3.select("#tree");
+    tree.attr("transform", transform);
   });
 
   function linkColor({ data: source }, { data: target }) {
@@ -110,12 +122,12 @@
       font-family="sans-serif"
       font-size="10">
       <g fill="none" stroke-opacity="0.4" stroke-width="1.5">
-        {#each links as link}
-          <path d={link.d} stroke={link.color} />
+        {#each links as link (link.key)}
+          <path d={link.d} stroke={link.color} transition:fade />
         {/each}
       </g>
       <g class="node">
-        {#each root.descendants() as d}
+        {#each root.descendants() as d (JSON.stringify(d.data.path))}
           <g
             transform={`translate(${d.x},${d.y})`}
             on:mousedown={e => {
@@ -124,12 +136,21 @@
               }
             }}
             on:contextmenu|preventDefault={remove(d.data.path, d.data.name)}>
-            <circle fill={nodeColor(d.data)} r="10" />
-            <text class="label" dy="0.31em" text-anchor="middle">
+            <circle fill={nodeColor(d.data)} r="10" transition:fade />
+            <text
+              class="label"
+              dy="0.31em"
+              text-anchor="middle"
+              transition:fade>
               {d.data.name}
             </text>
             {#if d.data.pendingLoad}
-              <text class="label" dy="2.31em" text-anchor="middle" fill="white">
+              <text
+                class="label"
+                dy="2.31em"
+                text-anchor="middle"
+                fill="white"
+                transition:fade>
                 +{parseInt(d.data.pendingLoad) * 4}
               </text>
             {/if}
