@@ -17,7 +17,6 @@ selectedTrackAudioStore.subscribe(track => {
   pause();
   htmlAudio.src = track;
 });
-yScaleStore.subscribe(pause);
 
 function pause() {
   audioStatusStore.setPlaying(false);

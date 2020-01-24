@@ -1,7 +1,11 @@
 <script>
   import { selectedTrackStore } from "./trackTree.js";
   import { audioStatusStore } from "./audio.js";
-  import { yScaleStore, autoScrollStore, isScrollingStore } from "../settings.js";
+  import {
+    yScaleStore,
+    autoScrollStore,
+    isScrollingStore
+  } from "../settings.js";
   import { create_in_transition } from "svelte/internal";
 
   function traverse(node, { startTime }) {
@@ -11,12 +15,12 @@
     const endTime = track.endsAt;
     const transTime = endTime - startTime;
 
-    const startPx = startTime * $yScaleStore;
-    const endPx = endTime * $yScaleStore;
-    const transPx = endPx - startPx;
     return {
       duration: transTime * 1000,
       tick: t => {
+        const startPx = startTime * $yScaleStore;
+        const endPx = endTime * $yScaleStore;
+        const transPx = endPx - startPx;
         const y = startPx + t * transPx;
         node.style = `top:${y}px;`;
         if ($isScrollingStore) {

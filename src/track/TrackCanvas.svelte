@@ -7,11 +7,12 @@
   } from "./trackTree.js";
   import { afterUpdate, onMount } from "svelte";
   import { configStore, yScaleStore } from "../settings.js";
+  import { fade } from "svelte/transition";
   import {
     instruments,
     instrumentSettings,
     pitchMin,
-    pitchRange,
+    pitchRange
   } from "../constants.js";
   import { audio } from "./audio.js";
 
@@ -23,31 +24,28 @@
   let clientHeight;
   $: xScale = clientWidth / pitchRange;
 
-
   $: nodeStore = deriveNodeStore(path);
   $: track = $nodeStore ? $nodeStore.track : null;
   $: notes = track ? track.notes : null;
-  $: sectionDuration = track ? track.endsAt - track.startsAt : 0;
+  $: startsAt = track ? track.startsAt : null;
+  $: sectionDuration = track ? track.endsAt - startsAt : 0;
   $: height = sectionDuration * $yScaleStore;
-  $: setTimeout(() => draw(canvas, notes, $yScaleStore), 0);
+  $: position = startsAt * $yScaleStore;
 
-  async function draw(canvas, notes, yScale) {
-    if (canvas == null) return;
-    if (notes == null) return;
+  afterUpdate(() => setTimeout(draw, 0));
+
+  function draw() {
+    if (canvas == null || notes == null) return;
 
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const background = "black";
-    ctx.fillStyle = background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const border = "white";
-      ctx.strokeStyle = border;
-      ctx.lineWidth = 1;
-      ctx.moveTo(0, canvas.height - 0.5);
-      ctx.lineTo(canvas.width, canvas.height - 0.5);
-      ctx.stroke();
+    const border = "white";
+    ctx.strokeStyle = border;
+    ctx.lineWidth = 1;
+    ctx.moveTo(0, canvas.height - 0.5);
+    ctx.lineTo(canvas.width, canvas.height - 0.5);
+    ctx.stroke();
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
@@ -58,9 +56,8 @@
         ctx,
         instrumentNotes,
         color,
-        yScale,
-        idx / instruments.length,
-        background
+        idx / Object.keys(instrumentSettings).length,
+        "black"
       );
     });
 
@@ -71,7 +68,7 @@
     ctx.fillText(text, canvas.width - 2.5, 12.5);
   }
 
-  function drawInstrument(ctx, notes, color, yScale, xOffset, background) {
+  function drawInstrument(ctx, notes, color, xOffset, background) {
     ctx.fillStyle = color;
     ctx.strokeStyle = background;
     ctx.lineWidth = 1;
@@ -79,9 +76,9 @@
     notes.forEach(note => {
       const xStart =
         Math.round((xOffset + note.pitch - pitchMin) * xScale) + 0.5;
-      const yStart = Math.round(note.time_on * yScale) + 0.5;
+      const yStart = Math.round(note.time_on * $yScaleStore) + 0.5;
       const noteWidth = Math.round(xScale);
-      const noteHeight = Math.round(note.duration * yScale);
+      const noteHeight = Math.round(note.duration * $yScaleStore);
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
       if (noteHeight > 2) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
     });
@@ -99,9 +96,10 @@
 
 <style>
   .trackCanvas {
+    position: relative;
     cursor: pointer;
-    margin-bottom: -4px;
     width: 100%;
+    margin-top: -3px;
   }
 </style>
 
@@ -114,6 +112,5 @@
     on:contextmenu|preventDefault={nodeStore.deselect}
     bind:this={canvas}
     width={clientWidth}
-    {height}
-    style={`height: ${height}`}/>
+    {height} />
 {/if}

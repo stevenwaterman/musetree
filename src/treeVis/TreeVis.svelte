@@ -11,32 +11,22 @@
   import { fade } from "svelte/transition";
   import { request } from "../broker.js";
 
-  const width = 500;
-  const height = 500;
+  const width = 200;
+  const height = 200;
   const dx = 25;
   const dy = 50;
   const linkGenerator = d3.linkVertical();
 
   let root;
   let links;
-  let xMin;
-  let xMax;
   $: tree($d3TreeStore);
 
   function tree(data) {
-    xMin = Infinity;
-    xMax = -Infinity;
-
     const hierarchy = d3.hierarchy(data);
     hierarchy.dx = dx;
     hierarchy.dy = dy;
 
     root = d3.tree().nodeSize([dx, dy])(hierarchy);
-    root.each(d => {
-      xMin = Math.min(xMin, d.x);
-      xMax = Math.max(xMax, d.x);
-    });
-
     links = root.links().map(link => ({
       d: linkGenerator({
         source: [link.source.x, link.source.y],
@@ -50,21 +40,22 @@
     }));
   }
 
-  let transform = null;
+  let transform;
+  function applyTransform() {
+    if (transform == null) return;
+    d3.select("#tree").attr("transform", transform);
+  }
+
   onMount(() => {
-    const tree = d3.select("#tree");
     d3.select("svg").call(
       d3.zoom().on("zoom", function() {
         transform = d3.event.transform;
-        tree.attr("transform", transform);
+        applyTransform();
       })
     );
   });
 
-  afterUpdate(() => {
-    const tree = d3.select("#tree");
-    tree.attr("transform", transform);
-  });
+  afterUpdate(applyTransform);
 
   function linkColor({ data: source }, { data: target }) {
     if (source.isSelected && target.isSelected) {
@@ -86,7 +77,7 @@
     return "#fff";
   }
 
-  function select({path, startsAt}) {
+  function select({ path, startsAt }) {
     trackTreeStore.selectFullPath(path, true);
     const playFrom = Math.max(0, startsAt - $preplayStore);
     if ($autoPlayStore) {
@@ -125,12 +116,8 @@
 </style>
 
 {#if root != null}
-  <svg>
-    <g
-      id="tree"
-      transform={`translate(${dx - xMin},${dy / 3})`}
-      font-family="sans-serif"
-      font-size="10">
+  <svg viewbox={`${-width / 2} -${height / 2} ${width} ${height}`}>
+    <g id="tree" font-family="sans-serif" font-size="10">
       <g fill="none" stroke-opacity="0.4" stroke-width="1.5">
         {#each links as link (link.key)}
           <path d={link.d} stroke={link.color} transition:fade />
