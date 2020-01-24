@@ -6,7 +6,7 @@
   import Timeline from "./Timeline.svelte";
   import TrackRowOptions from "./TrackRowOptions.svelte";
   import TrackCanvas from "./TrackCanvas.svelte";
-  import { slide } from "svelte/transition";
+  import { fade } from "svelte/transition";
   import {isScrollingStore} from "../settings.js";
 
   $: rows = $selectedPathStore.map((element, idx, array) => ({
@@ -19,8 +19,6 @@
   .container {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
-    /* justify-content: center; */
     overflow-y: scroll;
     background-color: black;
     height: 100%;
@@ -40,7 +38,7 @@
 <div class="container" on:wheel={() => isScrollingStore.set(false)}>
   <Timeline />
   {#each rows as { path, selected }, idx (JSON.stringify(path) + selected)}
-    <div class="staticSize" transition:slide|local>
+    <div class="staticSize" in:fade|local>
       <TrackCanvas path={[...path, selected]} section={idx}/>
     </div>
   {:else}
