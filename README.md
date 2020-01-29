@@ -1,6 +1,6 @@
 # MuseTree
 
-MuseTree is a custom front-end for [MuseNet](https://openai.com/blog/musenet/).
+MuseTree is a custom front-end for [MuseNet](https://openai.com/blog/musenet/), the AI music generator.
 It is designed for real music production, and aims to fix the problems with the official app.
 
 A live version is [hosted online](http://musetree.stevenwaterman.uk)
