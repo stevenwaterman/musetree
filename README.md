@@ -29,5 +29,5 @@ MuseTree uses the [svelte](https://svelte.dev/) web framework.
 
 MuseTree is still in a super-early state.
 Any and all contributions are welcome!
-Please have a look at the issue list and have a go at fixing one, or add more!
-I'm friendly, I promise.
+Please have a look at the [issue list](https://github.com/stevenwaterman/musetree/issues) and have a go at fixing one, or add more!
+I'm friendly, I promise.]
