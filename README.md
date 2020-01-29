@@ -19,8 +19,15 @@ A live version is [hosted online](http://musetree.stevenwaterman.uk)
 
 MuseTree uses the [svelte](https://svelte.dev/) web framework.
 
-Quick Start:
+**Quick Start:**
 
 * `git clone`
 * `npm i`
 * `npm run dev`
+
+**Contributing:**
+
+MuseTree is still in a super-early state.
+Any and all contributions are welcome!
+Please have a look at the issue list and have a go at fixing one, or add more!
+I'm friendly, I promise.
