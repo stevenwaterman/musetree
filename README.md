@@ -5,6 +5,8 @@ It is designed for real music production, and aims to fix the problems with the 
 
 A live version is [hosted online](http://musetree.stevenwaterman.uk)
 
+![Screenshot of Musetree](musetree.png)
+
 ## Features
 
 * Full tree support - you don't have to pick one of four options and be stuck with it
