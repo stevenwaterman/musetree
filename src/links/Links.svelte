@@ -18,7 +18,7 @@
     </a>
   </span>
   <span>
-    <a href="https://github.com/stevenwaterman/musenet-treegen">
+    <a href="https://github.com/stevenwaterman/musetree">
       Source code available on Github
     </a>
   </span>
