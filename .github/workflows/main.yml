@@ -14,10 +14,8 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '10.x'
-    - run: |
-        npm ci
-        npm run build
-        cp public/* .
+    - run: npm ci
+    - run: npm run build
     - run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
