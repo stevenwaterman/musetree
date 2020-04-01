@@ -6,15 +6,14 @@
     selectedTrackAudioStore
   } from "./trackTree.js";
   import { afterUpdate, onMount } from "svelte";
-  import { configStore, yScaleStore } from "../settings.js";
+  import { configStore, yScaleStore } from "../state/settings";
   import { fade } from "svelte/transition";
   import {
-    instruments,
     instrumentSettings,
     pitchMin,
     pitchRange
-  } from "../constants.js";
-  import { audio } from "./audio.js";
+  } from "../constants";
+  import { audio } from "../state/audio";
 
   export let path;
   export let section;

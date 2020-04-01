@@ -26,6 +26,7 @@
     "@babel/preset-typescript": "^7.3.3",
     "@testing-library/jest-dom": "^4.1.0",
     "@testing-library/svelte": "^1.8.0",
+    "@types/downloadjs": "^1.4.1",
     "@types/jest": "^24.0.18",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
@@ -57,6 +58,6 @@
     "retry-axios": "^2.1.1",
     "sirv-cli": "^0.4.4",
     "core-js": "^3.2.1",
-    "musenet-midi": "github:stevenwaterman/musenet-midi#master"
+    "musenet-midi": "github:stevenwaterman/musenet-midi#dist"
   }
 }

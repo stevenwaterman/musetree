@@ -1,9 +1,9 @@
 <script>
   import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
-  import { request } from "../broker.js";
-  import { configStore, autoRequestStore } from "../settings.js";
+  import { request } from "../broker";
+  import { configStore, autoRequestStore } from "../state/settings";
   import { slide } from "svelte/transition";
-  import { audio } from "./audio.js";
+  import { audio } from "../state/audio";
   import ChildButton from "./ChildButton.svelte";
 
   export let path;

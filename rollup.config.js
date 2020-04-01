@@ -4,6 +4,7 @@ import commonjs from "rollup-plugin-commonjs";
 import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import babel from "rollup-plugin-babel";
+import {typescript} from "svelte-preprocess";
 
 // Unclear why, but importing this failes.
 const svelteConfig = require("./svelte.config"); // eslint-disable-line
@@ -13,7 +14,7 @@ const production = !process.env.ROLLUP_WATCH;
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
 export default {
-    input: "src/main.js",
+    input: "src/main.ts",
     output: {
         sourcemap: true,
         format: "iife",
@@ -39,6 +40,9 @@ export default {
             browser: true,
             dedupe: importee =>
                 importee === "svelte" || importee.startsWith("svelte/")
+        }),
+        typescript({
+
         }),
         commonjs({
             namedExports: {

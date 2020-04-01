@@ -1,11 +1,11 @@
 <script>
   import { selectedTrackStore } from "./trackTree.js";
-  import { audioStatusStore } from "./audio.js";
+  import { audioStatusStore } from "../state/audio";
   import {
     yScaleStore,
     autoScrollStore,
     isScrollingStore
-  } from "../settings.js";
+  } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
   function traverse(node, { startTime }) {

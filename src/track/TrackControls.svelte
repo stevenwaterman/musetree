@@ -1,6 +1,6 @@
 <script>
-  import { audio, audioStatusStore } from "./audio.js";
-  import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../settings.js";
+  import { audio, audioStatusStore } from "../state/audio";
+  import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../state/settings";
 </script>
 
 <style>

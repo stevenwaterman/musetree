@@ -6,10 +6,10 @@
     selectedPathStore
   } from "../track/trackTree.js";
   import { onMount, afterUpdate } from "svelte";
-  import { autoPlayStore, preplayStore, configStore } from "../settings.js";
-  import { audio } from "../track/audio.js";
+  import { autoPlayStore, preplayStore, configStore } from "../state/settings";
+  import { audio } from "../state/audio";
   import { fade } from "svelte/transition";
-  import { request } from "../broker.js";
+  import { request } from "../broker";
 
   const width = 200;
   const height = 200;

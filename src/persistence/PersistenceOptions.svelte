@@ -1,5 +1,5 @@
 <script>
-  import { downloadAudio } from "../broker.js";
+  import { downloadAudio } from "../broker";
   import {
     trackTreeStore,
     selectedTrackEncodingStore

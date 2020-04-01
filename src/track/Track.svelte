@@ -3,7 +3,7 @@
   import Timeline from "./Timeline.svelte";
   import TrackRowOptions from "./TrackRowOptions.svelte";
   import TrackCanvas from "./TrackCanvas.svelte";
-  import { isScrollingStore } from "../settings.js";
+  import { isScrollingStore } from "../state/settings";
 
   $: rows = $selectedPathStore.map((element, idx, array) => ({
     path: array.slice(0, idx),

@@ -2,7 +2,6 @@
   import Track from "./track/Track.svelte";
   import GenerationOptions from "./generationOptions/GenerationOptions.svelte";
   import PersistenceOptions from "./persistence/PersistenceOptions.svelte";
-  import { audio } from "./track/audio.js";
   import TrackControls from "./track/TrackControls.svelte";
   import TreeVis from "./treeVis/TreeVis.svelte";
   import Links from "./links/Links.svelte";

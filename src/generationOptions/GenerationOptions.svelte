@@ -8,10 +8,10 @@
     autoRequestStore,
     autoScrollStore,
     yScaleStore
-  } from "../settings.js";
+  } from "../state/settings";
   import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
-  import { genres, instruments } from "../constants.js";
-  import {audio} from "../track/audio.js";
+  import { genres, instrumentCategories } from "../constants";
+  import {audio} from "../state/audio";
 </script>
 
 <style>
@@ -79,7 +79,7 @@
   </div>
 
   <label>Instruments:</label>
-  {#each instruments as instrument}
+  {#each instrumentCategories as instrument}
     <InstrumentCheckbox {instrument} />
   {/each}
 
