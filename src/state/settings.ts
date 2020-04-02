@@ -19,7 +19,7 @@ const instrumentsStore = derived<[Readable<boolean>, ...Readable<boolean>[]], Re
         }, {} as Record<InstrumentCategory, boolean>)
 );
 
-export const generationLengthStore: Writable<number> = writable(225);
+export const generationLengthStore: Writable<number> = writable(20);
 
 export const genreStore: Writable<Genre> = writable("video");
 export const temperatureStore: Writable<number> = writable(1);

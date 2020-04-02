@@ -1,13 +1,17 @@
 import {createTree, MutableDecoratedBranchStore, MutableDecoratedRootStore} from "./tree";
 import {MusenetEncoding, Track} from "../broker";
 import {derived, Readable, writable} from "svelte/store";
-import {createBranchEncodingStore, createRootEncodingStore, EncodingStore} from "./encoding";
+import {createEncodingStore} from "./encoding";
 import {TrackStore} from "./track";
 import {toMidi} from "musenet-midi";
+import {unwrapStore} from "../utils";
 
-type RootDecoration = {
+type BaseDecoration = {
+    pendingLoad: number;
+}
+type RootDecoration = BaseDecoration & {
 };
-type BranchDecoration = {
+type BranchDecoration = BaseDecoration & {
     encoding: MusenetEncoding,
     track: Track
 };
@@ -15,21 +19,24 @@ type BranchDecoration = {
 type TreeStore = MutableDecoratedRootStore<RootDecoration, BranchDecoration>;
 export type BranchStore = MutableDecoratedBranchStore<RootDecoration, BranchDecoration>;
 export type BranchState = Parameters<Parameters<BranchStore["subscribe"]>[0]>[0];
-type NodeStore = TreeStore | BranchStore
+export type NodeStore = TreeStore | BranchStore
 
-export const root: TreeStore = createTree(writable({}));
+export const root: TreeStore = createTree(writable({
+    pendingLoad: 0
+}));
 
-function deriveBranchDecorationStore(parentStore: NodeStore, trackStore: TrackStore): Readable<BranchDecoration> {
-    const encodingStore: EncodingStore = parentStore.type === "root" ? createRootEncodingStore() : createBranchEncodingStore(parentStore, trackStore);
+export function deriveBranchDecorationStore(parentStore: NodeStore | null, trackStore: TrackStore): Readable<BranchDecoration> {
+    const encodingStore = createEncodingStore(parentStore, trackStore);
     return derived([trackStore, encodingStore],
         ([$trackStore, $encodingStore]) => ({
             ...$trackStore,
-            ...$encodingStore
+            ...$encodingStore,
+            pendingLoad: 0
         })
     );
 }
 
-const selectedTrackStore: Readable<Track | null> = derived(root.selectedStore, $selected => $selected === null ? null : $selected.track);
-const currentEncodingStore: Readable<MusenetEncoding | null> = derived(root.selectedStore, $selected => $selected === null ? null : $selected.encoding);
+const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
+const currentEncodingStore: Readable<MusenetEncoding | null> = derived(selectedBranchStore, $selected => $selected === null ? null : $selected.encoding);
 export const currentMidiStore: Readable<Blob | null> = derived(currentEncodingStore, $encoding => $encoding === null ? null : toMidi($encoding));
 

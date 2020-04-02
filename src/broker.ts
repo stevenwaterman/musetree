@@ -36,7 +36,8 @@ function encodingToArray(encoding: string): MusenetEncoding {
 export async function request(config: Config, prevEncoding: MusenetEncoding, prevDuration: number) {
     const data = {
         ...config,
-        encoding: encodingToString(prevEncoding)
+        encoding: encodingToString(prevEncoding),
+        audioFormat: ""
     };
 
     // @ts-ignore
@@ -44,15 +45,15 @@ export async function request(config: Config, prevEncoding: MusenetEncoding, pre
         method: "POST",
         url: "https://musenet.openai.com/sample",
         data,
-        raxConfig: {
-            retry: 3,
-            noResponseRetries: 2,
-            retryDelay: 0,
-            backoffType: "static",
-            onRetryAttempt: async err => {
-                console.warn("retrying:", err);
-            }
-        }
+        // raxConfig: {
+        //     retry: 3,
+        //     noResponseRetries: 2,
+        //     retryDelay: 0,
+        //     backoffType: "static",
+        //     onRetryAttempt: async err => {
+        //         console.warn("retrying:", err);
+        //     }
+        // }
     }).then(res =>
         res.data.completions.map((completion: Completion) => parseCompletion(completion, prevDuration))
     );

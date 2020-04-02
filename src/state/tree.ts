@@ -26,6 +26,7 @@ type PlainState<ROOT_DECORATION, BRANCH_DECORATION> = PlainRootState<ROOT_DECORA
 
 type SelectionInfo = {
     selectedByParent: boolean;
+    wasLastSelectedByParent: boolean;
     onSelectedPath: boolean;
 };
 type SelectionInfoStore = Readable<SelectionInfo>;
@@ -33,7 +34,7 @@ type DecoratedRootState<ROOT_DECORATION, BRANCH_DECORATION> = ROOT_DECORATION & 
 type DecoratedBranchState<ROOT_DECORATION, BRANCH_DECORATION> = BRANCH_DECORATION & PlainBranchState<ROOT_DECORATION, BRANCH_DECORATION> & SelectionInfo;
 type DecoratedState<ROOT_DECORATION, BRANCH_DECORATION> = DecoratedRootState<ROOT_DECORATION, BRANCH_DECORATION> | DecoratedBranchState<ROOT_DECORATION, BRANCH_DECORATION>;
 
-type Mutator<BRANCH_DECORATION> = {
+type RootMutator<BRANCH_DECORATION> = {
     /**
      * Adds a child to the store at the next available index.
      * The child's decoration is derived from the parent's state using the provided function
@@ -53,6 +54,26 @@ type Mutator<BRANCH_DECORATION> = {
     select: (path: number[]) => void;
 };
 
+type BranchMutator<BRANCH_DECORATION> = {
+    /**
+     * Adds a child to the store at the next available index.
+     * The child's decoration is derived from the parent's state using the provided function
+     */
+    addChild: (decorationStore: Readable<BRANCH_DECORATION>) => void;
+
+    /**
+     * Deletes the child a the given index.
+     * The selected/last selected child becomes null if it is deleted
+     */
+    deleteChild: (childIdx: number) => void;
+
+    /**
+     * Selects the node at the given path under this one
+     * Returns the actual path that was selected
+     */
+    internalSelect: (path: number[]) => void;
+};
+
 type MutablePlainRootStore<ROOT_DECORATION, BRANCH_DECORATION> = Writable<PlainRootState<ROOT_DECORATION, BRANCH_DECORATION>>;
 type MutablePlainBranchStore<ROOT_DECORATION, BRANCH_DECORATION> = Writable<PlainBranchState<ROOT_DECORATION, BRANCH_DECORATION>>;
 type MutablePlainStore<ROOT_DECORATION, BRANCH_DECORATION> = MutablePlainRootStore<ROOT_DECORATION, BRANCH_DECORATION> | MutablePlainBranchStore<ROOT_DECORATION, BRANCH_DECORATION>;
@@ -61,14 +82,17 @@ type ImmutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> = Readable<
 type ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> = Readable<DecoratedBranchState<ROOT_DECORATION, BRANCH_DECORATION>>;
 type ImmutableDecoratedStore<ROOT_DECORATION, BRANCH_DECORATION> = ImmutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> | ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION>;
 
-export type MutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> = RootType & Mutator<BRANCH_DECORATION> & ImmutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> & {
-    selectedStore: SelectedStore<ROOT_DECORATION, BRANCH_DECORATION>;
+export type MutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> = RootType & RootMutator<BRANCH_DECORATION> & ImmutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> & {
+    selectedStore_2: SelectedStore<ROOT_DECORATION, BRANCH_DECORATION>;
+    selectedChildStore_2: SelectedChildStore<ROOT_DECORATION, BRANCH_DECORATION>
 };
-export type MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> = BranchType & Mutator<BRANCH_DECORATION> & ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION>;
+export type MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> = BranchType & BranchMutator<BRANCH_DECORATION> & ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> & {
+    selectedChildStore_2: SelectedChildStore<ROOT_DECORATION, BRANCH_DECORATION>
+};
 export type MutableDecoratedStore<ROOT_DECORATION, BRANCH_DECORATION> = MutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> | MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION>;
 
-type MutableSelectedStore<ROOT_DECORATION, BRANCH_DECORATION> = Writable<ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> | null>;
-type SelectedStore<ROOT_DECORATION, BRANCH_DECORATION> = Readable<DecoratedBranchState<ROOT_DECORATION, BRANCH_DECORATION> | null>;
+type MutableSelectedStore<ROOT_DECORATION, BRANCH_DECORATION> = Writable<MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> | null>;
+type SelectedStore<ROOT_DECORATION, BRANCH_DECORATION> = Readable<MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> | null>;
 
 
 
@@ -107,7 +131,7 @@ function rootSelect<
 
         const pathForChild = [...path];
         pathForChild.shift();
-        newSelectedChild.select(pathForChild);
+        newSelectedChild.internalSelect(pathForChild);
 
         return ({
             ...state,
@@ -123,13 +147,12 @@ function branchSelect<
     BRANCH_DECORATION,
 >(
     internalStore: MutablePlainBranchStore<ROOT_DECORATION, BRANCH_DECORATION>,
-    decoratedStore: ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION>,
-    selectedStore: MutableSelectedStore<ROOT_DECORATION, BRANCH_DECORATION>,
+    select: () => void,
     path: number[]
 ): void {
     if(path.length === 0){
         internalStore.update((state: PlainBranchState<ROOT_DECORATION, BRANCH_DECORATION>) => {
-            selectedStore.set(decoratedStore);
+            select();
             return {
                 ...state,
                 selectedChild: null,
@@ -142,7 +165,7 @@ function branchSelect<
     internalStore.update((state: PlainBranchState<ROOT_DECORATION, BRANCH_DECORATION>) => {
         const newSelectedChild = state.children[path[0]];
         if(newSelectedChild === undefined) {
-            selectedStore.set(decoratedStore);
+            select();
             return ({
                 ...state,
                 selectedChild: null,
@@ -152,7 +175,7 @@ function branchSelect<
 
         const pathForChild = [...path];
         pathForChild.shift();
-        newSelectedChild.select(pathForChild);
+        newSelectedChild.internalSelect(pathForChild);
 
         return ({
             ...state,
@@ -177,6 +200,7 @@ function addChild<
         const childIndex = state.nextChildIndex;
         const selectionInfoStore: SelectionInfoStore = derived([decoratedStore], ([$parentTotal]) => ({
             selectedByParent: $parentTotal.selectedChild === childIndex,
+            wasLastSelectedByParent: $parentTotal.lastSelected === childIndex,
             onSelectedPath: $parentTotal.onSelectedPath && $parentTotal.selectedChild === childIndex
         }));
         const newChild: MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> = createBranchStore([...state.path, childIndex], decorationStore, selectionInfoStore, selectedStore);
@@ -228,8 +252,7 @@ function branchDeleteChild<
     BRANCH_DECORATION,
 >(
     internalStore: MutablePlainBranchStore<ROOT_DECORATION, BRANCH_DECORATION>,
-    decoratedStore: ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION>,
-    selectedStore: MutableSelectedStore<ROOT_DECORATION, BRANCH_DECORATION>,
+    select: () => void,
     childIdx: number
 ): void {
     internalStore.update((state: PlainBranchState<ROOT_DECORATION, BRANCH_DECORATION>) => {
@@ -246,7 +269,7 @@ function branchDeleteChild<
 
         if(state.selectedChild === childIdx) {
             newState.selectedChild = null;
-            selectedStore.set(decoratedStore);
+            select();
         }
 
         if(state.lastSelected === childIdx) {
@@ -269,6 +292,7 @@ function createRootStore<ROOT_DECORATION, BRANCH_DECORATION>(decorationStore: Re
     const internalStore: MutablePlainRootStore<ROOT_DECORATION, BRANCH_DECORATION> = writable(initialState);
     const selectionInfoStore: SelectionInfoStore = writable({
         selectedByParent: true,
+        wasLastSelectedByParent: false,
         onSelectedPath: true
     });
     const decoratedStore: ImmutableDecoratedRootStore<ROOT_DECORATION, BRANCH_DECORATION> = derived(
@@ -280,19 +304,6 @@ function createRootStore<ROOT_DECORATION, BRANCH_DECORATION>(decorationStore: Re
     }));
 
     const mutableSelectedStore: MutableSelectedStore<ROOT_DECORATION, BRANCH_DECORATION> = writable(null);
-    const selectedStore: Writable<DecoratedBranchState<ROOT_DECORATION, BRANCH_DECORATION> | null> = writable(null);
-    let unsub: () => void = () => {};
-    mutableSelectedStore.subscribe((nestedStore: ImmutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> | null) => {
-        unsub();
-        if(nestedStore === null){
-            unsub = () => {};
-            selectedStore.set(null);
-        } else {
-            unsub = nestedStore.subscribe((state: DecoratedBranchState<ROOT_DECORATION, BRANCH_DECORATION>) => {
-                selectedStore.set(state)
-            })
-        }
-    });
 
     return {
         type: "root",
@@ -300,7 +311,8 @@ function createRootStore<ROOT_DECORATION, BRANCH_DECORATION>(decorationStore: Re
         addChild: (decorationStore: Readable<BRANCH_DECORATION>) => addChild(internalStore, decoratedStore, mutableSelectedStore, decorationStore),
         select: (path: number[]) => rootSelect(internalStore, mutableSelectedStore, path),
         deleteChild: (childIdx: number) => rootDeleteChild(internalStore, mutableSelectedStore, childIdx),
-        selectedStore: selectedStore
+        selectedStore_2: mutableSelectedStore,
+        selectedChildStore_2: createSelectedChildStore(decoratedStore)
     }
 }
 
@@ -322,13 +334,31 @@ function createBranchStore<ROOT_DECORATION, BRANCH_DECORATION>(path: number[], d
             ...$decorationStore,
             ...$selectionInfoStore
     }));
-    return {
+
+    let mutableStore: MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION>;
+    const select = () => {selectedStore.set(mutableStore)};
+    mutableStore = {
         type: "branch",
         ...decoratedStore,
+        selectedChildStore_2: createSelectedChildStore(decoratedStore),
+        internalSelect: (path: number[]) => branchSelect(internalStore, select, path),
         addChild: (decorationStore: Readable<BRANCH_DECORATION>) => addChild(internalStore, decoratedStore, selectedStore, decorationStore),
-        select: (path: number[]) => branchSelect(internalStore, decoratedStore, selectedStore, path),
-        deleteChild: (childIdx: number) => branchDeleteChild(internalStore, decoratedStore, selectedStore, childIdx)
-    }
+        deleteChild: (childIdx: number) => branchDeleteChild(internalStore, select, childIdx)
+    };
+    return mutableStore;
+}
+
+type SelectedChildStore<ROOT_DECORATION, BRANCH_DECORATION> = Readable<MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> | null>;
+function createSelectedChildStore<ROOT_DECORATION, BRANCH_DECORATION>(parentStore: ImmutableDecoratedStore<ROOT_DECORATION, BRANCH_DECORATION>): SelectedChildStore<ROOT_DECORATION, BRANCH_DECORATION> {
+    return derived(parentStore, $parentStore => {
+        let idx = $parentStore.selectedChild;
+        if(idx === null) return null;
+
+        const selected: MutableDecoratedBranchStore<ROOT_DECORATION, BRANCH_DECORATION> | undefined = $parentStore.children[idx];
+        if(selected === undefined) return null;
+
+        return selected;
+    });
 }
 
 export const createTree = createRootStore;

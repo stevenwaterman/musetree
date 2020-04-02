@@ -1,36 +1,50 @@
 <script>
-  import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
-  import { request } from "../broker";
-  import { configStore, autoRequestStore } from "../state/settings";
-  import { slide } from "svelte/transition";
-  import { audio } from "../state/audio";
+  import {deriveBranchDecorationStore, root} from "../state/trackTree";
+  import {writable} from "svelte/store";
+
+  // import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
+  // import { configStore, autoRequestStore } from "../state/settings";
+  // import { slide } from "svelte/transition";
+  // import { audio } from "../state/audio";
   import ChildButton from "./ChildButton.svelte";
+  import {configStore} from "../state/settings";
+  import { request } from "../broker";
+  import {createTrackStore} from "../state/track";
 
-  export let path;
+  $: selectedStore_2 = root.selectedStore_2;
+  $: selectedStore = $selectedStore_2;
 
-  $: nodeStore = deriveNodeStore(path);
+  $: nodeStore = selectedStore == null ? root : selectedStore;
+  $: nodeState = $nodeStore;
+  $: children = nodeState.children;
 
-  $: children = $nodeStore.children ? $nodeStore.children : {};
-  $: track = $nodeStore.track ? $nodeStore.track : null;
-  $: duration = track ? track.endsAt : 0;
-  $: pendingLoad = $nodeStore.pendingLoad;
-
+  $: selectedPath = nodeState.path;
+  $: lastSelectedChild = nodeState.lastSelected;
+  $: pendingLoad = nodeState.pendingLoad;
+  //
   function loadMore() {
-    const pathCapture = path;
-    const encoding = track ? track.encoding : "";
+    if(nodeState === null) return;
 
-    nodeStore.requestStart();
+    const nodeStoreCapture = nodeStore;
+    const encoding = nodeState.encoding || [];
+    const track = nodeState.track;
+    const duration = track ? track.duration : 0;
 
+  //   nodeStore.requestStart();
     return request($configStore, encoding, duration)
-      .then(tracks => trackTreeStore.addTracks(pathCapture, tracks))
-      .finally(_ => trackTreeStore.requestDone(pathCapture));
+      .then(tracks => tracks.forEach(track => {
+        const trackStore = createTrackStore(track);
+        const decorationStore = deriveBranchDecorationStore(nodeStoreCapture, trackStore);
+        nodeStoreCapture.addChild(decorationStore);
+      }))
+      // .finally(_ => trackTreeStore.requestDone(pathCapture));
   }
-  $: if (
-    $autoRequestStore &&
-    !$nodeStore.childOffset &&
-    !pendingLoad
-  )
-    loadMore();
+  // $: if (
+  //   $autoRequestStore &&
+  //   !$nodeStore.childOffset &&
+  //   !pendingLoad
+  // )
+  //   loadMore();
 </script>
 
 <style>
@@ -51,15 +65,15 @@
 </style>
 
 <div class="buttonRow">
-  {#each Object.keys(children) as idx}
-    <ChildButton {path} siblingId={idx} />
+  {#each Object.values(children) as childStore}
+    <ChildButton nodeStore={childStore} remove={() => console.log("removed")} />
   {/each}
   <button class="rowButton" on:click={loadMore}>
     Load More{pendingLoad ? ` (${pendingLoad * 4} pending)` : ''}
   </button>
   <button
     class="rowButton"
-    on:click={() => console.log(JSON.stringify($nodeStore))}>
+    on:click={() => console.log(JSON.stringify(nodeState))}>
     Log
   </button>
 </div>

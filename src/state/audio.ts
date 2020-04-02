@@ -26,6 +26,7 @@ export const audioStatusStore: AudioStatusStore = createAudioStatusStore();
 const htmlAudio: HTMLAudioElement = new Audio();
 currentMidiStore.subscribe((midi: Blob | null) => {
     pause();
+    console.log(midi);
     htmlAudio.srcObject = midi;
 });
 
