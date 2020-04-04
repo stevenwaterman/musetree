@@ -1,5 +1,6 @@
 import {currentMidiStore} from "./trackTree";
 import {Readable, Writable, writable} from "svelte/store";
+import MidiPlayer from 'web-midi-player';
 
 type AudioStatus = {
     playing: boolean;
@@ -7,9 +8,10 @@ type AudioStatus = {
 }
 
 type AudioStatusStore = Pick<Readable<AudioStatus>, "subscribe"> & {
-    setPlaying: (playing: boolean) => void;
+        setPlaying: (playing: boolean) => void;
     setTime: (time: number) => void;
 }
+
 
 function createAudioStatusStore(): AudioStatusStore {
     const initialStatus: AudioStatus = {playing: false, time: 0};
@@ -23,27 +25,33 @@ function createAudioStatusStore(): AudioStatusStore {
 
 export const audioStatusStore: AudioStatusStore = createAudioStatusStore();
 
-const htmlAudio: HTMLAudioElement = new Audio();
-currentMidiStore.subscribe((midi: Blob | null) => {
+const midiPlayer = new MidiPlayer();
+currentMidiStore.subscribe(async (midi: Blob | null) => {
     pause();
-    console.log(midi);
-    htmlAudio.srcObject = midi;
+    // console.log(midi);
+    if(midi !== null) {
+        const buffer = await midi.arrayBuffer();
+        midiPlayer.play({
+            arrayBuffer: buffer
+        })
+        // const array = new Uint8Array(buffer);
+        // player.load(array);
+        // player.play(() => {
+        //     audioStatusStore.setPlaying(false);
+        // });
+        // audioStatusStore.setPlaying(true);
+    }
 });
 
 function pause(): void {
-    audioStatusStore.setPlaying(false);
-    htmlAudio.pause();
+    // audioStatusStore.setPlaying(false);
+    // player.pause();
 }
 
-htmlAudio.onplaying = () => audioStatusStore.setPlaying(true);
-htmlAudio.onended = () => audioStatusStore.setPlaying(false);
-
 export const audio = {
-    play: async (time: number) => {
-        audioStatusStore.setTime(time);
-        pause();
-        htmlAudio.currentTime = time;
-        await htmlAudio.play();
+    play: (time: number) => {
+        // audioStatusStore.setTime(time);
+        // player.seek(time);
     },
     pause,
 };

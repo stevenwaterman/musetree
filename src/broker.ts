@@ -26,7 +26,7 @@ export async function downloadAudio(encoding: MusenetEncoding, format: AudioForm
 }
 
 function encodingToString(encoding: MusenetEncoding): string {
-    return " ".concat(...encoding.map(it => it.toString()))
+    return encoding.map(it => it.toString()).join(" ");
 }
 
 function encodingToArray(encoding: string): MusenetEncoding {

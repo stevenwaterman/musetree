@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "typeRoots": ["types"]
   },
   "include": ["src"]
 }
