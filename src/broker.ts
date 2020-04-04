@@ -100,12 +100,9 @@ function parseNotes({tracks}: Completion, prevDuration: number): Record<Instrume
     const notesPerInstrument: Record<InstrumentCategory, Note[]> = {} as Record<InstrumentCategory, Note[]>;
     instrumentCategories.forEach(instrument => (notesPerInstrument[instrument] = []));
 
-    console.log(prevDuration);
-    tracks.forEach(({instrument, notes}) => console.log(instrument, notes));
     tracks.forEach(({instrument, notes}) =>
             (notesPerInstrument[instrument] = transposeNotes(notes, prevDuration))
     );
-    console.log(notesPerInstrument);
 
     return notesPerInstrument;
 }
