@@ -28,7 +28,7 @@
     const nodeStoreCapture = nodeStore;
     const encoding = nodeState.encoding || [];
     const track = nodeState.track;
-    const duration = track ? track.duration : 0;
+    const duration = track ? track.endsAt : 0;
 
   //   nodeStore.requestStart();
     return request($configStore, encoding, duration)

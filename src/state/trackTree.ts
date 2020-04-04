@@ -37,6 +37,7 @@ export function deriveBranchDecorationStore(parentStore: NodeStore | null, track
 }
 
 const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
+selectedBranchStore.subscribe(state => console.log("Selected", state?.path));
 const currentEncodingStore: Readable<MusenetEncoding | null> = derived(selectedBranchStore, $selected => $selected === null ? null : $selected.encoding);
 export const currentMidiStore: Readable<Blob | null> = derived(currentEncodingStore, $encoding => $encoding === null ? null : toMidi($encoding));
 

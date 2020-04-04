@@ -110,6 +110,7 @@ function rootSelect<
 ): void {
     if(path.length === 0){
         internalStore.update((state: PlainRootState<ROOT_DECORATION, BRANCH_DECORATION>) => {
+            selectedStore.set(null);
             return {
                 ...state,
                 selectedChild: null,
@@ -122,6 +123,7 @@ function rootSelect<
     internalStore.update((state: PlainRootState<ROOT_DECORATION, BRANCH_DECORATION>) => {
         const newSelectedChild = state.children[path[0]];
         if(newSelectedChild === undefined) {
+            selectedStore.set(null);
             return ({
                 ...state,
                 selectedChild: null,

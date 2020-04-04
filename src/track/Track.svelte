@@ -27,8 +27,7 @@
     {#if selectedChildStore === null}
         <p class="placeholder">Use the controls below to begin</p>
     {:else}
-        <div>Selected {$root.selectedChild}</div>
-        <TrackCanvas branchStore={selectedChildStore} section={0}/>
+        <TrackCanvas branchStore={selectedChildStore} section={0} deselect="{() => root.select([])}"/>
     {/if}
 </div>
 <TrackRowOptions />
