@@ -76,12 +76,26 @@
     background-color: black;
     overflow: hidden;
   }
+
+  .pan-container {
+    height: 100%;
+  }
+
+  .tree-position {
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 50%;
+    bottom: 50%;
+  }
 </style>
 
 {#if root != null}
   <div class="tree-container">
-    <div bind:this={container}>
-      <TreeVisRow parentStore={root}/>
+    <div class="pan-container" bind:this={container}>
+      <div class="tree-position">
+        <TreeVisRow parentStore={root}/>
+      </div>
     </div>
   </div>
 {/if}
