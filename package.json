@@ -57,13 +57,9 @@
   "dependencies": {
     "axios": "^0.19.1",
     "core-js": "^3.2.1",
-    "d3": "^5.15.0",
     "downloadjs": "^1.4.7",
-    "midijs": "^0.12.0",
-    "midiplayer": "^1.0.0",
     "musenet-midi": "github:stevenwaterman/musenet-midi#dist",
     "retry-axios": "^2.1.1",
-    "sirv-cli": "^0.4.4",
-    "web-midi-player": "^1.4.1"
+    "sirv-cli": "^0.4.4"
   }
 }

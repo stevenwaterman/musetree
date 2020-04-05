@@ -1,6 +1,6 @@
 <script>
-  import {yScaleStore, instrumentStores} from "../state/settings";
-  import {pitchRange, pitchMin, pitchMax} from "../constants";
+  import {yScaleStore} from "../state/settings";
+  import {pitchRange, pitchMin, instrumentSettings} from "../constants";
   import {afterUpdate} from "svelte";
   import TrackCanvas from "./TrackCanvas.svelte";
   import {root} from "../state/trackTree";
@@ -45,14 +45,14 @@
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
-      const settings = instrumentStores[instrument];
+      const settings = instrumentSettings[instrument];
       const {color} = settings;
 
       drawInstrument(
               ctx,
               instrumentNotes,
               color,
-              idx / Object.keys(instrumentStores).length,
+              idx / Object.keys(instrumentSettings).length,
               "black"
       );
     });
