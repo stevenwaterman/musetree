@@ -94,7 +94,7 @@
   <div class="tree-container">
     <div class="pan-container" bind:this={container}>
       <div class="tree-position">
-        <TreeVisRow parentStore={root}/>
+        <TreeVisRow parentStore={root} center={true}/>
       </div>
     </div>
   </div>

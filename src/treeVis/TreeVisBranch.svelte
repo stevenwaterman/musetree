@@ -86,5 +86,5 @@
     <!--        </text>-->
     <!--    {/if}-->
     </div>
-    <TreeVisRow parentStore={branchStore}/>
+    <TreeVisRow parentStore={branchStore} center={false}/>
 </div>
