@@ -59,6 +59,7 @@
     "core-js": "^3.2.1",
     "downloadjs": "^1.4.7",
     "musenet-midi": "github:stevenwaterman/musenet-midi#dist",
+    "panzoom": "^9.2.1",
     "retry-axios": "^2.1.1",
     "sirv-cli": "^0.4.4"
   }

@@ -3,17 +3,11 @@
   import {autoPlayStore, preplayStore, configStore} from "../state/settings";
   import {audio} from "../state/audio";
   import {request} from "../broker";
-  import TreeVisBranch from "./TreeVisBranch.svelte";
+  import TreeVisRow from "./TreeVisRow.svelte";
   import {root} from "../state/trackTree";
+  import panzoom from "panzoom";
 
-  const width = 200;
-  const height = 200;
-  const dx = 25;
-  const dy = 50;
   // const linkGenerator = d3.linkVertical();
-
-  $: rootState = $root;
-  $: rootChildren = rootState.children;
 
   // let root;
   // let links;
@@ -38,7 +32,7 @@
   //   }));
   // }
 
-  let transform;
+  // let transform;
 
   // function applyTransform() {
   //   if (transform == null) return;
@@ -66,6 +60,11 @@
   //   return "#fff";
   // }
 
+  let container;
+
+  afterUpdate(() => {
+    panzoom(container);
+  })
 </script>
 
 <style>
@@ -75,21 +74,14 @@
     width: 100%;
     flex-shrink: 0;
     background-color: black;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
+    overflow: hidden;
   }
 </style>
 
 {#if root != null}
   <div class="tree-container">
-    <div class="tree">
-      <div class="row">
-        {#each Object.values(rootChildren) as child, idx}
-          <TreeVisBranch parentStore={root} branchStore={child}/>
-        {/each}}
-        </div>
+    <div bind:this={container}>
+      <TreeVisRow parentStore={root}/>
     </div>
   </div>
 {/if}

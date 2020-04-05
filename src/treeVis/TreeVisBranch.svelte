@@ -1,6 +1,7 @@
 <script>
     import {root} from "../state/trackTree";
     import {fade} from "svelte/transition";
+    import TreeVisRow from "./TreeVisRow.svelte";
 
     export let parentStore;
     export let branchStore;
@@ -51,30 +52,39 @@
     border-radius: 50%;
 
     cursor: pointer;
-    background: red;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 </style>
 
 <!--<g fill="none" stroke-opacity="0.4" stroke-width="1.5">-->
 <!--    <path d={link.d} stroke={link.color} transition:fade></path>-->
 <!--</g>-->
-<div
-        on:mousedown={leftClick}
-        on:contextmenu|preventDefault={rightClick}
-        class="node"
->
-<!--    <circle fill={nodeColor} r="10" transition:fade></circle>-->
-    <span class="label" transition:fade>
-        {childIndex}
-    </span>
-<!--    {#if pendingLoad > 0}-->
-<!--        <text-->
-<!--                class="label"-->
-<!--                dy="2.31em"-->
-<!--                text-anchor="middle"-->
-<!--                fill="white"-->
-<!--                transition:fade>-->
-<!--            +{pendingLoad * 4}-->
-<!--        </text>-->
-<!--    {/if}-->
+<div class="column">
+    <div
+            on:mousedown={leftClick}
+            on:contextmenu|preventDefault={rightClick}
+            class="node"
+            style={"background-color: " + nodeColor + ";"}
+            transition:fade
+    >
+        <span class="label" transition:fade>
+            {childIndex}
+        </span>
+    <!--    {#if pendingLoad > 0}-->
+    <!--        <text-->
+    <!--                class="label"-->
+    <!--                dy="2.31em"-->
+    <!--                text-anchor="middle"-->
+    <!--                fill="white"-->
+    <!--                transition:fade>-->
+    <!--            +{pendingLoad * 4}-->
+    <!--        </text>-->
+    <!--    {/if}-->
+    </div>
+    <TreeVisRow parentStore={branchStore}/>
 </div>
