@@ -6,6 +6,7 @@
   import TreeVisRow from "./TreeVisRow.svelte";
   import {root} from "../state/trackTree";
   import panzoom from "panzoom";
+  import TreeVisRoot from "./TreeVisRoot.svelte";
 
   // const linkGenerator = d3.linkVertical();
 
@@ -63,7 +64,13 @@
   let container;
 
   afterUpdate(() => {
-    panzoom(container);
+    panzoom(container, {
+      minZoom: 0.1,
+      maxZoom: 2,
+      zoomDoubleClickSpeed: 0,
+      smoothScroll: false
+    });
+    // TODO middle click = reset zoom
   })
 </script>
 
@@ -94,7 +101,7 @@
   <div class="tree-container">
     <div class="pan-container" bind:this={container}>
       <div class="tree-position">
-        <TreeVisRow parentStore={root} center={true}/>
+        <TreeVisRoot/>
       </div>
     </div>
   </div>

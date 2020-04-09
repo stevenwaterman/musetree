@@ -1,39 +1,94 @@
-import {createTree, MutableDecoratedBranchStore, MutableDecoratedRootStore} from "./tree";
 import {MusenetEncoding, Track} from "../broker";
-import {derived, Readable, writable} from "svelte/store";
+import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore} from "./encoding";
 import {TrackStore} from "./track";
 import {toMidi} from "musenet-midi";
 import {unwrapStore} from "../utils";
+import {StateFor} from "./stores";
+import {
+    createTree,
+    StoreDecorationSupplier_Branch,
+    StoreDecorationSupplier_Root,
+    StoreSafeDecorated_DecoratedState_Branch,
+    StoreSafeDecorated_DecoratedState_Root,
+    StoreSafePartDecorated_DecoratedState_Branch,
+    StoreSafePartDecorated_DecoratedState_Root
+} from "./tree";
 
-type BaseDecoration = {
+type BaseStateDecoration = {
     pendingLoad: number;
 }
-type RootDecoration = BaseDecoration & {
+type RootStateDecoration = BaseStateDecoration & {
+
 };
-type BranchDecoration = BaseDecoration & {
+export type BranchStateDecoration = BaseStateDecoration & {
     encoding: MusenetEncoding,
     track: Track
 };
 
-type TreeStore = MutableDecoratedRootStore<RootDecoration, BranchDecoration>;
-export type BranchStore = MutableDecoratedBranchStore<RootDecoration, BranchDecoration>;
-export type BranchState = Parameters<Parameters<BranchStore["subscribe"]>[0]>[0];
+type BaseStoreDecoration = {
+    addChild: (trackStore: TrackStore) => void;
+    updatePendingLoad: (updater: (current: number) => number) => void;
+}
+type RootStoreDecoration = BaseStoreDecoration & {
+
+}
+type BranchStoreDecoration = BaseStoreDecoration & {
+
+}
+
+type PendingLoadStore = Writable<{ pendingLoad: number }>;
+
+export type TreeStore = StoreSafeDecorated_DecoratedState_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>;
+export type BranchStore = StoreSafeDecorated_DecoratedState_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>;
+export type BranchState = StateFor<BranchStore>;
 export type NodeStore = TreeStore | BranchStore
+export type NodeState = StateFor<NodeStore>;
 
-export const root: TreeStore = createTree(writable({
+const rootStateDecorationStore: Writable<RootStateDecoration> = writable({
     pendingLoad: 0
-}));
+});
+export const root: TreeStore = createTree(rootStateDecorationStore, createRootStoreDecorationSupplier(rootStateDecorationStore));
 
-export function deriveBranchDecorationStore(parentStore: NodeStore | null, trackStore: TrackStore): Readable<BranchDecoration> {
+function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0], trackStore: TrackStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
     const encodingStore = createEncodingStore(parentStore, trackStore);
-    return derived([trackStore, encodingStore],
-        ([$trackStore, $encodingStore]) => ({
+    return derived([trackStore, encodingStore, pendingLoadStore],
+        ([$trackStore, $encodingStore, $pendingLoadStore]) => ({
             ...$trackStore,
             ...$encodingStore,
-            pendingLoad: 0
+            ...$pendingLoadStore
         })
     );
+}
+
+function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): StoreDecorationSupplier_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration> {
+    return (partDecoratedStore: StoreSafePartDecorated_DecoratedState_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>) => ({
+        addChild: (trackStore: TrackStore) => {
+            const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
+            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, trackStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+        },
+        updatePendingLoad: (updater: (current: number) => number) => {
+            pendingLoadStore.update(state => ({
+                ...state,
+                pendingLoad: updater(state.pendingLoad)
+            }))
+        }
+    });
+}
+
+function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): StoreDecorationSupplier_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration> {
+    return (partDecoratedStore: StoreSafePartDecorated_DecoratedState_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>) => ({
+        addChild: (trackStore: TrackStore) => {
+            const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
+            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, trackStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+        },
+        updatePendingLoad: (updater: (current: number) => number) => {
+            pendingLoadStore.update(state => ({
+                ...state,
+                pendingLoad: updater(state.pendingLoad)
+            }))
+        }
+    })
 }
 
 const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);

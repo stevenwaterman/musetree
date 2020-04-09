@@ -1,8 +1,17 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import * as rax from "retry-axios";
 import {instrumentCategories, InstrumentCategory} from "./constants";
 import download from "downloadjs";
 import {Config} from "./state/settings";
+import {
+    BranchStateDecoration,
+    BranchState,
+    BranchStore,
+    NodeState,
+    NodeStore
+} from "./state/trackTree";
+import {createTrackStore, TrackState} from "./state/track";
+import {Readable, Writable} from "svelte/store";
 
 export type MusenetEncoding = number[]
 export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
@@ -33,30 +42,47 @@ function encodingToArray(encoding: string): MusenetEncoding {
     return encoding.split(" ").map(it => parseInt(it));
 }
 
-export async function request(config: Config, prevEncoding: MusenetEncoding, prevDuration: number) {
+export async function request(config: Config, store: NodeStore, state: NodeState) {
+    if (store.type === "root") {
+        return await requestInternal(config, store, [], 0);
+    }
+    if (store.type === "branch" && state.type === "branch") {
+        return await requestInternal(config, store, state.encoding, state.track.endsAt);
+    }
+    throw new Error("Unrecognised combination of store and state types " + store.type + "/" + state.type);
+}
+
+async function requestInternal(config: Config, store: NodeStore, prevEncoding: MusenetEncoding, prevDuration: number) {
     const data = {
         ...config,
         encoding: encodingToString(prevEncoding),
         audioFormat: ""
     };
 
-    // @ts-ignore
+    type ResponseData = {
+        completions: Completion[]
+    };
+
+    store.updatePendingLoad(it => it + 4);
+
     return axios({
         method: "POST",
         url: "https://musenet.openai.com/sample",
-        data,
-        // raxConfig: {
-        //     retry: 3,
-        //     noResponseRetries: 2,
-        //     retryDelay: 0,
-        //     backoffType: "static",
-        //     onRetryAttempt: async err => {
-        //         console.warn("retrying:", err);
-        //     }
-        // }
-    }).then(res =>
-        res.data.completions.map((completion: Completion) => parseCompletion(completion, prevDuration))
-    );
+        data
+    })
+        .then((res: AxiosResponse<ResponseData>) =>
+            res.data.completions)
+        .then((completions: Completion[]) =>
+            completions.map((completion: Completion) =>
+                parseCompletion(completion, prevDuration)))
+        .then((tracks: Track[]) =>
+            tracks.map((track: Track) =>
+                    createTrackStore(track)))
+        .then((trackStores: Writable<TrackState>[]) =>
+            trackStores.map((trackStore: Writable<TrackState>) =>
+                store.addChild(trackStore)))
+        .finally(() =>
+            store.updatePendingLoad(it => it - 4))
 }
 
 type Completion = {
@@ -101,7 +127,7 @@ function parseNotes({tracks}: Completion, prevDuration: number): Record<Instrume
     instrumentCategories.forEach(instrument => (notesPerInstrument[instrument] = []));
 
     tracks.forEach(({instrument, notes}) =>
-            (notesPerInstrument[instrument] = transposeNotes(notes, prevDuration))
+        (notesPerInstrument[instrument] = transposeNotes(notes, prevDuration))
     );
 
     return notesPerInstrument;

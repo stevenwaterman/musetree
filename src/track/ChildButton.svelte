@@ -1,7 +1,4 @@
 <script>
-  // import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
-  // import { audio } from "../state/audio";
-  // import { preplayStore, autoPlayStore } from "../state/settings";
   import {root} from "../state/trackTree";
 
   export let nodeStore;

@@ -1,11 +1,7 @@
 <script>
-  import {deriveBranchDecorationStore, root} from "../state/trackTree";
+  import {root} from "../state/trackTree";
   import {writable} from "svelte/store";
 
-  // import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
-  // import { configStore, autoRequestStore } from "../state/settings";
-  // import { slide } from "svelte/transition";
-  // import { audio } from "../state/audio";
   import ChildButton from "./ChildButton.svelte";
   import {configStore} from "../state/settings";
   import { request } from "../broker";
@@ -24,20 +20,7 @@
   //
   function loadMore() {
     if(nodeState === null) return;
-
-    const nodeStoreCapture = nodeStore;
-    const encoding = nodeState.encoding || [];
-    const track = nodeState.track;
-    const duration = track ? track.endsAt : 0;
-
-  //   nodeStore.requestStart();
-    return request($configStore, encoding, duration)
-      .then(tracks => tracks.forEach(track => {
-        const trackStore = createTrackStore(track);
-        const decorationStore = deriveBranchDecorationStore(nodeStoreCapture, trackStore);
-        nodeStoreCapture.addChild(decorationStore);
-      }))
-      // .finally(_ => trackTreeStore.requestDone(pathCapture));
+    return request($configStore, nodeStore, nodeState);
   }
   // $: if (
   //   $autoRequestStore &&
@@ -69,7 +52,7 @@
     <ChildButton nodeStore={childStore} remove={() => console.log("removed")} />
   {/each}
   <button class="rowButton" on:click={loadMore}>
-    Load More{pendingLoad ? ` (${pendingLoad * 4} pending)` : ''}
+    Load More{pendingLoad ? ` (${pendingLoad} pending)` : ''}
   </button>
   <button
     class="rowButton"

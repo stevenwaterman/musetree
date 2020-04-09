@@ -1,5 +1,4 @@
 <script>
-  import { selectedTrackStore } from "./trackTree.js";
   import { audioStatusStore } from "../state/audio";
   import {
     yScaleStore,
@@ -8,30 +7,30 @@
   } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  function traverse(node, { startTime }) {
-    const track = $selectedTrackStore;
-    if (track == null) return;
-
-    const endTime = track.endsAt;
-    const transTime = endTime - startTime;
-
-    return {
-      duration: transTime * 1000,
-      tick: t => {
-        const startPx = startTime * $yScaleStore;
-        const endPx = endTime * $yScaleStore;
-        const transPx = endPx - startPx;
-        const y = startPx + t * transPx;
-        node.style = `top:${y}px;`;
-        if ($isScrollingStore) {
-          node.scrollIntoView({
-            block: "center",
-            behaviour: "smooth"
-          });
-        }
-      }
-    };
-  }
+  // function traverse(node, { startTime }) {
+  //   const track = $selectedTrackStore;
+  //   if (track == null) return;
+  //
+  //   const endTime = track.endsAt;
+  //   const transTime = endTime - startTime;
+  //
+  //   return {
+  //     duration: transTime * 1000,
+  //     tick: t => {
+  //       const startPx = startTime * $yScaleStore;
+  //       const endPx = endTime * $yScaleStore;
+  //       const transPx = endPx - startPx;
+  //       const y = startPx + t * transPx;
+  //       node.style = `top:${y}px;`;
+  //       if ($isScrollingStore) {
+  //         node.scrollIntoView({
+  //           block: "center",
+  //           behaviour: "smooth"
+  //         });
+  //       }
+  //     }
+  //   };
+  // }
 
   let element;
   let transition;
@@ -71,11 +70,11 @@
   }
 </style>
 
-<div
-  bind:this={element}
-  on:introend={() => {
-    visible = false;
-  }}
-  class="anchor">
-  <div hidden={!visible} class="line" />
-</div>
+<!--<div-->
+<!--  bind:this={element}-->
+<!--  on:introend={() => {-->
+<!--    visible = false;-->
+<!--  }}-->
+<!--  class="anchor">-->
+<!--  <div hidden={!visible} class="line" />-->
+<!--</div>-->

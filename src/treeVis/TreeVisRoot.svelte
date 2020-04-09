@@ -5,33 +5,20 @@
     import {configStore} from "../state/settings";
     import {request} from "../broker"
 
-    export let parentStore;
-    export let branchStore;
-
-    $: branchState = $branchStore;
-    $: path = branchState.path;
-    $: childIndex = path[path.length - 1];
+    $: branchState = $root;
     $: pendingLoad = branchState.pendingLoad;
 
     function leftClick(mouseEvent) {
         if (mouseEvent.button === 0) {
             if (mouseEvent.ctrlKey) {
                 if (branchState !== null) {
-                    request($configStore, branchStore, branchState);
+                    request($configStore, root, branchState);
                 }
             } else {
-                root.select(path);
+                root.select([]);
             }
         }
     }
-
-    function rightClick() {
-        parentStore.deleteChild(childIndex);
-    }
-
-    $: onSelectedPath = branchState.onSelectedPath;
-    $: selectedByParent = branchState.selectedByParent;
-    $: nodeColor = onSelectedPath ? "#f00" : selectedByParent ? "#f90" : "#fff";
 </script>
 
 <style>
@@ -52,10 +39,7 @@
     border-radius: 50%;
 
     cursor: pointer;
-}
-
-.label {
-    font-size: 30px;
+    background: red;
 }
 
 .pendingLoad {
@@ -67,19 +51,14 @@
 <div class="column">
     <div
             on:mousedown={leftClick}
-            on:contextmenu|preventDefault={rightClick}
             class="node"
-            style={"background-color: " + nodeColor + ";"}
             transition:fade
     >
-        <span class="label" transition:fade>
-            {childIndex}
-        </span>
     </div>
     {#if pendingLoad > 0}
         <span class="pendingLoad" transition:fade>
                 +{pendingLoad}
         </span>
     {/if}
-    <TreeVisRow parentStore={branchStore} center={false}/>
+    <TreeVisRow parentStore={root} center={false}/>
 </div>
