@@ -2,7 +2,6 @@
   import {yScaleStore} from "../state/settings";
   import {pitchRange, pitchMin, instrumentSettings} from "../constants";
   import {afterUpdate} from "svelte";
-  import TrackCanvas from "./TrackCanvas.svelte";
   import {root} from "../state/trackTree";
 
   export let branchStore;
@@ -114,5 +113,5 @@
 {/if}
 
 {#if selectedChildStore !== null}
-  <TrackCanvas branchStore={selectedChildStore} section={section + 1} deselect="{() => root.select(path)}"/>
+  <svelte:self branchStore={selectedChildStore} section={section + 1} deselect="{() => root.select(path)}"/>
 {/if}

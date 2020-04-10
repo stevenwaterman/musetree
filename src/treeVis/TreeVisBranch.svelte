@@ -1,7 +1,6 @@
 <script>
     import {root} from "../state/trackTree";
     import {fade} from "svelte/transition";
-    import TreeVisRow from "./TreeVisRow.svelte";
     import {configStore} from "../state/settings";
     import {request} from "../broker"
 
@@ -12,6 +11,9 @@
     $: path = branchState.path;
     $: childIndex = path[path.length - 1];
     $: pendingLoad = branchState.pendingLoad;
+
+    $: childStores = branchState.children;
+    $: children = Object.entries(childStores);
 
     function leftClick(mouseEvent) {
         if (mouseEvent.button === 0) {
@@ -62,24 +64,40 @@
     font-size: 18px;
     color: white;
 }
+
+.row {
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: row;
+    border-left: 1px solid white;
+
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+}
 </style>
 
-<div class="column">
+<div class="column" transition:fade>
     <div
             on:mousedown={leftClick}
             on:contextmenu|preventDefault={rightClick}
             class="node"
             style={"background-color: " + nodeColor + ";"}
-            transition:fade
     >
-        <span class="label" transition:fade>
+        <span class="label">
             {childIndex}
         </span>
     </div>
     {#if pendingLoad > 0}
-        <span class="pendingLoad" transition:fade>
+        <span class="pendingLoad">
                 +{pendingLoad}
         </span>
     {/if}
-    <TreeVisRow parentStore={branchStore} center={false}/>
+    <div class="row">
+        {#each children as [index, child] (index)}
+            <svelte:self parentStore={branchStore} branchStore={child}/>
+        {/each}
+    </div>
 </div>

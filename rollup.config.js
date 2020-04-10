@@ -26,7 +26,7 @@ export default {
     plugins: [
         svelte({
             // enable run-time checks when not in production
-            dev: !production,
+            dev: true,
             // we'll extract any component CSS out into
             // a separate file — better for performance
             css: css => {

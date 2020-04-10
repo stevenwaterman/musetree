@@ -245,7 +245,7 @@ function rootDeleteChild<
         if(removedChild === undefined) return state;
 
         const newChildren = {...state.children};
-        delete(newChildren[childIdx]);
+        delete newChildren[childIdx];
 
         const newState = {
             ...state,
@@ -277,7 +277,7 @@ function branchDeleteChild<
         if(removedChild === undefined) return state;
 
         const newChildren = {...state.children};
-        delete(newChildren[childIdx]);
+        delete newChildren[childIdx];
 
         const newState = {
             ...state,

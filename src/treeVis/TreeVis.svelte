@@ -3,63 +3,9 @@
   import {autoPlayStore, preplayStore, configStore} from "../state/settings";
   import {audio} from "../state/audio";
   import {request} from "../broker";
-  import TreeVisRow from "./TreeVisRow.svelte";
   import {root} from "../state/trackTree";
   import panzoom from "panzoom";
   import TreeVisRoot from "./TreeVisRoot.svelte";
-
-  // const linkGenerator = d3.linkVertical();
-
-  // let root;
-  // let links;
-  // $: tree($d3TreeStore);
-  //
-  // function tree(data) {
-  //   const hierarchy = d3.hierarchy(data);
-  //   hierarchy.dx = dx;
-  //   hierarchy.dy = dy;
-  //
-  //   root = d3.tree().nodeSize([dx, dy])(hierarchy);
-  //   links = root.links().map(link => ({
-  //     d: linkGenerator({
-  //       source: [link.source.x, link.source.y],
-  //       target: [link.target.x, link.target.y]
-  //     }),
-  //     color: linkColor(link.source, link.target),
-  //     key:
-  //       JSON.stringify(link.source.data.path) +
-  //       "," +
-  //       JSON.stringify(link.target.data.path)
-  //   }));
-  // }
-
-  // let transform;
-
-  // function applyTransform() {
-  //   if (transform == null) return;
-  //   d3.select("#tree").attr("transform", transform);
-  // }
-  //
-  // onMount(() => {
-  //   d3.select("svg").call(
-  //           d3.zoom().on("zoom", function () {
-  //             transform = d3.event.transform;
-  //             applyTransform();
-  //           })
-  //   );
-  // });
-  //
-  // afterUpdate(applyTransform);
-  //
-  // function linkColor({data: source}, {data: target}) {
-  //   if (source.isSelected && target.isSelected) {
-  //     return "#f00";
-  //   }
-  //   if (target.wasSelected) {
-  //     return "#f90";
-  //   }
-  //   return "#fff";
-  // }
 
   let container;
 
@@ -67,7 +13,7 @@
     panzoom(container, {
       minZoom: 0.1,
       maxZoom: 2,
-      zoomDoubleClickSpeed: 0,
+      zoomDoubleClickSpeed: 1,
       smoothScroll: false
     });
     // TODO middle click = reset zoom
