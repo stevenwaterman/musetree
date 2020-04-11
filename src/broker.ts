@@ -1,22 +1,19 @@
 import axios, {AxiosResponse} from "axios";
-import * as rax from "retry-axios";
-import {instrumentCategories, InstrumentCategory} from "./constants";
+import {InstrumentCategory, instruments} from "./constants";
 import download from "downloadjs";
 import {Config} from "./state/settings";
 import {
-    BranchStateDecoration,
-    BranchState,
-    BranchStore,
     NodeState,
     NodeStore
 } from "./state/trackTree";
-import {createTrackStore, TrackState} from "./state/track";
-import {Readable, Writable} from "svelte/store";
+import {createTrackStore, Track, TrackState} from "./state/track";
+import {Writable} from "svelte/store";
+import {createEmptyNotes, Note, Notes} from "./state/notes";
+import {MusenetEncoding} from "./state/encoding";
 
-export type MusenetEncoding = number[]
+
+
 export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
-
-rax.attach();
 
 export async function downloadAudio(encoding: MusenetEncoding, format: AudioFormat, name: string): Promise<XMLHttpRequest | boolean> {
     // Use fetch because `.blob` is great
@@ -94,12 +91,7 @@ type Completion = {
     }>
 }
 
-export type Track = {
-    encoding: MusenetEncoding;
-    startsAt: number;
-    endsAt: number;
-    notes: Record<InstrumentCategory, Note[]>;
-}
+
 
 function parseCompletion(completion: Completion, prevDuration: number): Track {
     return {
@@ -110,11 +102,7 @@ function parseCompletion(completion: Completion, prevDuration: number): Track {
     };
 }
 
-export type Note = {
-    time_on: number;
-    pitch: number;
-    duration: number;
-}
+
 
 function transposeNotes(notes: Note[], subtract: number): Note[] {
     return notes
@@ -122,9 +110,9 @@ function transposeNotes(notes: Note[], subtract: number): Note[] {
         .filter(note => note.time_on >= 0);
 }
 
-function parseNotes({tracks}: Completion, prevDuration: number): Record<InstrumentCategory, Note[]> {
-    const notesPerInstrument: Record<InstrumentCategory, Note[]> = {} as Record<InstrumentCategory, Note[]>;
-    instrumentCategories.forEach(instrument => (notesPerInstrument[instrument] = []));
+function parseNotes({tracks}: Completion, prevDuration: number): Notes {
+    const notesPerInstrument: Notes = createEmptyNotes();
+    instruments.forEach(instrument => (notesPerInstrument[instrument] = []));
 
     tracks.forEach(({instrument, notes}) =>
         (notesPerInstrument[instrument] = transposeNotes(notes, prevDuration))

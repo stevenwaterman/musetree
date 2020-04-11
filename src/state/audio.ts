@@ -1,6 +1,7 @@
-import {currentMidiStore} from "./trackTree";
+import {currentNotesStore} from "./trackTree";
 import {Readable, Writable, writable} from "svelte/store";
-// import MidiPlayer from 'web-midi-player';
+import {SoundController} from "../synth/soundController";
+import {Notes} from "./notes";
 
 type AudioStatus = {
     playing: boolean;
@@ -12,6 +13,7 @@ type AudioStatusStore = Pick<Readable<AudioStatus>, "subscribe"> & {
     setTime: (time: number) => void;
 }
 
+const controller = new SoundController();
 
 function createAudioStatusStore(): AudioStatusStore {
     const initialStatus: AudioStatus = {playing: false, time: 0};
@@ -25,31 +27,21 @@ function createAudioStatusStore(): AudioStatusStore {
 
 export const audioStatusStore: AudioStatusStore = createAudioStatusStore();
 
-// const midiPlayer = new MidiPlayer();
-currentMidiStore.subscribe(async (midi: Blob | null) => {
-    // await midiPlayer.stop();
-
-    if(midi !== null) {
-        // const buffer = await midi.arrayBuffer();
-        // await midiPlayer.play({
-        //     arrayBuffer: buffer
-        // });
-
-        // audioStatusStore.setPlaying(true);
+currentNotesStore.subscribe((notes: Notes | null) => {
+    if(notes === null) {
+        controller.reset();
+    } else {
+        controller.load(notes);
     }
 });
 
 function pause(): void {
-    // midiPlayer.pause();
-    // midiPlayer.pause();
+    controller.stop();
 }
 
 export const audio = {
     play: (time: number) => {
-        // midiPlayer.resume();
-        // midiPlayer.resume();
-        // audioStatusStore.setTime(time);
-        // player.seek(time);
+        controller.play();
     },
     pause,
 };

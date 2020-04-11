@@ -1,4 +1,6 @@
-export const instrumentSettings = {
+export type Instrument = "bass" | "drums" | "guitar" | "harp" | "piano" | "violin" | "strings" | "cello" | "flute" | "trumpet" | "clarinet" | "winds";
+export const instruments: Instrument[] = ["bass", "drums", "guitar", "harp", "piano", "violin", "strings", "cello", "flute", "trumpet", "clarinet", "winds"];
+export const instrumentSettings: Record<Instrument, {color: string}> = {
     bass: {
         color: "rgba(255, 0, 0, 1)"
     },
@@ -35,8 +37,7 @@ export const instrumentSettings = {
     winds: {
         color: "rgba(255, 255, 255, 1)"
     }
-} as const;
-export type Instrument = keyof (typeof instrumentSettings);
+};
 
 export const instrumentCategories = [
     "bass",

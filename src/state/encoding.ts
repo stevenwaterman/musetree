@@ -1,9 +1,10 @@
-import {MusenetEncoding} from "../broker";
 import {derived, Readable, writable} from "svelte/store";
 import {TrackStore as TrackStore} from "./track";
 
+export type MusenetEncoding = number[];
 export type EncodingState = { encoding: MusenetEncoding; }
 export type EncodingStore = Readable<EncodingState>;
+
 export function createRootEncodingStore(): EncodingStore {
     return writable({encoding: []});
 }
@@ -17,7 +18,7 @@ export function createEncodingStore(parent: null | ({type: "root"}) | (Parameter
     if(parent === null) {
         return createRootEncodingStore();
     } else if(parent.type === "root") {
-        return createBranchEncodingStore(writable({encoding: []}), trackStore);
+        return createBranchEncodingStore(createRootEncodingStore(), trackStore);
     } else {
         return createBranchEncodingStore(parent, trackStore);
     }

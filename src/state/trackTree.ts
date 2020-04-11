@@ -1,8 +1,6 @@
-import {MusenetEncoding, Track} from "../broker";
 import {derived, Readable, Writable, writable} from "svelte/store";
-import {createEncodingStore} from "./encoding";
-import {TrackStore} from "./track";
-import {toMidi} from "musenet-midi";
+import {createEncodingStore, MusenetEncoding} from "./encoding";
+import {Track, TrackStore} from "./track";
 import {unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
@@ -14,6 +12,7 @@ import {
     StoreSafePartDecorated_DecoratedState_Branch,
     StoreSafePartDecorated_DecoratedState_Root
 } from "./tree";
+import {createNotesStore, Notes} from "./notes";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -23,6 +22,7 @@ type RootStateDecoration = BaseStateDecoration & {
 };
 export type BranchStateDecoration = BaseStateDecoration & {
     encoding: MusenetEncoding,
+    notes: Notes,
     track: Track
 };
 
@@ -50,12 +50,14 @@ const rootStateDecorationStore: Writable<RootStateDecoration> = writable({
 });
 export const root: TreeStore = createTree(rootStateDecorationStore, createRootStoreDecorationSupplier(rootStateDecorationStore));
 
-function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0], trackStore: TrackStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
+function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0] & Parameters<typeof createNotesStore>[0], trackStore: TrackStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
     const encodingStore = createEncodingStore(parentStore, trackStore);
-    return derived([trackStore, encodingStore, pendingLoadStore],
-        ([$trackStore, $encodingStore, $pendingLoadStore]) => ({
+    const notesStore = createNotesStore(parentStore, trackStore);
+    return derived([trackStore, encodingStore, notesStore, pendingLoadStore],
+        ([$trackStore, $encodingStore, $notesStore, $pendingLoadStore]) => ({
             ...$trackStore,
             ...$encodingStore,
+            ...$notesStore,
             ...$pendingLoadStore
         })
     );
@@ -92,6 +94,5 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
 }
 
 const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
-const currentEncodingStore: Readable<MusenetEncoding | null> = derived(selectedBranchStore, $selected => $selected === null ? null : $selected.encoding);
-export const currentMidiStore: Readable<Blob | null> = derived(currentEncodingStore, $encoding => $encoding === null ? null : toMidi($encoding));
+export const currentNotesStore: Readable<Notes | null> = derived(selectedBranchStore, $selected => $selected === null ? null : $selected.notes);
 
