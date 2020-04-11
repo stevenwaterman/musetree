@@ -1,12 +1,15 @@
-import {Synth} from "tone";
+import {PolySynth, Synth} from "tone";
 
-export function createPiano(): Synth {
-    const piano = new Synth({
+export function createPiano(): PolySynth {
+    const piano = new PolySynth(Synth, {
         oscillator: {
-
+            type: "triangle"
         },
         envelope: {
-
+            attack: 0.005,
+            decay: 0.1,
+            sustain: 0.3,
+            release: 1
         }
     }).toDestination();
     piano.sync();

@@ -2,6 +2,7 @@ import {currentNotesStore} from "./trackTree";
 import {Readable, Writable, writable} from "svelte/store";
 import {SoundController} from "../synth/soundController";
 import {Notes} from "./notes";
+import {Synth} from "tone";
 
 type AudioStatus = {
     playing: boolean;

@@ -106,13 +106,13 @@ function parseCompletion(completion: Completion, prevDuration: number): Track {
 
 function transposeNotes(notes: Note[], subtract: number): Note[] {
     return notes
+        .filter(note => note.time_on >= subtract)
+        .filter(note => note.duration > 0)
         .map(note => ({...note, time_on: note.time_on - subtract}))
-        .filter(note => note.time_on >= 0);
 }
 
 function parseNotes({tracks}: Completion, prevDuration: number): Notes {
     const notesPerInstrument: Notes = createEmptyNotes();
-    instruments.forEach(instrument => (notesPerInstrument[instrument] = []));
 
     tracks.forEach(({instrument, notes}) =>
         (notesPerInstrument[instrument] = transposeNotes(notes, prevDuration))
