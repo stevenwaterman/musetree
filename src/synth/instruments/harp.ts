@@ -1,8 +1,7 @@
-import {PolySynth, Synth} from "tone";
 import {FrequencyInstrument} from "./frequencyInstrument";
 
-export class Piano extends FrequencyInstrument<"piano"> {
-    protected instrument = "piano" as const;
+export class Harp extends FrequencyInstrument<"harp"> {
+    protected instrument = "harp" as const;
 
     constructor() {
         super({

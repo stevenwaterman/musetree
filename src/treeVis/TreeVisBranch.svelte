@@ -86,7 +86,7 @@
             class="node"
             style={"background-color: " + nodeColor + ";"}
     >
-        <span class="label">
+        <span class="label" transition:fade>
             {childIndex}
         </span>
     </div>

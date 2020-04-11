@@ -1,14 +1,37 @@
-import {mtof, PolySynth, Transport} from "tone";
-import {createPiano} from "./instruments/piano";
-import {Frequency, MidiNote, Time} from "tone/build/esm/core/type/Units";
-import {Note, Notes} from "../state/notes";
+import {Transport} from "tone";
+import {Piano} from "./instruments/piano";
+import {Notes} from "../state/notes";
+import {FrequencyInstrument} from "./instruments/frequencyInstrument";
+import {Instrument} from "../constants";
+import {SynthInstrument} from "./instruments/synthInstrument";
+import {Bass} from "./instruments/bass";
+import {Clarinet} from "./instruments/clarinet";
+import {Cello} from "./instruments/cello";
+import {Drums} from "./instruments/drums";
+import {Guitar} from "./instruments/guitar";
+import {Flute} from "./instruments/flute";
+import {Harp} from "./instruments/harp";
+import {Trumpet} from "./instruments/trumpet";
+import {Violin} from "./instruments/violin";
 
 export class SoundController {
-    private readonly piano: PolySynth;
+    private readonly instruments: SynthInstrument[];
     private state: "waiting" | "ready" | "playing" = "waiting";
 
     constructor() {
-        this.piano = createPiano();
+        const instrumentRecord: Record<Instrument, SynthInstrument> = {
+            bass: new Bass(),
+            cello: new Cello(),
+            clarinet: new Clarinet(),
+            drums: new Drums(),
+            flute: new Flute(),
+            guitar: new Guitar(),
+            harp: new Harp(),
+            piano: new Piano(),
+            trumpet: new Trumpet(),
+            violin: new Violin()
+        };
+        this.instruments = Object.values(instrumentRecord);
     }
 
     load(notes: Notes) {
@@ -17,42 +40,21 @@ export class SoundController {
         }
         if(this.state === "waiting" || this.state === "ready") {
             this.reset();
-            console.log("loading");
-            const chords: Note[][] = notes.piano.reduce((acc: Note[][], elem: Note) => {
-                if(acc.length === 0){
-                    acc.push([elem]);
-                } else if (acc[acc.length - 1][0].time_on === elem.time_on) {
-                    acc[acc.length - 1].push(elem);
-                } else {
-                    acc.push([elem]);
-                }
-                return acc;
-            }, []);
-            chords.forEach((chord: Note[]) => {
-                const time = chord[0].time_on;
-
-                chord.forEach(note => {
-                    const freq: Frequency = mtof(note.pitch as MidiNote);
-                    console.log(freq);
-                    const duration: Time = note.duration;
-                    this.piano.triggerAttackRelease(freq, duration, time);
-                })
-            });
+            this.instruments.forEach(instrument => instrument.load(notes));
             this.state = "ready";
         }
     }
 
     reset() {
         if(this.state === "ready"){
-            console.log("resetting");
             Transport.cancel();
+            this.instruments.forEach(instrument => instrument.stop());
             this.state = "waiting";
         }
     }
 
     play(time: number) {
         if(this.state === "ready") {
-            console.log("playing");
             Transport.start(time);
             this.state = "playing";
         }
@@ -60,7 +62,6 @@ export class SoundController {
 
     stop() {
         if(this.state === "playing") {
-            console.log("Stopping");
             Transport.stop();
             this.state = "ready";
         }

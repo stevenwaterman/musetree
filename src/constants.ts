@@ -1,5 +1,5 @@
-export type Instrument = "bass" | "drums" | "guitar" | "harp" | "piano" | "violin" | "strings" | "cello" | "flute" | "trumpet" | "clarinet" | "winds";
-export const instruments: Instrument[] = ["bass", "drums", "guitar", "harp", "piano", "violin", "strings", "cello", "flute", "trumpet", "clarinet", "winds"];
+export type Instrument = "bass" | "drums" | "guitar" | "harp" | "piano" | "violin" | "cello" | "flute" | "trumpet" | "clarinet";
+export const instruments: Instrument[] = ["bass", "drums", "guitar", "harp", "piano", "violin", "cello", "flute", "trumpet", "clarinet"];
 export const instrumentSettings: Record<Instrument, {color: string}> = {
     bass: {
         color: "rgba(255, 0, 0, 1)"
@@ -19,9 +19,6 @@ export const instrumentSettings: Record<Instrument, {color: string}> = {
     violin: {
         color: "rgba(255, 0, 255, 1)"
     },
-    strings: {
-        color: "rgba(255, 0, 255, 1)"
-    },
     cello: {
         color: "rgba(255, 0, 255, 1)"
     },
@@ -34,9 +31,6 @@ export const instrumentSettings: Record<Instrument, {color: string}> = {
     clarinet: {
         color: "rgba(255, 255, 255, 1)"
     },
-    winds: {
-        color: "rgba(255, 255, 255, 1)"
-    }
 };
 
 export const instrumentCategories = [

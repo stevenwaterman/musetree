@@ -22,6 +22,10 @@
             }
         }
     }
+
+    function rightClick() {
+        children.map(pair => pair[0]).forEach(idx => root.deleteChild(idx));
+    }
 </script>
 
 <style>
@@ -65,9 +69,9 @@
 </style>
 
 <div class="column" transition:fade>
-    <div on:mousedown={leftClick} class="node"></div>
+    <div on:mousedown={leftClick} on:contextmenu|preventDefault={rightClick} class="node"></div>
     {#if pendingLoad > 0}
-        <span class="pendingLoad">
+        <span class="pendingLoad" transition:fade>
                 +{pendingLoad}
         </span>
     {/if}
