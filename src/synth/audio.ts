@@ -1,4 +1,4 @@
-import {Offline, Player, Transport} from "tone";
+import {now, Offline, Player, Transport} from "tone";
 import {Piano} from "./instruments/piano";
 import {Notes} from "../state/notes";
 import {Instrument} from "../constants";
@@ -21,11 +21,12 @@ type AudioStatus_Base<TYPE extends string> = {
 type AudioStatus_Empty = AudioStatus_Base<"empty">;
 type AudioStatus_Loading = AudioStatus_Base<"loading">;
 type AudioStatus_Ready = AudioStatus_Base<"ready"> & {
-    duration: number;
+    trackDuration: number;
 };
 type AudioStatus_Playing = AudioStatus_Base<"playing"> & {
-    startTime: number;
-    duration: number;
+    started: number;
+    offset: number;
+    trackDuration: number;
 };
 
 type AudioStatus = AudioStatus_Empty | AudioStatus_Loading | AudioStatus_Ready | AudioStatus_Playing;
@@ -39,21 +40,13 @@ audioStatusStore.subscribe(newStatus => {
 });
 
 const player = new Player().toDestination();
-player.onstop = () => {
-    if (audioStatus.type === "playing") {
-        audioStatusStoreInternal.set({
-            type: "ready",
-            duration: audioStatus.duration
-        });
-    } else {
-        throw new Error("Audio status was " + audioStatus.type + " but player was playing");
-    }
-};
 
 currentNotesStore.subscribe(async state => {
     stop();
     if (state !== null) {
         await load(state.notes, state.duration);
+    } else {
+        audioStatusStoreInternal.set({type: "empty"});
     }
 });
 
@@ -84,28 +77,46 @@ export async function load(notes: Notes, duration: number) {
     }, duration, 1)
         .then(buffer => {
             player.buffer = buffer;
-            console.log("Loaded");
         })
         .then(() => {
-            audioStatusStoreInternal.set({type: "ready", duration: duration})
+            audioStatusStoreInternal.set({type: "ready", trackDuration: duration})
         })
-        .catch(() => {
+        .catch((e) => {
+            console.error(e);
             audioStatusStoreInternal.set({type: "empty"})
         })
 }
 
 export function play(time: number) {
-    if (audioStatus.type === "ready") {
-        player.start(undefined, time);
-        audioStatusStoreInternal.set({
-            type: "playing",
-            duration: audioStatus.duration,
-            startTime: time});
+    if(audioStatus.type === "empty" || audioStatus.type === "loading") {
+        throw new Error("Cannot play - Invalid status " + audioStatus.type);
     }
+
+    if(audioStatus.type === "playing") {
+        stop();
+    }
+
+    player.start(undefined, time);
+
+    const duration = audioStatus.trackDuration;
+    const startedTime = now();
+    audioStatusStoreInternal.set({
+        type: "playing",
+        trackDuration: duration,
+        offset: time,
+        started: startedTime
+    });
+
+    setTimeout(() => {
+        if(audioStatus.type === "playing" && audioStatus.started === startedTime){
+            audioStatusStoreInternal.set({type: "ready", trackDuration: duration})
+        }
+    }, 1000 * (duration - time))
 }
 
 export function stop() {
     if (audioStatus.type === "playing") {
+        audioStatusStoreInternal.set({type: "ready", trackDuration: audioStatus.trackDuration});
         player.stop();
     }
 }

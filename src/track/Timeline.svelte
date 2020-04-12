@@ -7,7 +7,7 @@
   } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  function traverse(node, {startTime, duration: endTime}) {
+  function traverse(node, {offset: startTime, trackDuration: endTime}) {
     const transTime = endTime - startTime;
     return {
       duration: transTime * 1000,

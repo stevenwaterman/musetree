@@ -3,6 +3,7 @@
   import {pitchRange, pitchMin, instrumentSettings} from "../constants";
   import {afterUpdate} from "svelte";
   import {root} from "../state/trackTree";
+  import * as Audio from "../synth/audio";
 
   export let branchStore;
   export let section;
@@ -79,14 +80,14 @@
     });
   }
 
-  // function play(event) {
-  //   const rect = event.target.getBoundingClientRect();
-  //   const y = event.clientY - rect.top;
-  //   const fraction = y / height;
-  //   const addDuration = sectionDuration * fraction;
-  //   const totalDuration = track.startsAt + addDuration;
-  //   audio.play(totalDuration);
-  // }
+  function play(event) {
+    const rect = event.target.getBoundingClientRect();
+    const y = event.clientY - rect.top;
+    const fraction = y / height;
+    const addDuration = sectionDuration * fraction;
+    const totalDuration = track.startsAt + addDuration;
+    Audio.play(totalDuration);
+  }
 </script>
 
 <style>
@@ -103,7 +104,7 @@
     bind:clientWidth
     bind:clientHeight
     class="trackCanvas"
-    on:click="{() => {console.log('Clicked')}}"
+    on:click="{play}"
     on:contextmenu|preventDefault={deselect()}
     bind:this={canvas}
     width={clientWidth}

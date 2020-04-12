@@ -1,7 +1,7 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
 import {Track, TrackStore} from "./track";
-import {unwrapStore} from "../utils";
+import {maybeDerived, unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
     createTree,
@@ -89,39 +89,18 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
 
 const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
 
-type CurrentNotes = { notes: Notes, duration: number } | null;
-let lastNotes: CurrentNotes = null;
-export const currentNotesStore: Readable<CurrentNotes> = derived(selectedBranchStore, ($selected: BranchState | null, set: (value: CurrentNotes) => void) => {
-    if (lastNotes !== null && $selected === null) {
-        lastNotes = null;
-        set(null);
-    }
-    if (lastNotes === null && $selected !== null) {
-        const newValue = {
+export const currentNotesStore: Readable<{ notes: Notes, duration: number } | null> = maybeDerived(
+    selectedBranchStore,
+    ($selected: BranchState | null) => {
+        if ($selected === null) return null;
+        return {
             notes: $selected.notes,
             duration: $selected.track.endsAt
-        };
-        lastNotes = newValue;
-        set(newValue);
-    }
-    if (lastNotes !== null && $selected !== null) {
-        if(lastNotes.duration !== $selected.track.endsAt) {
-            const newValue = {
-                notes: $selected.notes,
-                duration: $selected.track.endsAt
-            };
-            lastNotes = newValue;
-            set(newValue);
         }
-        if(lastNotes.notes !== $selected.notes) {
-            const newValue = {
-                notes: $selected.notes,
-                duration: $selected.track.endsAt
-            };
-            lastNotes = newValue;
-            set(newValue);
-        }
-    }
-}, null);
-currentNotesStore.subscribe(state => console.log("Notes updated", state));
+    },
+    null,
+    (last, next) => {
+        if (last?.duration !== next?.duration) return true;
+        return last?.notes !== next?.notes;
+    });
 

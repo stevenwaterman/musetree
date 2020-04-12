@@ -1,5 +1,4 @@
-import {readable, Readable, Writable, writable} from "svelte/store";
-import {run_all} from "svelte/internal";
+import {derived, Readable, Writable, writable} from "svelte/store";
 
 export function firstLetterUC(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -19,4 +18,25 @@ export function unwrapStore<T, INNER extends Readable<T | null>>(store_2: Readab
         }
     });
     return output;
+}
+
+type Stores = Readable<any> | [Readable<any>, ...Array<Readable<any>>];
+type StoresValues<T> = T extends Readable<infer U> ? U : {
+    [K in keyof T]: T[K] extends Readable<infer U> ? U : never;
+};
+export function maybeDerived<S extends Stores, T>(
+    stores: S,
+    func: (values: StoresValues<S>) => T,
+    initial: T,
+    shouldUpdate: (last: T, next: T) => boolean = (a, b) => (a !== b)
+): Readable<T> {
+    let lastValue: T = initial;
+    const actualFunc = (stores: StoresValues<S>, set: (value: T) => void) => {
+        const nextValue = func(stores);
+        if(shouldUpdate(lastValue, nextValue)) {
+            lastValue = nextValue;
+            set(nextValue);
+        }
+    };
+    return derived(stores, actualFunc, initial);
 }
