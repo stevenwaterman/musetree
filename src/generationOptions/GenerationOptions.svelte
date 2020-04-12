@@ -11,7 +11,6 @@
   } from "../state/settings";
   import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
   import { genres, instrumentCategories } from "../constants";
-  import {audio} from "../state/audio";
 </script>
 
 <style>

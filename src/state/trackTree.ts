@@ -17,9 +17,7 @@ import {createNotesStore, Notes} from "./notes";
 type BaseStateDecoration = {
     pendingLoad: number;
 }
-type RootStateDecoration = BaseStateDecoration & {
-
-};
+type RootStateDecoration = BaseStateDecoration & {};
 export type BranchStateDecoration = BaseStateDecoration & {
     encoding: MusenetEncoding,
     notes: Notes,
@@ -30,12 +28,8 @@ type BaseStoreDecoration = {
     addChild: (trackStore: TrackStore) => void;
     updatePendingLoad: (updater: (current: number) => number) => void;
 }
-type RootStoreDecoration = BaseStoreDecoration & {
-
-}
-type BranchStoreDecoration = BaseStoreDecoration & {
-
-}
+type RootStoreDecoration = BaseStoreDecoration & {}
+type BranchStoreDecoration = BaseStoreDecoration & {}
 
 type PendingLoadStore = Writable<{ pendingLoad: number }>;
 
@@ -94,5 +88,40 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
 }
 
 const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
-export const currentNotesStore: Readable<Notes | null> = derived(selectedBranchStore, $selected => $selected === null ? null : $selected.notes);
+
+type CurrentNotes = { notes: Notes, duration: number } | null;
+let lastNotes: CurrentNotes = null;
+export const currentNotesStore: Readable<CurrentNotes> = derived(selectedBranchStore, ($selected: BranchState | null, set: (value: CurrentNotes) => void) => {
+    if (lastNotes !== null && $selected === null) {
+        lastNotes = null;
+        set(null);
+    }
+    if (lastNotes === null && $selected !== null) {
+        const newValue = {
+            notes: $selected.notes,
+            duration: $selected.track.endsAt
+        };
+        lastNotes = newValue;
+        set(newValue);
+    }
+    if (lastNotes !== null && $selected !== null) {
+        if(lastNotes.duration !== $selected.track.endsAt) {
+            const newValue = {
+                notes: $selected.notes,
+                duration: $selected.track.endsAt
+            };
+            lastNotes = newValue;
+            set(newValue);
+        }
+        if(lastNotes.notes !== $selected.notes) {
+            const newValue = {
+                notes: $selected.notes,
+                duration: $selected.track.endsAt
+            };
+            lastNotes = newValue;
+            set(newValue);
+        }
+    }
+}, null);
+currentNotesStore.subscribe(state => console.log("Notes updated", state));
 

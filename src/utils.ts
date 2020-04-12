@@ -1,4 +1,5 @@
-import {Readable, Writable, writable} from "svelte/store";
+import {readable, Readable, Writable, writable} from "svelte/store";
+import {run_all} from "svelte/internal";
 
 export function firstLetterUC(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);

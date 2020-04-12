@@ -1,7 +1,6 @@
 <script>
   import {onMount, afterUpdate} from "svelte";
   import {autoPlayStore, preplayStore, configStore} from "../state/settings";
-  import {audio} from "../state/audio";
   import {request} from "../broker";
   import {root} from "../state/trackTree";
   import panzoom from "panzoom";
