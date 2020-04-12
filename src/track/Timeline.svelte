@@ -1,5 +1,5 @@
 <script>
-  import { audioStatusStore } from "../state/audio";
+  import { audioStatusStore } from "../synth/audio";
   import {
     yScaleStore,
     autoScrollStore,
@@ -7,43 +7,36 @@
   } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  // function traverse(node, { startTime }) {
-  //   const track = $selectedTrackStore;
-  //   if (track == null) return;
-  //
-  //   const endTime = track.endsAt;
-  //   const transTime = endTime - startTime;
-  //
-  //   return {
-  //     duration: transTime * 1000,
-  //     tick: t => {
-  //       const startPx = startTime * $yScaleStore;
-  //       const endPx = endTime * $yScaleStore;
-  //       const transPx = endPx - startPx;
-  //       const y = startPx + t * transPx;
-  //       node.style = `top:${y}px;`;
-  //       if ($isScrollingStore) {
-  //         node.scrollIntoView({
-  //           block: "center",
-  //           behaviour: "smooth"
-  //         });
-  //       }
-  //     }
-  //   };
-  // }
+  function traverse(node, {startTime, duration: endTime}) {
+    const transTime = endTime - startTime;
+    return {
+      duration: transTime * 1000,
+      tick: t => {
+        const startPx = startTime * $yScaleStore;
+        const endPx = endTime * $yScaleStore;
+        const transPx = endPx - startPx;
+        const y = startPx + t * transPx;
+        node.style = `top:${y}px;`;
+        if ($isScrollingStore) {
+          node.scrollIntoView({
+            block: "center",
+            behaviour: "smooth"
+          });
+        }
+      }
+    };
+  }
 
   let element;
   let transition;
-  let visible = false;
+  let hidden = true;
 
-  audioStatusStore.subscribe(({ playing, time }) => {
+  audioStatusStore.subscribe(status => {
     if (transition) transition.end();
-    visible = playing;
-    if (visible) {
+    hidden = status.type !== "playing";
+    if (!hidden) {
       isScrollingStore.set($autoScrollStore);
-      transition = create_in_transition(element, traverse, {
-        startTime: time
-      });
+      transition = create_in_transition(element, traverse, status);
       transition.start();
     }
   });
@@ -70,11 +63,9 @@
   }
 </style>
 
-<!--<div-->
-<!--  bind:this={element}-->
-<!--  on:introend={() => {-->
-<!--    visible = false;-->
-<!--  }}-->
-<!--  class="anchor">-->
-<!--  <div hidden={!visible} class="line" />-->
-<!--</div>-->
+<div
+        bind:this={element}
+        on:introend="{() => { hidden = true; }}"
+        class="anchor">
+  <div class="line" hidden={hidden}></div>
+</div>

@@ -1,4 +1,4 @@
-import {Offline, Oscillator, Player, ToneAudioBuffer, Transport} from "tone";
+import {Offline, Player, Transport} from "tone";
 import {Piano} from "./instruments/piano";
 import {Notes} from "../state/notes";
 import {Instrument} from "../constants";
@@ -12,15 +12,42 @@ import {Flute} from "./instruments/flute";
 import {Harp} from "./instruments/harp";
 import {Trumpet} from "./instruments/trumpet";
 import {Violin} from "./instruments/violin";
-import {derived, Readable, Writable, writable} from "svelte/store";
+import {Writable, writable} from "svelte/store";
 import {currentNotesStore} from "../state/trackTree";
 
-const audioStatusStoreInternal: Writable<boolean> = writable(false);
-export const audioStatusStore: Readable<boolean> = audioStatusStoreInternal;
+type AudioStatus_Base<TYPE extends string> = {
+    type: TYPE;
+}
+type AudioStatus_Empty = AudioStatus_Base<"empty">;
+type AudioStatus_Loading = AudioStatus_Base<"loading">;
+type AudioStatus_Ready = AudioStatus_Base<"ready"> & {
+    duration: number;
+};
+type AudioStatus_Playing = AudioStatus_Base<"playing"> & {
+    startTime: number;
+    duration: number;
+};
+
+type AudioStatus = AudioStatus_Empty | AudioStatus_Loading | AudioStatus_Ready | AudioStatus_Playing;
+
+const audioStatusStoreInternal: Writable<AudioStatus> = writable({type: "empty"});
+export const audioStatusStore = audioStatusStoreInternal;
+
+let audioStatus: AudioStatus = {type: "empty"};
+audioStatusStore.subscribe(newStatus => {
+    audioStatus = newStatus;
+});
 
 const player = new Player().toDestination();
 player.onstop = () => {
-    audioStatusStoreInternal.set(false);
+    if (audioStatus.type === "playing") {
+        audioStatusStoreInternal.set({
+            type: "ready",
+            duration: audioStatus.duration
+        });
+    } else {
+        throw new Error("Audio status was " + audioStatus.type + " but player was playing");
+    }
 };
 
 currentNotesStore.subscribe(async state => {
@@ -31,6 +58,12 @@ currentNotesStore.subscribe(async state => {
 });
 
 export async function load(notes: Notes, duration: number) {
+    if (audioStatus.type === "playing") {
+        throw new Error("Audio should not be playing, it will break");
+    }
+
+    audioStatusStoreInternal.set({type: "loading"});
+
     await Offline(() => {
         const synths: Record<Instrument, SynthInstrument> = {
             bass: new Bass(),
@@ -52,15 +85,28 @@ export async function load(notes: Notes, duration: number) {
         .then(buffer => {
             player.buffer = buffer;
             console.log("Loaded");
-        });
+        })
+        .then(() => {
+            audioStatusStoreInternal.set({type: "ready", duration: duration})
+        })
+        .catch(() => {
+            audioStatusStoreInternal.set({type: "empty"})
+        })
 }
 
 export function play(time: number) {
-    player.start(undefined, time);
-    audioStatusStoreInternal.set(true);
+    if (audioStatus.type === "ready") {
+        player.start(undefined, time);
+        audioStatusStoreInternal.set({
+            type: "playing",
+            duration: audioStatus.duration,
+            startTime: time});
+    }
 }
 
 export function stop() {
-    player.stop();
+    if (audioStatus.type === "playing") {
+        player.stop();
+    }
 }
 

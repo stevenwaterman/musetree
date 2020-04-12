@@ -1,9 +1,9 @@
 <script>
-    // import Timeline from "./Timeline.svelte";
     import TrackRowOptions from "./TrackRowOptions.svelte";
     import TrackCanvas from "./TrackCanvas.svelte";
     import {isScrollingStore} from "../state/settings";
     import {root} from "../state/trackTree";
+    import Timeline from "./Timeline.svelte";
 
     $: selectedChildStore_2 = root.selectedChildStore_2;
     $: selectedChildStore = $selectedChildStore_2;
@@ -23,7 +23,7 @@
 </style>
 
 <div class="container" on:wheel={() => isScrollingStore.set(false)}>
-<!--      <Timeline />-->
+      <Timeline />
     {#if selectedChildStore === null}
         <p class="placeholder">Use the controls below to begin</p>
     {:else}
