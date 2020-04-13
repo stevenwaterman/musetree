@@ -1,21 +1,20 @@
-import {mtof, PolySynth} from "tone";
-import {Instrument} from "../../constants";
-import {Notes} from "../../state/notes";
+import {Instrument, pitchMin} from "../../constants";
+import {Note} from "../../state/notes";
 import {SynthInstrument} from "./synthInstrument";
-import {MidiNote} from "tone/build/esm/core/type/NoteUnits";
-import {Frequency, Time} from "tone/build/esm/core/type/Units";
-import {Instrument as ToneInstrument} from "tone/build/esm/instrument/Instrument";
 
-export abstract class FrequencySynth<I extends Instrument> implements SynthInstrument{
+export abstract class FrequencySynth<I extends Instrument> implements SynthInstrument<I>{
     protected abstract instrument: I;
-    protected abstract synth: ToneInstrument<any>;
+    protected abstract instantiate(ctx: OfflineAudioContext, destination: AudioNode): void;
+    protected abstract loadNote(frequency: number, duration: number, startTime: number): void;
 
-    public load(notes: Notes) {
+    public schedule(ctx: OfflineAudioContext, destination: AudioNode, notes: Record<I, Note[]>) {
+        // const sampleRate = ctx.sampleRate;
+        this.instantiate(ctx, destination);
         notes[this.instrument].forEach(note => {
-            const freq: Frequency = mtof(note.pitch as MidiNote);
-            const duration: Time = note.duration;
-            const time = note.time_on;
-            this.synth.triggerAttackRelease(freq, duration, time);
+            const freq: number = note.pitch - pitchMin;
+            const duration: number = note.duration;
+            const startTime = note.time_on;
+            this.loadNote(freq, duration, startTime);
         });
     }
 }

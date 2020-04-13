@@ -1,17 +1,8 @@
-import {now, Offline, Player, Transport} from "tone";
+import {now, Player, ToneAudioBuffer} from "tone";
 import {Piano} from "./instruments/piano";
 import {Notes} from "../state/notes";
 import {Instrument} from "../constants";
 import {SynthInstrument} from "./instruments/synthInstrument";
-import {Bass} from "./instruments/bass";
-import {Clarinet} from "./instruments/clarinet";
-import {Cello} from "./instruments/cello";
-import {Drums} from "./instruments/drums";
-import {Guitar} from "./instruments/guitar";
-import {Flute} from "./instruments/flute";
-import {Harp} from "./instruments/harp";
-import {Trumpet} from "./instruments/trumpet";
-import {Violin} from "./instruments/violin";
 import {Writable, writable} from "svelte/store";
 import {currentNotesStore} from "../state/trackTree";
 
@@ -42,49 +33,39 @@ audioStatusStore.subscribe(newStatus => {
 const player = new Player().toDestination();
 
 currentNotesStore.subscribe(async state => {
-    stop();
     if (state !== null) {
         await load(state.notes, state.duration);
     } else {
-        audioStatusStoreInternal.set({type: "empty"});
+        reset();
     }
 });
 
+const synths: Partial<Record<Instrument, SynthInstrument<Instrument>>> = {
+    piano: new Piano(),
+};
+
+
+const sampleRate = 48000;
+async function render(notes: Notes, duration: number): Promise<AudioBuffer> {
+    const ctx = new OfflineAudioContext(1, duration * sampleRate, sampleRate);
+    const destination = ctx.destination;
+
+    synths.piano?.schedule(ctx, destination, notes);
+
+    return await ctx.startRendering();
+}
+
 export async function load(notes: Notes, duration: number) {
     if (audioStatus.type === "playing") {
-        throw new Error("Audio should not be playing, it will break");
+        stop();
     }
 
     audioStatusStoreInternal.set({type: "loading"});
 
-    await Offline(() => {
-        const synths: Record<Instrument, SynthInstrument> = {
-            bass: new Bass(),
-            cello: new Cello(),
-            clarinet: new Clarinet(),
-            drums: new Drums(),
-            flute: new Flute(),
-            guitar: new Guitar(),
-            harp: new Harp(),
-            piano: new Piano(),
-            trumpet: new Trumpet(),
-            violin: new Violin()
-        };
-        Object.values(synths).forEach(synth => {
-            synth.load(notes);
-        });
-        Transport.start();
-    }, duration, 1)
-        .then(buffer => {
-            player.buffer = buffer;
-        })
-        .then(() => {
-            audioStatusStoreInternal.set({type: "ready", trackDuration: duration})
-        })
-        .catch((e) => {
-            console.error(e);
-            audioStatusStoreInternal.set({type: "empty"})
-        })
+    const audioBuffer = await render(notes, duration);
+    player.buffer = new ToneAudioBuffer(audioBuffer);
+
+    audioStatusStoreInternal.set({type: "ready", trackDuration: duration});
 }
 
 export function play(time: number) {
@@ -119,5 +100,10 @@ export function stop() {
         audioStatusStoreInternal.set({type: "ready", trackDuration: audioStatus.trackDuration});
         player.stop();
     }
+}
+
+function reset() {
+    player.stop();
+    audioStatusStoreInternal.set({type: "empty"});
 }
 

@@ -1,5 +1,6 @@
-import {Notes} from "../../state/notes";
+import {Note} from "../../state/notes";
+import {Instrument} from "../../constants";
 
-export interface SynthInstrument {
-    load(notes: Notes): void;
+export type SynthInstrument<I extends Instrument> = {
+    schedule(ctx: OfflineAudioContext, destination: AudioNode, notes: Record<I, Note[]>): void;
 }

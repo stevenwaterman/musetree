@@ -1,32 +1,36 @@
-import {PolySynth, Synth, SynthOptions} from "tone";
-import {Instrument, pitchRange} from "../../constants";
-import {RecursivePartial} from "tone/build/esm/core/util/Interface";
+import {Merge, mtof} from "tone";
+import {Instrument, pitchMax, pitchMin, pitchRange} from "../../constants";
 import {FrequencySynth} from "./frequencySynth";
+import {MidiNote} from "tone/build/esm/core/type/NoteUnits";
+import {Tone} from "tone/build/esm/core/Tone";
 
 export abstract class SimpleAbstractPolySynth<I extends Instrument> extends FrequencySynth<I>{
-    protected synth: PolySynth;
+    private notes: Array<(duration: number, startTime: number) => void> = [];
 
-    protected constructor(synthOptions: RecursivePartial<SynthOptions>) {
-        super();
-        this.synth = new PolySynth<Synth>({
-            maxPolyphony: pitchRange,
-            options: synthOptions,
-            voice: RandomPhaseSynth
-        });
-        this.synth.volume.value = -20;
-        this.synth.toDestination();
-    }
-}
+    protected instantiate(ctx: OfflineAudioContext, destination: AudioNode) {
+        const outputGainNode = ctx.createGain();
+        outputGainNode.gain.value = 0.2;
+        outputGainNode.connect(destination);
 
-class RandomPhaseSynth extends Synth {
-    static getDefaults(): SynthOptions {
-        const old = super.getDefaults();
-        return {
-            ...old,
-            oscillator: {
-                ...old.oscillator,
-                phase: Math.random() * 360
-            }
+        this.notes = [];
+        for(let pitch = pitchMin; pitch < pitchMax; pitch++) {
+            const gainNode = ctx.createGain();
+            gainNode.connect(outputGainNode);
+            gainNode.gain.value = 0;
+
+            const oscillatorNode = ctx.createOscillator();
+            oscillatorNode.connect(gainNode);
+            oscillatorNode.frequency.value = mtof(pitch as MidiNote);
+            oscillatorNode.start();
+
+            this.notes.push(((duration, startTime) => {
+                gainNode.gain.setValueAtTime(1, ctx.currentTime + startTime);
+                gainNode.gain.setValueAtTime(0, ctx.currentTime + startTime + duration);
+            }))
         }
+    }
+
+    protected loadNote(frequency: number, duration: number, startTime: number): void {
+        this.notes[frequency](duration, startTime);
     }
 }
