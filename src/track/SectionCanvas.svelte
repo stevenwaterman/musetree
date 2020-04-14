@@ -3,7 +3,7 @@
   import {pitchRange, pitchMin, instrumentSettings} from "../constants";
   import {afterUpdate} from "svelte";
   import {root} from "../state/trackTree";
-  import * as Audio from "../synth/audio";
+  import * as Audio from "../synth/audioPlayer";
 
   export let branchStore;
   export let section;
@@ -17,10 +17,10 @@
   $: branchState = $branchStore;
   $: path = branchState.path;
   $: index = path[path.length - 1];
-  $: track = branchState === null ? null : branchState.track;
-  $: notes = track === null ? null : track.notes;
-  $: startsAt = track ? track.startsAt : null;
-  $: sectionDuration = track ? track.endsAt - startsAt : 0;
+  $: section = branchState === null ? null : branchState.section;
+  $: notes = section === null ? null : section.notes;
+  $: startsAt = section ? section.startsAt : null;
+  $: sectionDuration = section ? section.endsAt - startsAt : 0;
   $: height = sectionDuration * $yScaleStore;
   $: position = startsAt * $yScaleStore;
 
@@ -85,13 +85,13 @@
     const y = event.clientY - rect.top;
     const fraction = y / height;
     const addDuration = sectionDuration * fraction;
-    const totalDuration = track.startsAt + addDuration;
+    const totalDuration = section.startsAt + addDuration;
     Audio.play(totalDuration);
   }
 </script>
 
 <style>
-  .trackCanvas {
+  .sectionCanvas {
     position: relative;
     cursor: pointer;
     width: 100%;
@@ -103,7 +103,7 @@
   <canvas
     bind:clientWidth
     bind:clientHeight
-    class="trackCanvas"
+    class="sectionCanvas"
     on:click="{play}"
     on:contextmenu|preventDefault={deselect()}
     bind:this={canvas}

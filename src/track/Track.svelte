@@ -1,6 +1,6 @@
 <script>
-    import TrackRowOptions from "./TrackRowOptions.svelte";
-    import TrackCanvas from "./TrackCanvas.svelte";
+    import SectionRowOptions from "./SectionOptions.svelte";
+    import SectionCanvas from "./SectionCanvas.svelte";
     import {isScrollingStore} from "../state/settings";
     import {root} from "../state/trackTree";
     import Timeline from "./Timeline.svelte";
@@ -27,7 +27,7 @@
     {#if selectedChildStore === null}
         <p class="placeholder">Use the controls below to begin</p>
     {:else}
-        <TrackCanvas branchStore={selectedChildStore} section={0} deselect="{() => root.select([])}"/>
+        <SectionCanvas branchStore={selectedChildStore} section={0} deselect="{() => root.select([])}"/>
     {/if}
 </div>
-<TrackRowOptions />
+<SectionRowOptions />

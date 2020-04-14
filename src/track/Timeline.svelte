@@ -1,5 +1,5 @@
 <script>
-  import { audioStatusStore } from "../synth/audio";
+  import { audioStatusStore } from "../synth/audioPlayer";
   import {
     yScaleStore,
     autoScrollStore,
@@ -7,7 +7,7 @@
   } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  function traverse(node, {offset: startTime, trackDuration: endTime}) {
+  function traverse(node, {offset: startTime, duration: endTime}) {
     const transTime = endTime - startTime;
     return {
       duration: transTime * 1000,

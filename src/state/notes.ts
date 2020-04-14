@@ -1,5 +1,5 @@
 import {derived, Readable, writable} from "svelte/store";
-import {TrackStore as TrackStore} from "./track";
+import {SectionStore} from "./section";
 import {Instrument, instruments} from "../constants";
 
 export type Note = {
@@ -20,11 +20,11 @@ export function createEmptyNotes(): Notes {
 export function createRootNotesStore(): NotesStore {
     return writable({notes: createEmptyNotes()});
 }
-export function createBranchNotesStore(parent: NotesStore, trackStore: TrackStore): NotesStore {
-    return derived([parent, trackStore],
-        ([$parent, $trackStore]) => {
+export function createBranchNotesStore(parent: NotesStore, sectionStore: SectionStore): NotesStore {
+    return derived([parent, sectionStore],
+        ([$parent, $sectionStore]) => {
             const parentNotes: Notes = $parent.notes;
-            const childNotes: Notes = $trackStore.track.notes;
+            const childNotes: Notes = $sectionStore.section.notes;
             const combinedNotes: Notes = createEmptyNotes();
             instruments.forEach(instrument => {
                 combinedNotes[instrument] = [...parentNotes[instrument], ...childNotes[instrument]];
@@ -34,12 +34,12 @@ export function createBranchNotesStore(parent: NotesStore, trackStore: TrackStor
             };
         });
 }
-export function createNotesStore(parent: null | ({type: "root"}) | (Parameters<typeof createBranchNotesStore>[0] & {type: "branch"}), trackStore: TrackStore): NotesStore {
+export function createNotesStore(parent: null | ({type: "root"}) | (Parameters<typeof createBranchNotesStore>[0] & {type: "branch"}), sectionStore: SectionStore): NotesStore {
     if(parent === null) {
         return createRootNotesStore();
     } else if(parent.type === "root") {
-        return createBranchNotesStore(createRootNotesStore(), trackStore);
+        return createBranchNotesStore(createRootNotesStore(), sectionStore);
     } else {
-        return createBranchNotesStore(parent, trackStore);
+        return createBranchNotesStore(parent, sectionStore);
     }
 }

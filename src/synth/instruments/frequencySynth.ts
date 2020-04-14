@@ -1,20 +1,14 @@
-import {Instrument, pitchMin} from "../../constants";
-import {Note} from "../../state/notes";
+import {Instrument} from "../../constants";
 import {SynthInstrument} from "./synthInstrument";
+import {AudioNote, AudioNotes} from "../decoder";
 
 export abstract class FrequencySynth<I extends Instrument> implements SynthInstrument<I>{
     protected abstract instrument: I;
     protected abstract instantiate(ctx: OfflineAudioContext, destination: AudioNode): void;
-    protected abstract loadNote(frequency: number, duration: number, startTime: number): void;
+    protected abstract loadNote(note: AudioNote): void;
 
-    public schedule(ctx: OfflineAudioContext, destination: AudioNode, notes: Record<I, Note[]>) {
-        // const sampleRate = ctx.sampleRate;
+    public schedule(ctx: OfflineAudioContext, destination: AudioNode, notes: AudioNotes) {
         this.instantiate(ctx, destination);
-        notes[this.instrument].forEach(note => {
-            const freq: number = note.pitch - pitchMin;
-            const duration: number = note.duration;
-            const startTime = note.time_on;
-            this.loadNote(freq, duration, startTime);
-        });
+        notes[this.instrument].forEach(note => this.loadNote(note));
     }
 }

@@ -5,7 +5,7 @@
   import ChildButton from "./ChildButton.svelte";
   import {configStore} from "../state/settings";
   import { request } from "../broker";
-  import {createTrackStore} from "../state/track";
+  import {createSectionStore} from "../state/section";
 
   $: selectedStore_2 = root.selectedStore_2;
   $: selectedStore = $selectedStore_2;

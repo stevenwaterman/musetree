@@ -1,6 +1,6 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
-import {Track, TrackStore} from "./track";
+import {Section, SectionStore} from "./section";
 import {maybeDerived, unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
@@ -21,11 +21,11 @@ type RootStateDecoration = BaseStateDecoration & {};
 export type BranchStateDecoration = BaseStateDecoration & {
     encoding: MusenetEncoding,
     notes: Notes,
-    track: Track
+    section: Section
 };
 
 type BaseStoreDecoration = {
-    addChild: (trackStore: TrackStore) => void;
+    addChild: (sectionStore: SectionStore) => void;
     updatePendingLoad: (updater: (current: number) => number) => void;
 }
 type RootStoreDecoration = BaseStoreDecoration & {}
@@ -34,6 +34,7 @@ type BranchStoreDecoration = BaseStoreDecoration & {}
 type PendingLoadStore = Writable<{ pendingLoad: number }>;
 
 export type TreeStore = StoreSafeDecorated_DecoratedState_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>;
+export type TreeState = StateFor<TreeStore>;
 export type BranchStore = StoreSafeDecorated_DecoratedState_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>;
 export type BranchState = StateFor<BranchStore>;
 export type NodeStore = TreeStore | BranchStore
@@ -44,12 +45,12 @@ const rootStateDecorationStore: Writable<RootStateDecoration> = writable({
 });
 export const root: TreeStore = createTree(rootStateDecorationStore, createRootStoreDecorationSupplier(rootStateDecorationStore));
 
-function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0] & Parameters<typeof createNotesStore>[0], trackStore: TrackStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
-    const encodingStore = createEncodingStore(parentStore, trackStore);
-    const notesStore = createNotesStore(parentStore, trackStore);
-    return derived([trackStore, encodingStore, notesStore, pendingLoadStore],
-        ([$trackStore, $encodingStore, $notesStore, $pendingLoadStore]) => ({
-            ...$trackStore,
+function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0] & Parameters<typeof createNotesStore>[0], sectionStore: SectionStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
+    const encodingStore = createEncodingStore(parentStore, sectionStore);
+    const notesStore = createNotesStore(parentStore, sectionStore);
+    return derived([sectionStore, encodingStore, notesStore, pendingLoadStore],
+        ([$sectionStore, $encodingStore, $notesStore, $pendingLoadStore]) => ({
+            ...$sectionStore,
             ...$encodingStore,
             ...$notesStore,
             ...$pendingLoadStore
@@ -59,9 +60,9 @@ function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createE
 
 function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): StoreDecorationSupplier_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration> {
     return (partDecoratedStore: StoreSafePartDecorated_DecoratedState_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>) => ({
-        addChild: (trackStore: TrackStore) => {
+        addChild: (sectionStore: SectionStore) => {
             const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
-            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, trackStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
         },
         updatePendingLoad: (updater: (current: number) => number) => {
             pendingLoadStore.update(state => ({
@@ -74,9 +75,9 @@ function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): 
 
 function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): StoreDecorationSupplier_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration> {
     return (partDecoratedStore: StoreSafePartDecorated_DecoratedState_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>) => ({
-        addChild: (trackStore: TrackStore) => {
+        addChild: (sectionStore: SectionStore) => {
             const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
-            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, trackStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
         },
         updatePendingLoad: (updater: (current: number) => number) => {
             pendingLoadStore.update(state => ({
@@ -88,19 +89,4 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
 }
 
 const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
-
-export const currentNotesStore: Readable<{ notes: Notes, duration: number } | null> = maybeDerived(
-    selectedBranchStore,
-    ($selected: BranchState | null) => {
-        if ($selected === null) return null;
-        return {
-            notes: $selected.notes,
-            duration: $selected.track.endsAt
-        }
-    },
-    null,
-    (last, next) => {
-        if (last?.duration !== next?.duration) return true;
-        return last?.notes !== next?.notes;
-    });
 

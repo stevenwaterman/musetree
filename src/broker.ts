@@ -1,15 +1,16 @@
 import axios, {AxiosResponse} from "axios";
-import {InstrumentCategory, instruments} from "./constants";
+import {Instrument} from "./constants";
 import download from "downloadjs";
 import {Config} from "./state/settings";
 import {
     NodeState,
     NodeStore
 } from "./state/trackTree";
-import {createTrackStore, Track, TrackState} from "./state/track";
+import {createSectionStore, Section, SectionState} from "./state/section";
 import {Writable} from "svelte/store";
 import {createEmptyNotes, Note, Notes} from "./state/notes";
 import {MusenetEncoding} from "./state/encoding";
+import {renderAudio} from "./synth/audioRender";
 
 
 
@@ -44,7 +45,7 @@ export async function request(config: Config, store: NodeStore, state: NodeState
         return await requestInternal(config, store, [], 0);
     }
     if (store.type === "branch" && state.type === "branch") {
-        return await requestInternal(config, store, state.encoding, state.track.endsAt);
+        return await requestInternal(config, store, state.encoding, state.section.endsAt);
     }
     throw new Error("Unrecognised combination of store and state types " + store.type + "/" + state.type);
 }
@@ -69,15 +70,16 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
     })
         .then((res: AxiosResponse<ResponseData>) =>
             res.data.completions)
-        .then((completions: Completion[]) =>
-            completions.map((completion: Completion) =>
-                parseCompletion(completion, prevDuration)))
-        .then((tracks: Track[]) =>
-            tracks.map((track: Track) =>
-                    createTrackStore(track)))
-        .then((trackStores: Writable<TrackState>[]) =>
-            trackStores.map((trackStore: Writable<TrackState>) =>
-                store.addChild(trackStore)))
+        .then((completions: Completion[]) => {
+            const promises = completions.map((completion: Completion) => parseCompletion(completion, prevEncoding, prevDuration));
+            return Promise.all(promises)
+        })
+        .then((sections: Section[]) =>
+            sections.map((section: Section) =>
+                    createSectionStore(section)))
+        .then((sectionStores: Writable<SectionState>[]) =>
+            sectionStores.map((sectionStore: Writable<SectionState>) =>
+                store.addChild(sectionStore)))
         .finally(() =>
             store.updatePendingLoad(it => it - 4))
 }
@@ -86,23 +88,20 @@ type Completion = {
     encoding: string;
     totalTime: number;
     tracks: Array<{
-        instrument: InstrumentCategory,
+        instrument: Instrument,
         notes: Note[]
     }>
 }
 
-
-
-function parseCompletion(completion: Completion, prevDuration: number): Track {
-    return {
-        encoding: encodingToArray(completion.encoding),
-        startsAt: prevDuration,
-        endsAt: completion.totalTime,
-        notes: parseNotes(completion, prevDuration),
-    };
+async function parseCompletion(completion: Completion, prevEncoding: MusenetEncoding, prevDuration: number): Promise<Section> {
+    const fullEncoding = encodingToArray(completion.encoding);
+    const encoding = fullEncoding.slice(prevEncoding.length);
+    const startsAt = prevDuration;
+    const endsAt = completion.totalTime;
+    const notes = parseNotes(completion, prevDuration);
+    const audio = await renderAudio(encoding, endsAt - startsAt);
+    return {encoding, startsAt, endsAt, notes, audio};
 }
-
-
 
 function transposeNotes(notes: Note[], subtract: number): Note[] {
     return notes
