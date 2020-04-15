@@ -61,8 +61,8 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
                 if(start !== undefined) {
                     const {startTime, volume} = start;
                     instrumentNotes.push({
-                        startTime: startTime / 100,
-                        endTime: time / 100,
+                        startTime: startTime,
+                        endTime: time,
                         pitch: pitch,
                         volume: volume / 80
                     });
@@ -74,8 +74,8 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
                 if(previous !== undefined) {
                     const {startTime, volume} = previous;
                     instrumentNotes.push({
-                        startTime: startTime / 100,
-                        endTime: time / 100,
+                        startTime: startTime,
+                        endTime: time,
                         pitch: pitch,
                         volume: volume / 80
                     });
@@ -84,7 +84,10 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
                 notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
             }
         } else if (token.type == "wait") {
-            time += token.delay;
+            const delay = token.delay;
+            const factor = 6/625;
+            const seconds = delay * factor;
+            time += seconds;
         }
     });
 
@@ -152,3 +155,4 @@ export function parseToken(token: number): Token | null {
     if (token < 4096) return {type: "wait", delay: (token % 128) + 1};
     return null;
 }
+

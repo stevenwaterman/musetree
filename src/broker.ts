@@ -99,6 +99,7 @@ async function parseCompletion(completion: Completion, prevEncoding: MusenetEnco
     const startsAt = prevDuration;
     const endsAt = completion.totalTime;
     const notes = parseNotes(completion, prevDuration);
+    console.log(startsAt, endsAt, Object.values(notes));
     const audio = await renderAudio(encoding, endsAt - startsAt);
     return {encoding, startsAt, endsAt, notes, audio};
 }

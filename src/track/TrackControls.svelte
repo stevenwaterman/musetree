@@ -1,6 +1,6 @@
 <script>
     import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../state/settings";
-    import {load as audioLoad, play, stop, audioStatusStore} from "../synth/audioPlayer"
+    import {play, stop, audioStatusStore} from "../synth/audioPlayer"
 </script>
 
 <style>
@@ -44,12 +44,10 @@
 </style>
 
 <div class="container row center">
-    {#if $audioStatusStore.type === "playing"}
+    {#if $audioStatusStore.type === "on"}
         <button on:click={stop}>Stop</button>
-    {:else if $audioStatusStore.type === "ready"}
+    {:else}
         <button on:click={() => play(0)}>Play</button>
-    {:else if $audioStatusStore.type === "loading"}
-        <button>Loading</button>
     {/if}
 
     <div class="col margin">

@@ -33,7 +33,7 @@
 
   audioStatusStore.subscribe(status => {
     if (transition) transition.end();
-    hidden = status.type !== "playing";
+    hidden = status.type === "off";
     if (!hidden) {
       isScrollingStore.set($autoScrollStore);
       transition = create_in_transition(element, traverse, status);

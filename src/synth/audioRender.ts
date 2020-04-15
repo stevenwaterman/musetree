@@ -24,15 +24,17 @@ const synths: Partial<Record<Instrument, SynthInstrument<Instrument>>> = {
     violin: new Violin()
 };
 
-const sampleRate = 44100;
+const sampleRate = 48000;
 async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer> {
     const ctx = new OfflineAudioContext(1, duration * sampleRate, sampleRate);
+
 
     const gain = ctx.createGain();
     gain.gain.value = 0.2;
     gain.connect(ctx.destination);
 
     Object.values(synths).forEach(synth => synth && synth.schedule(ctx, gain, notes));
+    console.log(ctx.currentTime);
 
     return await ctx.startRendering();
 }
@@ -40,5 +42,5 @@ async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer>
 export async function renderAudio(encoding: MusenetEncoding, duration: number) {
     const notes = decode(encoding);
     console.log(encoding, notes, duration);
-    return await render(notes, duration + 5);
+    return await render(notes, duration);
 }
