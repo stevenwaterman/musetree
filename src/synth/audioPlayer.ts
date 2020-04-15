@@ -2,11 +2,11 @@ import {getContext, now, Player, ToneAudioBuffer} from "tone";
 import {Piano} from "./instruments/piano";
 import {Notes} from "../state/notes";
 import {Instrument} from "../constants";
-import {SynthInstrument} from "./instruments/synthInstrument";
+import {SynthInstrument} from "./nodes/synthInstrument";
 import {Writable, writable} from "svelte/store";
 // import {currentNotesStore} from "../state/trackTree";
 import {Section} from "../state/section";
-import {BranchState, root, TreeState} from "../state/trackTree";
+import {BranchState, BranchStore, root, TreeState} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
 
 type AudioStatus_Base<TYPE extends string> = {
@@ -63,10 +63,10 @@ export async function load(section: Section) {
 export function play(time: number) {
     const ctx = new AudioContext();
     let bufferSource = ctx.createBufferSource();
-    const rootState: TreeState = get_store_value(root);
-    const childStore = rootState.children[1];
+    const childStore: BranchStore = get_store_value(root.selectedChildStore_2);
     const childState: BranchState = get_store_value(childStore);
     bufferSource.buffer = childState.section.audio;
+
     bufferSource.connect(ctx.destination);
     bufferSource.start();
     // if(audioStatus.type === "empty" || audioStatus.type === "loading") {

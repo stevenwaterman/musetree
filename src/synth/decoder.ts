@@ -66,7 +66,7 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
                         pitch: pitch,
                         volume: volume / 80
                     });
-                    console.log("Adding", startTime, time, pitch);
+                    // console.log("Adding", startTime, time, pitch);
                     delete notesStarted[instrument][pitch]
                 }
             } else {
@@ -79,7 +79,7 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
                         pitch: pitch,
                         volume: volume / 80
                     });
-                    console.log("Adding Prematurely", startTime, time, pitch);
+                    // console.log("Adding Prematurely", startTime, time, pitch);
                 }
                 notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
             }
