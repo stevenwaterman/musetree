@@ -1,7 +1,7 @@
-import {SimpleFmSynth} from "../nodes/simpleFmSynth";
+import {FmSynth} from "../nodes/FmSynth";
 import {ENVELOPE_AHDSR} from "../nodes/envelopes";
 
-export class Violin extends SimpleFmSynth<"violin"> {
+export class Violin extends FmSynth<"violin"> {
     protected instrument = "violin" as const;
 
     protected amplitudeEnvelope: ENVELOPE_AHDSR = {

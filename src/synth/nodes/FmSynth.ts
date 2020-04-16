@@ -1,15 +1,10 @@
-import {mtof} from "tone";
 import {Instrument} from "../../constants";
-import {FrequencySynth} from "./frequencySynth";
-import {MidiNote} from "tone/build/esm/core/type/NoteUnits";
+import {InstrumentSynth} from "./InstrumentSynth";
 import {AudioNote} from "../decoder";
-import * as Envelopes from "./envelopes";
-import {ENVELOPE_AHDSR} from "./envelopes";
+import {ENVELOPE_AHDSR, ahdsr} from "./envelopes";
+import {toFrequency} from "../utils";
 
-export abstract class SimpleFmSynth<I extends Instrument> extends FrequencySynth<I> {
-    private ctx: OfflineAudioContext = null as any;
-    private destination: AudioNode = null as any;
-
+export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     protected abstract amplitudeGain: number;
     protected abstract amplitudeWave: OscillatorType;
     protected abstract amplitudeEnvelope: ENVELOPE_AHDSR;
@@ -24,13 +19,10 @@ export abstract class SimpleFmSynth<I extends Instrument> extends FrequencySynth
 
     protected abstract offDelay: number;
 
-    protected setup(ctx: OfflineAudioContext, destination: AudioNode): void {
-        this.ctx = ctx;
-        this.destination = destination;
-    }
+    async setup(){};
 
-    protected loadNote(note: AudioNote): void {
-        const freq = mtof(note.pitch as MidiNote);
+    async loadNote(note: AudioNote, ctx: BaseAudioContext, destination: AudioNode) {
+        const freq = toFrequency(note.pitch);
 
 
 
@@ -42,16 +34,16 @@ export abstract class SimpleFmSynth<I extends Instrument> extends FrequencySynth
             sustain: this.amplitudeEnvelope.sustain,
             release: this.amplitudeEnvelope.release * ampMultiplier
         };
-        const ampGain = Envelopes.ahdsr(
-            this.ctx,
+        const ampGain = ahdsr(
+            ctx,
             this.amplitudeGain * ampMultiplier * note.volume,
             note.startTime,
             note.endTime,
             adjustedAmplitudeEnvelope
         );
-        ampGain.connect(this.destination);
+        ampGain.connect(destination);
 
-        const ampOsc = this.ctx.createOscillator();
+        const ampOsc = ctx.createOscillator();
         ampOsc.type = this.amplitudeWave;
         ampOsc.frequency.value = freq * this.amplitudeFrequencyMultiplier * ampMultiplier;
         ampOsc.connect(ampGain);
@@ -68,8 +60,8 @@ export abstract class SimpleFmSynth<I extends Instrument> extends FrequencySynth
             sustain: this.frequencyEnvelope.sustain,
             release: this.frequencyEnvelope.release * freqMultiplier
         };
-        const freqGain = Envelopes.ahdsr(
-            this.ctx,
+        const freqGain = ahdsr(
+            ctx,
             this.frequencyGain * freqMultiplier,
             note.startTime,
             note.endTime,
@@ -77,7 +69,7 @@ export abstract class SimpleFmSynth<I extends Instrument> extends FrequencySynth
         );
         freqGain.connect(ampGain.gain);
 
-        const freqOsc = this.ctx.createOscillator();
+        const freqOsc = ctx.createOscillator();
         freqOsc.type = this.frequencyWave;
         freqOsc.frequency.value = freq * this.frequencyFrequencyMultiplier * freqMultiplier;
         freqOsc.connect(ampOsc.frequency);

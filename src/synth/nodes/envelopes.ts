@@ -30,7 +30,7 @@ export function ahdsr(ctx: BaseAudioContext, gain: number, startTime: number, en
     node.gain.linearRampToValueAtTime(gain, time);
     time += envelope.hold;
     node.gain.linearRampToValueAtTime(gain, time);
-    node.gain.setTargetAtTime(envelope.sustain, time, envelope.decay);
+    node.gain.setTargetAtTime(gain * envelope.sustain, time, envelope.decay);
     time = ctx.currentTime + endTime;
     node.gain.setTargetAtTime(0, time, envelope.release);
 

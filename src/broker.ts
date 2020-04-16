@@ -1,17 +1,13 @@
 import axios, {AxiosResponse} from "axios";
-import {Instrument} from "./constants";
 import download from "downloadjs";
 import {Config} from "./state/settings";
-import {
-    NodeState,
-    NodeStore
-} from "./state/trackTree";
+import {NodeState, NodeStore} from "./state/trackTree";
 import {createSectionStore, Section, SectionState} from "./state/section";
 import {Writable} from "svelte/store";
 import {createEmptyNotes, Note, Notes} from "./state/notes";
 import {MusenetEncoding} from "./state/encoding";
 import {renderAudio} from "./synth/audioRender";
-
+import {Instrument} from "./constants";
 
 
 export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
@@ -76,7 +72,7 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
         })
         .then((sections: Section[]) =>
             sections.map((section: Section) =>
-                    createSectionStore(section)))
+                createSectionStore(section)))
         .then((sectionStores: Writable<SectionState>[]) =>
             sectionStores.map((sectionStore: Writable<SectionState>) =>
                 store.addChild(sectionStore)))
@@ -99,7 +95,6 @@ async function parseCompletion(completion: Completion, prevEncoding: MusenetEnco
     const startsAt = prevDuration;
     const endsAt = completion.totalTime;
     const notes = parseNotes(completion, prevDuration);
-    console.log(startsAt, endsAt, Object.values(notes));
     const audio = await renderAudio(encoding, endsAt - startsAt);
     return {encoding, startsAt, endsAt, notes, audio};
 }
@@ -115,7 +110,7 @@ function parseNotes({tracks}: Completion, prevDuration: number): Notes {
     const notesPerInstrument: Notes = createEmptyNotes();
 
     tracks.forEach(({instrument, notes}) =>
-        (notesPerInstrument[instrument] = transposeNotes(notes, prevDuration))
+        notesPerInstrument[instrument] = transposeNotes(notes, prevDuration)
     );
 
     return notesPerInstrument;

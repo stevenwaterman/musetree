@@ -1,6 +1,6 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
-import {Section, SectionStore} from "./section";
+import {createSectionStore, Section, SectionStore} from "./section";
 import {maybeDerived, unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {

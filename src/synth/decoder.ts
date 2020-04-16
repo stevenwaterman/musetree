@@ -35,7 +35,7 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
         clarinet: [],
         trumpet: [],
         harp: [],
-        drum: []
+        drums: []
     };
     const notesStarted: Record<Instrument, Record<number, {startTime: number, volume: number}>> = {
         piano: {},
@@ -47,7 +47,7 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
         clarinet: {},
         trumpet: {},
         harp: {},
-        drum: {}
+        drums: {}
     };
     let time: number = 0;
 
@@ -90,6 +90,17 @@ export function decode(encoded: MusenetEncoding): AudioNotes {
             time += seconds;
         }
     });
+
+    Object.entries(notesStarted).forEach(([instrument, started]) =>
+        Object.entries(started).forEach(([pitch, {startTime, volume}]) =>
+            notes[instrument as Instrument].push({
+                pitch: parseInt(pitch),
+                startTime,
+                endTime: time,
+                volume: volume / 80
+            })
+        )
+    );
 
     Object.values(notes).forEach(instrumentNotes => instrumentNotes.sort((a,b) => a.startTime - b.startTime));
     return notes;
@@ -151,7 +162,7 @@ export function parseToken(token: number): Token | null {
         const [instrument, volume] = tokenInfo[token >> 7];
         return {type: "note", pitch: token % 128, instrument, volume};
     }
-    if (token < 3968) return {type: "note", pitch: token % 128, instrument: "drum", volume: 80};
+    if (token < 3968) return {type: "note", pitch: token % 128, instrument: "drums", volume: 80};
     if (token < 4096) return {type: "wait", delay: (token % 128) + 1};
     return null;
 }

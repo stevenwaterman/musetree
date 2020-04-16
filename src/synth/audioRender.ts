@@ -1,6 +1,6 @@
 import {Piano} from "./instruments/piano";
 import {Instrument} from "../constants";
-import {SynthInstrument} from "./nodes/synthInstrument";
+import {NotesPlayer} from "./nodes/NotesPlayer";
 import {MusenetEncoding} from "../state/encoding";
 import {AudioNotes, decode} from "./decoder";
 import {Bass} from "./instruments/bass";
@@ -11,11 +11,13 @@ import {Guitar} from "./instruments/guitar";
 import {Harp} from "./instruments/harp";
 import {Trumpet} from "./instruments/trumpet";
 import {Violin} from "./instruments/violin";
+import {Drums} from "./instruments/drums";
 
-const synths: Partial<Record<Instrument, SynthInstrument<Instrument>>> = {
+const synths: Record<Instrument, NotesPlayer> = {
     bass: new Bass(),
     cello: new Cello(),
     clarinet: new Clarinet(),
+    drums: new Drums(),
     flute: new Flute(),
     guitar: new Guitar(),
     harp: new Harp(),
@@ -33,8 +35,8 @@ async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer>
     gain.gain.value = 0.2;
     gain.connect(ctx.destination);
 
-    Object.values(synths).forEach(synth => synth && synth.schedule(ctx, gain, notes));
-    console.log(ctx.currentTime);
+    const promises = Object.values(synths).map(it => it.schedule(ctx, gain, notes));
+    await Promise.all(promises);
 
     return await ctx.startRendering();
 }
