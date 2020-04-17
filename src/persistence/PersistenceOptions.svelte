@@ -1,6 +1,7 @@
 <script>
-  import { downloadAudio } from "../broker";
+  import {downloadAudio} from "../broker";
   import download from "downloadjs";
+  import TestBench from "../TestBench.svelte";
 
   function save() {
     // download(JSON.stringify($trackTreeStore), "save.json");

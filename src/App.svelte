@@ -5,6 +5,7 @@
   import TrackControls from "./track/TrackControls.svelte";
   import TreeVis from "./treeVis/TreeVis.svelte";
   import Links from "./links/Links.svelte";
+  import TestBench from "./TestBench.svelte";
 </script>
 
 <style>
@@ -21,7 +22,6 @@
     flex-direction: column;
     height: 100vh;
   }
-
   :global(body) {
     padding: 0;
     margin: 0;
@@ -31,17 +31,18 @@
   }
 </style>
 
-<div class="columns">
-  <div class="col">
-    <Track />
-    <TrackControls />
-  </div>
-  <div class="col">
-    <TreeVis />
-  </div>
-  <div class="col">
-    <GenerationOptions />
-    <PersistenceOptions />
-    <Links />
-  </div>
-</div>
+<!--<div class="columns">-->
+<!--  <div class="col">-->
+<!--    <Track />-->
+<!--    <TrackControls />-->
+<!--  </div>-->
+<!--  <div class="col">-->
+<!--    <TreeVis />-->
+<!--  </div>-->
+<!--  <div class="col">-->
+<!--    <GenerationOptions />-->
+<!--    <PersistenceOptions />-->
+<!--    <Links />-->
+<!--  </div>-->
+<!--</div>-->
+<TestBench/>

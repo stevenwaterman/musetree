@@ -20,19 +20,22 @@ type ENVELOPE_R = {
 
 export type ENVELOPE_AHDSR = ENVELOPE_A & ENVELOPE_H & ENVELOPE_D & ENVELOPE_S & ENVELOPE_R;
 
-export function ahdsr(ctx: BaseAudioContext, gain: number, startTime: number, endTime: number, envelope: ENVELOPE_AHDSR): GainNode {
-    const node = ctx.createGain();
-    node.gain.value = 0;
+export function ahdsr(ctx: BaseAudioContext, gain: number, startTime: number, endTime: number, envelope: ENVELOPE_AHDSR, output: AudioNode): GainNode {
+    const attackNode = ctx.createGain();
+    attackNode.gain.value = 0;
+    attackNode.connect(output);
+    attackNode.gain.setValueAtTime(0, startTime);
+    attackNode.gain.linearRampToValueAtTime(gain, ctx.currentTime + startTime + envelope.attack);
 
-    let time = ctx.currentTime + startTime;
-    node.gain.setValueAtTime(0, time);
-    time += envelope.attack;
-    node.gain.linearRampToValueAtTime(gain, time);
-    time += envelope.hold;
-    node.gain.linearRampToValueAtTime(gain, time);
-    node.gain.setTargetAtTime(gain * envelope.sustain, time, envelope.decay);
-    time = ctx.currentTime + endTime;
-    node.gain.setTargetAtTime(0, time, envelope.release);
+    const decayNode = ctx.createGain();
+    decayNode.gain.value = 1;
+    decayNode.connect(attackNode);
+    decayNode.gain.setTargetAtTime(envelope.sustain, ctx.currentTime + startTime + envelope.attack + envelope.hold, envelope.decay);
 
-    return node;
+    const releaseNode = ctx.createGain();
+    releaseNode.gain.value = 1;
+    releaseNode.connect(decayNode);
+    releaseNode.gain.setTargetAtTime(0, ctx.currentTime + endTime, envelope.release);
+
+    return releaseNode;
 }
