@@ -12,12 +12,24 @@
         await ctx.suspend();
         await synth.setup(ctx, ctx.destination);
         await synth.loadNote({
-            volume: 1,
+            volume: 0.5,
             pitch: pitch,
             startTime: ctx.currentTime,
             endTime: ctx.currentTime + length
         }, ctx, ctx.destination);
         await ctx.resume();
+    }
+
+    function impulseResponse( ctx, duration, decay) {
+        const sampleRate = ctx.sampleRate;
+        const length = sampleRate * duration;
+        const impulse = ctx.createBuffer(1, length, sampleRate);
+        const impulseData = impulse.getChannelData(0);
+
+        for (let i = 0; i < length; i++){
+            impulseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
+        }
+        return impulse;
     }
     
     async function playAll() {
@@ -27,10 +39,20 @@
         gain.gain.value = 0.1;
         gain.connect(ctx.destination);
 
+        const reverb = ctx.createConvolver();
+        reverb.buffer = impulseResponse(ctx, 10, 100);
+        reverb.connect(gain);
+
+        const mixer = ctx.createGain();
+        mixer.gain.value = 1;
+        mixer.connect(reverb);
+        mixer.connect(gain);
+
         const synth = new Piano();
         await ctx.suspend();
-        let audioNotes = decode([1072,1079,1084,3976,60,1096,3977,72,1099,3977,1098,75,3977,1096,74,3977,72,1099,3977,75,1103,3977,1101,79,3977,1099,77,3977,75,1103,3977,79,1106,3977,1104,82,3977,1103,80,3977,79,1106,3977,82,1108,3977,1106,84,3977,55,1084,1104,82,3977,80,1106,3977,82,1108,3977,84,1110,3977,86,1111,3977,1110,87,3977,1108,86,3977,84,1110,3977,48,1080,86,1111,3988,1108,87,3988,1104,84,3988,80,1108,3988,1079,56,1084,1103,84,3977,79,1108,3977,84,1111,3977,1110,87,3977,1108,86,3977,84,1111,3977,87,1115,3977,1113,91,3977,1111,89,3977,87,1115,3977,91,1118,3977,1116,94,3977,1115,92,3977,91,1118,3977,94,1120,3977,1118,96,3977,60,1087,1116,94,3977,92,1118,3977,94,1120,3977,96,1122,3977,98,1123,3977,1122,99,3977,1120,98,3977,96,1122,3977,98,1123,3988,1120,99,3988,1115,96,3988,91,1120,3988,1077,55,1084,63,1113,96,3977,89,1115,3977,91,1116,3977,92,1118,3977,94,1120,3977,1118,96,3977,1116,94,3977,92,1118,3977,1072,53,1080,60,94,1120,3988,1116,96,3988,1113,92,3988,89,1116,3988,48,1077,56,1084]);
-        await synth.schedule(ctx, gain, audioNotes);
+        const encoding = "816 823 831 835 4095 4095 48 55 63 67 3969 816 823 831 840 4010 48 55 63 72 3978 816 823 833 839 4011 48 55 65 71 3978 816 823 831 840 4010 48 55 63 72 3978 816 823 827 842 4055 55 59 74 3988 825 828 835 4011 48 57 60 67 3978 823 827 830 835 4010 55 59 62 67 3978 816 828 831 836 4055 60 63 68 3989 824 828 831 4010 48 4011 56 60 63 3988 811 823 827 830 4095 3984 43 55 59 62 4035 816 823 831 835 4095 3984 48 55 63 67 4012 816 823 831 840 4011 48 55 63 72 3978 816 823 833 839 4010 48 55 65 71 3978 816 823 831 840 4011 48 55 63 72 3978 816 826 832 842 4010 58 64 3978 821 833 3999 74 3978 53 65 3978 825 831 840 4010 57 63 72 3978 821 831 833 3978 48 3999 53 63 65 3978 816 826 830 835 4010 58 62 3978 823 831 3999 48 67 3978 55 63 3978 809 821 831 837 4010 69 3978 1096 4000 41 53 63 3977 72 3978 814 821 958 968 4055 46 53 62 72 3989 819 823 835 838 4055 51 55 67 70 3988";
+        let audioNotes = decode(encoding.split(" ").map(it => parseInt(it)));
+        await synth.schedule(ctx, mixer, audioNotes);
         await ctx.resume();
     }
 </script>
