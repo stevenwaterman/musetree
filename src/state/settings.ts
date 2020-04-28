@@ -5,7 +5,7 @@ import {MusenetEncoding} from "./encoding";
 
 export const instrumentStores: Record<InstrumentCategory, Writable<boolean>> = instrumentCategories
     .reduce((acc, instrument) => {
-        acc[instrument] = writable(instrument === "piano");
+        acc[instrument] = writable(instrument === "piano" || instrument === "drums");
         return acc;
     }, {} as Record<InstrumentCategory, Writable<boolean>>);
 
@@ -20,9 +20,9 @@ const instrumentsStore = derived<[Readable<boolean>, ...Readable<boolean>[]], Re
         }, {} as Record<InstrumentCategory, boolean>)
 );
 
-export const generationLengthStore: Writable<number> = writable(100);
+export const generationLengthStore: Writable<number> = writable(300);
 
-export const genreStore: Writable<Genre> = writable("elvispresley");
+export const genreStore: Writable<Genre> = writable("broadway");
 export const temperatureStore: Writable<number> = writable(1);
 export const truncationStore: Writable<number> = writable(27);
 

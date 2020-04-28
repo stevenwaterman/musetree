@@ -19,23 +19,97 @@ type ENVELOPE_R = {
 }
 
 export type ENVELOPE_AHDSR = ENVELOPE_A & ENVELOPE_H & ENVELOPE_D & ENVELOPE_S & ENVELOPE_R;
+export type ENVELOPE_AHD = ENVELOPE_A & ENVELOPE_H & ENVELOPE_D;
 
-export function ahdsr(ctx: BaseAudioContext, gain: number, startTime: number, endTime: number, envelope: ENVELOPE_AHDSR, output: AudioNode): GainNode {
-    const attackNode = ctx.createGain();
-    attackNode.gain.value = 0;
-    attackNode.connect(output);
-    attackNode.gain.setValueAtTime(0, startTime);
-    attackNode.gain.linearRampToValueAtTime(gain, ctx.currentTime + startTime + envelope.attack);
+export class AhdsrEnvelope {
+    private readonly ctx: BaseAudioContext;
 
-    const decayNode = ctx.createGain();
-    decayNode.gain.value = 1;
-    decayNode.connect(attackNode);
-    decayNode.gain.setTargetAtTime(envelope.sustain, ctx.currentTime + startTime + envelope.attack + envelope.hold, envelope.decay);
+    private readonly gain: number;
+    private readonly envelope: ENVELOPE_AHDSR;
 
-    const releaseNode = ctx.createGain();
-    releaseNode.gain.value = 1;
-    releaseNode.connect(decayNode);
-    releaseNode.gain.setTargetAtTime(0, ctx.currentTime + endTime, envelope.release);
+    private readonly attackNode: GainNode;
+    private readonly decayNode: GainNode;
+    private readonly releaseNode: GainNode;
 
-    return releaseNode;
+    readonly input: AudioNode;
+
+    constructor(ctx: BaseAudioContext, gain: number, envelope: ENVELOPE_AHDSR) {
+        this.ctx = ctx;
+        this.gain = gain;
+        this.envelope = envelope;
+
+        this.attackNode = ctx.createGain();
+        this.decayNode = ctx.createGain();
+        this.releaseNode = ctx.createGain();
+
+        this.attackNode.gain.value = 0;
+        this.decayNode.gain.value = 1;
+        this.releaseNode.gain.value = 1;
+
+        this.attackNode.connect(this.decayNode);
+        this.decayNode.connect(this.releaseNode);
+
+        this.input = this.attackNode;
+    }
+
+    connect(destinationNode: AudioParam | AudioNode, output?: number, input?: number): AhdsrEnvelope {
+        if(destinationNode instanceof AudioParam) {
+            this.releaseNode.connect(destinationNode, output);
+        } else {
+            this.releaseNode.connect(destinationNode, output, input);
+        }
+        return this;
+    }
+
+    schedule(volume: number, startTime: number, releaseTime: number): AhdsrEnvelope {
+        this.attackNode.gain.setValueAtTime(0, startTime);
+        this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, this.ctx.currentTime + startTime + this.envelope.attack);
+        this.decayNode.gain.setTargetAtTime(this.gain * volume * this.envelope.sustain, this.ctx.currentTime + startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        this.releaseNode.gain.setTargetAtTime(0, this.ctx.currentTime + releaseTime, this.envelope.release);
+        return this;
+    }
+}
+
+export class AhdEnvelope {
+    private readonly ctx: BaseAudioContext;
+
+    private readonly gain: number;
+    private readonly envelope: ENVELOPE_AHD;
+
+    private readonly attackNode: GainNode;
+    private readonly decayNode: GainNode;
+
+    readonly input: AudioNode;
+
+    constructor(ctx: BaseAudioContext, gain: number, envelope: ENVELOPE_AHD) {
+        this.ctx = ctx;
+        this.gain = gain;
+        this.envelope = envelope;
+
+        this.attackNode = ctx.createGain();
+        this.decayNode = ctx.createGain();
+
+        this.attackNode.gain.value = 0;
+        this.decayNode.gain.value = 1;
+
+        this.attackNode.connect(this.decayNode);
+
+        this.input = this.attackNode;
+    }
+
+    connect(destinationNode: AudioParam | AudioNode, output?: number, input?: number): AhdEnvelope {
+        if(destinationNode instanceof AudioParam) {
+            this.decayNode.connect(destinationNode, output);
+        } else {
+            this.decayNode.connect(destinationNode, output, input);
+        }
+        return this;
+    }
+
+    schedule(volume: number, startTime: number): AhdEnvelope {
+        this.attackNode.gain.setValueAtTime(0, startTime);
+        this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, this.ctx.currentTime + startTime + this.envelope.attack);
+        this.decayNode.gain.setTargetAtTime(0, this.ctx.currentTime + startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        return this;
+    }
 }

@@ -20,18 +20,7 @@
         await ctx.resume();
     }
 
-    function impulseResponse( ctx, duration, decay) {
-        const sampleRate = ctx.sampleRate;
-        const length = sampleRate * duration;
-        const impulse = ctx.createBuffer(1, length, sampleRate);
-        const impulseData = impulse.getChannelData(0);
 
-        for (let i = 0; i < length; i++){
-            impulseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, decay);
-        }
-        return impulse;
-    }
-    
     async function playAll() {
         const ctx = new AudioContext();
 
@@ -40,7 +29,7 @@
         gain.connect(ctx.destination);
 
         const reverb = ctx.createConvolver();
-        reverb.buffer = impulseResponse(ctx, 10, 100);
+        // reverb.buffer = impulseResponse(ctx, 10, 100);
         reverb.connect(gain);
 
         const mixer = ctx.createGain();

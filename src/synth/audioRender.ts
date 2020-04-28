@@ -13,6 +13,8 @@ import {Trumpet} from "./instruments/trumpet";
 import {Violin} from "./instruments/violin";
 import {Drums} from "./instruments/drums";
 
+export const AFTER_RELEASE = 5;
+
 const synths: Record<Instrument, NotesPlayer> = {
     bass: new Bass(),
     cello: new Cello(),
