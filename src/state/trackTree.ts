@@ -1,7 +1,7 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
-import {createSectionStore, Section, SectionStore} from "./section";
-import {maybeDerived, unwrapStore} from "../utils";
+import {Section, SectionStore} from "./section";
+import {unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
     createTree,
@@ -88,5 +88,5 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
     })
 }
 
-const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
+export const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
 

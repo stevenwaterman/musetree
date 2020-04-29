@@ -1,19 +1,19 @@
 import {Writable, writable} from "svelte/store";
 import {Section} from "../state/section";
-import {BranchState, BranchStore, NodeStore, root} from "../state/trackTree";
+import {BranchState, BranchStore, NodeStore, root, selectedBranchStore} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
 
 type AudioStatus_Base<TYPE extends string> = {
     type: TYPE;
 }
-type AudioStatus_Off = AudioStatus_Base<"off"> & {
-};
+type AudioStatus_Off = AudioStatus_Base<"off"> & {};
+type AudioStatus_Loading = AudioStatus_Base<"loading"> & {};
 type AudioStatus_On = AudioStatus_Base<"on"> & {
     started: number;
     offset: number;
     duration: number;
 };
-type AudioStatus = AudioStatus_Off | AudioStatus_On;
+type AudioStatus = AudioStatus_Off | AudioStatus_Loading | AudioStatus_On;
 
 const audioStatusStoreInternal: Writable<AudioStatus> = writable({type: "off"});
 export const audioStatusStore = audioStatusStoreInternal;
@@ -27,54 +27,74 @@ const ctx = new AudioContext({
     sampleRate: 44100
 });
 
+selectedBranchStore.subscribe(async () => {
+    await load();
+})
 
-let trackSources: AudioBufferSourceNode[] = [];
-export async function play(offset: number) {
-    if(audioStatus.type === "on") {
-        stop();
-    }
+let trackSections: {
+    start: number,
+    end: number,
+    buffer: AudioBuffer
+}[] = [];
 
+async function load() {
     //TODO this is filthy
     let node: NodeStore = root;
     const track: Section[] = [];
-    while(true) {
+    while (true) {
         const childStore: BranchStore | null = get_store_value(node.selectedChildStore_2);
-        if(childStore === null) break;
+        if (childStore === null) break;
         node = childStore;
 
         const childState: BranchState = get_store_value(node);
         track.push(childState.section);
     }
 
-    await ctx.suspend();
-    const bufferOutput = ctx.destination;
-
-    trackSources = track
-        .filter(section => section.endsAt > offset)
+    trackSections = track
         .map(section => {
-            const bufferSource = ctx.createBufferSource();
-            bufferSource.buffer = section.audio;
-            bufferSource.connect(bufferOutput);
-
-            if(section.startsAt > offset) {
-                const sectionStartsAt = section.startsAt - offset;
-                const sectionDuration = section.endsAt - section.startsAt;
-                const sectionEndsAt = sectionStartsAt + sectionDuration;
-                bufferSource.start(ctx.currentTime + sectionStartsAt);
-                bufferSource.stop(ctx.currentTime + sectionEndsAt);
-            } else {
-                const sectionStartsAt = 0;
-                const sectionOffset = offset - section.startsAt;
-                const sectionDuration = section.endsAt - section.startsAt - sectionOffset;
-                const sectionEndsAt = sectionStartsAt + sectionDuration;
-                bufferSource.start(ctx.currentTime + sectionStartsAt, sectionOffset);
-                bufferSource.stop(ctx.currentTime + sectionEndsAt);
-            }
-
-            return bufferSource;
+            return {
+                start: section.startsAt,
+                end: section.endsAt,
+                buffer: section.audio
+            };
         });
+}
 
-    trackSources[trackSources.length - 1].onended = () => {
+let sourceNodes: { start: number; end: number; source: AudioBufferSourceNode }[];
+export async function play(offset: number) {
+    if(trackSections.length === 0) return;
+
+    const stopFirst = audioStatus.type === "on";
+
+    audioStatusStoreInternal.set({
+        type: "loading"
+    })
+
+    if (stopFirst) stop();
+
+    await ctx.suspend();
+
+    sourceNodes = trackSections.map(({buffer, start, end}) => {
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        return {start, end, source};
+    });
+
+    sourceNodes
+        .filter(({end}) => end > offset)
+        .forEach(({start, source}) => {
+            if (start <= offset) {
+                const sectionOffset = offset - start;
+                source.start(ctx.currentTime, sectionOffset);
+            } else {
+                const sectionStartsAt = start - offset;
+                source.start(ctx.currentTime + sectionStartsAt);
+            }
+        })
+
+    // TODO clicking to play doesn't work - race condition
+    sourceNodes[trackSections.length - 1].source.onended = () => {
         stop();
     }
 
@@ -84,11 +104,11 @@ export async function play(offset: number) {
         type: "on",
         started: ctx.currentTime,
         offset: offset,
-        duration: track[track.length - 1].endsAt
+        duration: trackSections[trackSections.length - 1].end
     });
 }
 
 export function stop() {
-    trackSources.forEach(source => source.stop())
+    sourceNodes.forEach(source => source.source.stop())
     audioStatusStoreInternal.set({type: "off"})
 }
