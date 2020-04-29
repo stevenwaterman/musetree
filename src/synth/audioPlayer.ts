@@ -2,8 +2,6 @@ import {Writable, writable} from "svelte/store";
 import {Section} from "../state/section";
 import {BranchState, BranchStore, NodeStore, root} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
-import {decode} from "./decoder";
-import {renderAudio} from "./audioRender";
 
 type AudioStatus_Base<TYPE extends string> = {
     type: TYPE;
@@ -26,19 +24,19 @@ audioStatusStore.subscribe(newStatus => {
 });
 
 const ctx = new AudioContext({
-    sampleRate: 48000
+    sampleRate: 44100
 });
-let stopFunction: () => void = () => {};
+
+
+let trackSources: AudioBufferSourceNode[] = [];
 export async function play(offset: number) {
     if(audioStatus.type === "on") {
         stop();
     }
 
-    // const audio: AudioBuffer = await renderAudio([7, 560, 444, 448, 451, 4056, 4056, 64, 577, 67, 581, 3998, 3998, 572, 576, 65, 579, 69, 4026, 4026, 560, 567, 572, 576, 67, 4058, 4058, 55, 569], 5);
-
     //TODO this is filthy
-    const track: Section[] = [];
     let node: NodeStore = root;
+    const track: Section[] = [];
     while(true) {
         const childStore: BranchStore | null = get_store_value(node.selectedChildStore_2);
         if(childStore === null) break;
@@ -48,18 +46,12 @@ export async function play(offset: number) {
         track.push(childState.section);
     }
 
-    stopFunction = () => {};
     await ctx.suspend();
     const bufferOutput = ctx.destination;
-    // const source = ctx.createBufferSource();
-    // source.buffer = audio;
-    // source.start();
-    // source.connect(bufferOutput);
-    // await ctx.resume();
 
-
-    track.forEach(section => {
-        if(section.endsAt > offset) {
+    trackSources = track
+        .filter(section => section.endsAt > offset)
+        .map(section => {
             const bufferSource = ctx.createBufferSource();
             bufferSource.buffer = section.audio;
             bufferSource.connect(bufferOutput);
@@ -79,13 +71,12 @@ export async function play(offset: number) {
                 bufferSource.stop(ctx.currentTime + sectionEndsAt);
             }
 
-            const oldStopFunction = stopFunction;
-            stopFunction = () => {
-                 bufferSource.stop();
-                 oldStopFunction()
-            }
-        }
-    });
+            return bufferSource;
+        });
+
+    trackSources[trackSources.length - 1].onended = () => {
+        stop();
+    }
 
     await ctx.resume();
 
@@ -98,7 +89,6 @@ export async function play(offset: number) {
 }
 
 export function stop() {
-    stopFunction();
-
+    trackSources.forEach(source => source.stop())
     audioStatusStoreInternal.set({type: "off"})
 }
