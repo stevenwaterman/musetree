@@ -34,12 +34,13 @@ export class Drums extends InstrumentSynth<"drums"> {
             console.log("Unknown drum sample " + pitch);
             return;
         }
-        sample.loadNote(note, ctx, destination);
+        await sample.loadNote(note, ctx, destination);
     };
 
 }
 
 class DrumSample implements NoteSynth {
+    private static readonly OFFSET = 0;
     private readonly arrayBufferPromise: Promise<ArrayBuffer>;
     private audioBuffer: AudioBuffer = null as any;
 
@@ -61,6 +62,6 @@ class DrumSample implements NoteSynth {
         const bufferSource = ctx.createBufferSource();
         bufferSource.buffer = this.audioBuffer;
         bufferSource.connect(gainNode);
-        bufferSource.start(ctx.currentTime + note.startTime);
+        bufferSource.start(ctx.currentTime + note.startTime - DrumSample.OFFSET);
     }
 }

@@ -13,8 +13,7 @@ export class Bass extends FmSynth<"bass"> {
     };
     protected amplitudeGain: number = 0.5;
     protected amplitudeWave: OscillatorType = "sine";
-    protected amplitudePitchAdjustment: number | null = null;
-    protected amplitudeFrequencyMultiplier: number = 1;
+    protected amplitudeFrequencyMultiplier: number = 0.5;
 
 
     protected frequencyEnvelope: ENVELOPE_AHDSR = {
@@ -26,9 +25,5 @@ export class Bass extends FmSynth<"bass"> {
     };
     protected frequencyGain: number = 3;
     protected frequencyWave: OscillatorType = "sine";
-    protected frequencyPitchAdjustment: number | null = null;
     protected frequencyFrequencyMultiplier: number = 3;
-
-
-    protected offDelay: number = 0.25;
 }

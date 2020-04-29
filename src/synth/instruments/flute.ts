@@ -11,7 +11,7 @@ export class Flute extends FmSynth<"flute"> {
         sustain: 0.4,
         release: 0.05
     };
-    protected amplitudeGain: number = 0.7;
+    protected amplitudeGain: number = 0.35;
     protected amplitudeWave: OscillatorType = "sine";
     protected amplitudePitchAdjustment: number | null = null;
     protected amplitudeFrequencyMultiplier: number = 1;

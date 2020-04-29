@@ -11,7 +11,7 @@ export class Cello extends FmSynth<"cello"> {
         sustain: 0,
         release: 0.05
     };
-    protected amplitudeGain: number = 0.4;
+    protected amplitudeGain: number = 0.15;
     protected amplitudeWave: OscillatorType = "sawtooth";
     protected amplitudePitchAdjustment: number | null = null;
     protected amplitudeFrequencyMultiplier: number = 1;

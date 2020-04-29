@@ -11,7 +11,7 @@ export class Clarinet extends FmSynth<"clarinet"> {
         sustain: 0.8,
         release: 0.05
     };
-    protected amplitudeGain: number = 0.2;
+    protected amplitudeGain: number = 0.1;
     protected amplitudeWave: OscillatorType = "square";
     protected amplitudePitchAdjustment: number | null = null;
     protected amplitudeFrequencyMultiplier: number = 1;

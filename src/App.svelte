@@ -31,18 +31,18 @@
   }
 </style>
 
-<!--<div class="columns">-->
-<!--  <div class="col">-->
-<!--    <Track />-->
-<!--    <TrackControls />-->
-<!--  </div>-->
-<!--  <div class="col">-->
-<!--    <TreeVis />-->
-<!--  </div>-->
-<!--  <div class="col">-->
-<!--    <GenerationOptions />-->
-<!--    <PersistenceOptions />-->
-<!--    <Links />-->
-<!--  </div>-->
-<!--</div>-->
-<TestBench/>
+<div class="columns">
+  <div class="col">
+    <Track />
+    <TrackControls />
+  </div>
+  <div class="col">
+    <TreeVis />
+  </div>
+  <div class="col">
+    <GenerationOptions />
+    <PersistenceOptions />
+    <Links />
+  </div>
+</div>
+<!--<TestBench/>-->
