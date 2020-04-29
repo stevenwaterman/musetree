@@ -2,6 +2,7 @@ import {Writable, writable} from "svelte/store";
 import {Section} from "../state/section";
 import {BranchState, BranchStore, NodeStore, root, selectedBranchStore} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
+import {autoPlayStore, preplayStore} from "../state/settings";
 
 type AudioStatus_Base<TYPE extends string> = {
     type: TYPE;
@@ -27,17 +28,22 @@ const ctx = new AudioContext({
     sampleRate: 44100
 });
 
-selectedBranchStore.subscribe(async () => {
-    await load();
-})
+let autoPlay: boolean = false;
+let prePlayTime: number = 0;
+autoPlayStore.subscribe(state => autoPlay = state);
+preplayStore.subscribe(state => prePlayTime = state);
 
 let trackSections: {
     start: number,
     end: number,
     buffer: AudioBuffer
 }[] = [];
+let sourceNodes: { start: number; end: number; source: AudioBufferSourceNode }[] = [];
 
+selectedBranchStore.subscribe(() => load());
 async function load() {
+    stop();
+
     //TODO this is filthy
     let node: NodeStore = root;
     const track: Section[] = [];
@@ -58,9 +64,13 @@ async function load() {
                 buffer: section.audio
             };
         });
+
+    if(autoPlay && trackSections.length) {
+        const offset = trackSections[trackSections.length - 1].start - prePlayTime;
+        await play(Math.max(offset, 0))
+    }
 }
 
-let sourceNodes: { start: number; end: number; source: AudioBufferSourceNode }[];
 export async function play(offset: number) {
     if(trackSections.length === 0) return;
 
@@ -109,6 +119,10 @@ export async function play(offset: number) {
 }
 
 export function stop() {
+    if(!sourceNodes) return;
+    if(sourceNodes.length) {
+        sourceNodes[sourceNodes.length - 1].source.onended = () => null;
+    }
     sourceNodes.forEach(source => source.source.stop())
     audioStatusStoreInternal.set({type: "off"})
 }

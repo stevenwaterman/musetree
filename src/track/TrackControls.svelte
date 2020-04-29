@@ -46,6 +46,8 @@
 <div class="container row center">
     {#if $audioStatusStore.type === "on"}
         <button on:click={stop}>Stop</button>
+    {:else if $audioStatusStore.type === "loading"}
+        <button disabled>Play</button>
     {:else}
         <button on:click={() => play(0)}>Play</button>
     {/if}
