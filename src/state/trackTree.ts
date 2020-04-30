@@ -88,5 +88,16 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
     })
 }
 
-export const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2);
+const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2, (a,b) => arraysEqual(a.path, b.path));
+export const selectedPathStore: Readable<number[] | null> = derived(selectedBranchStore, state => state === null ? null : state.path);
 
+function arraysEqual(a: any[], b: any[]) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+
+    for (let i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}

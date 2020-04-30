@@ -28,9 +28,9 @@ const synths: Record<Instrument, NotesPlayer> = {
     violin: new Violin()
 };
 
-const sampleRate = 48000;
+const sampleRate = 44100;
 async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer> {
-    const ctx = new OfflineAudioContext(1, duration * sampleRate, sampleRate);
+    const ctx = new OfflineAudioContext(1, (duration + 2) * sampleRate, sampleRate);
 
 
     const gain = ctx.createGain();

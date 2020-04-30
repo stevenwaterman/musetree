@@ -1,20 +1,28 @@
 import {Writable, writable} from "svelte/store";
 import {Section} from "../state/section";
-import {BranchState, BranchStore, NodeStore, root, selectedBranchStore} from "../state/trackTree";
+import {
+    BranchState,
+    BranchStore,
+    NodeState,
+    root,
+    selectedPathStore
+} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
 import {autoPlayStore, preplayStore} from "../state/settings";
+import {AudioDatum, combine} from "./audioCombiner";
 
 type AudioStatus_Base<TYPE extends string> = {
     type: TYPE;
 }
 type AudioStatus_Off = AudioStatus_Base<"off"> & {};
 type AudioStatus_Loading = AudioStatus_Base<"loading"> & {};
+type AudioStatus_Starting = AudioStatus_Base<"starting"> & {};
 type AudioStatus_On = AudioStatus_Base<"on"> & {
     started: number;
     offset: number;
     duration: number;
 };
-type AudioStatus = AudioStatus_Off | AudioStatus_Loading | AudioStatus_On;
+type AudioStatus = AudioStatus_Off | AudioStatus_Loading | AudioStatus_Starting | AudioStatus_On;
 
 const audioStatusStoreInternal: Writable<AudioStatus> = writable({type: "off"});
 export const audioStatusStore = audioStatusStoreInternal;
@@ -33,30 +41,37 @@ let prePlayTime: number = 0;
 autoPlayStore.subscribe(state => autoPlay = state);
 preplayStore.subscribe(state => prePlayTime = state);
 
-let trackSections: {
-    start: number,
-    end: number,
-    buffer: AudioBuffer
-}[] = [];
-let sourceNodes: { start: number; end: number; source: AudioBufferSourceNode }[] = [];
+type TrackAudio = {
+    buffer: AudioBuffer,
+    duration: number
+}
+let trackAudio: TrackAudio | null = null;
 
-selectedBranchStore.subscribe(() => load());
-async function load() {
+selectedPathStore.subscribe(load);
+async function load(path: number[] | null) {
+    console.log("Loading");
+
     stop();
 
-    //TODO this is filthy
-    let node: NodeStore = root;
-    const track: Section[] = [];
-    while (true) {
-        const childStore: BranchStore | null = get_store_value(node.selectedChildStore_2);
-        if (childStore === null) break;
-        node = childStore;
+    if(path === null) return;
 
-        const childState: BranchState = get_store_value(node);
+    audioStatusStore.set({type: "loading"});
+
+    let node: NodeState = get_store_value(root);
+    const track: Section[] = [];
+    path.forEach((childIdx: number) => {
+        const childStore: BranchStore = node.children[childIdx];
+        const childState: BranchState = get_store_value(childStore);
         track.push(childState.section);
+        node = childState;
+    });
+    console.log("Sections: ", track)
+
+    if (!track.length) {
+        return;
     }
 
-    trackSections = track
+    const data: AudioDatum[] = track
         .map(section => {
             return {
                 start: section.startsAt,
@@ -65,64 +80,50 @@ async function load() {
             };
         });
 
-    if(autoPlay && trackSections.length) {
-        const offset = trackSections[trackSections.length - 1].start - prePlayTime;
-        await play(Math.max(offset, 0))
+    const buffer = await combine(data);
+    const duration = data[data.length - 1].end;
+    trackAudio = { buffer, duration };
+
+    if(autoPlay) {
+        const offset = data[data.length - 1].start - prePlayTime;
+        const clamped = Math.max(offset, 0);
+        await play(clamped);
     }
 }
 
+let source: AudioBufferSourceNode | null = null;
 export async function play(offset: number) {
-    if(trackSections.length === 0) return;
+    console.log("playing 1");
+    if(trackAudio === null) return;
+    console.log("playing 2");
+    if (audioStatus.type === "on") stop();
+    console.log("playing 3");
+    audioStatusStoreInternal.set({ type: "starting" })
+    console.log("playing 4");
 
-    const stopFirst = audioStatus.type === "on";
-
-    audioStatusStoreInternal.set({
-        type: "loading"
-    })
-
-    if (stopFirst) stop();
-
-    await ctx.suspend();
-
-    sourceNodes = trackSections.map(({buffer, start, end}) => {
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        return {start, end, source};
-    });
-
-    sourceNodes
-        .filter(({end}) => end > offset)
-        .forEach(({start, source}) => {
-            if (start <= offset) {
-                const sectionOffset = offset - start;
-                source.start(ctx.currentTime, sectionOffset);
-            } else {
-                const sectionStartsAt = start - offset;
-                source.start(ctx.currentTime + sectionStartsAt);
-            }
-        })
-
-    // TODO clicking to play doesn't work - race condition
-    sourceNodes[trackSections.length - 1].source.onended = () => {
-        stop();
-    }
-
-    await ctx.resume();
+    source = ctx.createBufferSource();
+    console.log("playing 5");
+    source.buffer = trackAudio.buffer;
+    console.log("playing 6");
+    source.connect(ctx.destination);
+    console.log("playing 7");
+    source.onended = stop;
+    console.log("playing 8");
+    source.start(undefined, offset);
+    console.log("playing 9");
 
     audioStatusStoreInternal.set({
         type: "on",
         started: ctx.currentTime,
         offset: offset,
-        duration: trackSections[trackSections.length - 1].end
+        duration: trackAudio.duration
     });
 }
 
 export function stop() {
-    if(!sourceNodes) return;
-    if(sourceNodes.length) {
-        sourceNodes[sourceNodes.length - 1].source.onended = () => null;
-    }
-    sourceNodes.forEach(source => source.source.stop())
+    if(!source) return;
+    source.onended = () => {};
+    source.stop();
+    source = null;
     audioStatusStoreInternal.set({type: "off"})
 }

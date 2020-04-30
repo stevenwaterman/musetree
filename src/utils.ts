@@ -4,7 +4,7 @@ export function firstLetterUC(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function unwrapStore<T, INNER extends Readable<T | null>>(store_2: Readable<INNER | null>, equality: (a: T | null, b: T | null) => boolean = (a,b) => a===b): Readable<T | null> {
+export function unwrapStore<T, INNER extends Readable<T | null>>(store_2: Readable<INNER | null>, equality: (a: T, b: T) => boolean = (a,b) => a===b): Readable<T | null> {
     let value: T | null = null;
     const output: Writable<T | null> = writable(null);
     let unsubscribe: () => void = () => {};
@@ -12,7 +12,12 @@ export function unwrapStore<T, INNER extends Readable<T | null>>(store_2: Readab
         unsubscribe();
         if(store !== null) {
             unsubscribe = store.subscribe((state: T | null) => {
-                if(!equality(value, state)) {
+                if (
+                    (value === null && state !== null) ||
+                    (value !== null && state === null) ||
+                    (value !== null && state !== null && !equality(value, state))
+                ) {
+                    console.log("Updating to ", state);
                     value = state;
                     output.set(state);
                 }
