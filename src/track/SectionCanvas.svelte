@@ -6,7 +6,7 @@
   import * as Audio from "../synth/audioPlayer";
 
   export let branchStore;
-  export let section;
+  export let idx;
   export let deselect;
 
   let canvas;
@@ -60,7 +60,7 @@
     ctx.fillStyle = "white";
     ctx.textAlign = "right";
     ctx.font = "14px arial";
-    const text = `Section ${section + 1}: ${index}`;
+    const text = `Section ${index + 1}: ${index}`;
     ctx.fillText(text, canvas.width - 2.5, 12.5);
   }
 
@@ -114,5 +114,5 @@
 {/if}
 
 {#if selectedChildStore !== null}
-  <svelte:self branchStore={selectedChildStore} section={section + 1} deselect="{() => root.select(path)}"/>
+  <svelte:self branchStore={selectedChildStore} section={index + 1} deselect="{() => root.select(path)}"/>
 {/if}
