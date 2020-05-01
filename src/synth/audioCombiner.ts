@@ -4,7 +4,7 @@ export type AudioDatum = {
     end: number
 };
 
-const sampleRate = 44100;
+const sampleRate = 48000;
 export async function combine(data: AudioDatum[]): Promise<AudioBuffer> {
     const duration = Math.max(...data.map(it => it.end));
     const ctx = new OfflineAudioContext(1, duration * sampleRate, sampleRate);

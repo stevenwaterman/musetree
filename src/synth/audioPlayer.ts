@@ -33,7 +33,7 @@ audioStatusStore.subscribe(newStatus => {
 });
 
 const ctx = new AudioContext({
-    sampleRate: 44100
+    sampleRate: 48000 
 });
 
 let autoPlay: boolean = false;
@@ -93,24 +93,15 @@ async function load(path: number[] | null) {
 
 let source: AudioBufferSourceNode | null = null;
 export async function play(offset: number) {
-    console.log("playing 1");
     if(trackAudio === null) return;
-    console.log("playing 2");
     if (audioStatus.type === "on") stop();
-    console.log("playing 3");
     audioStatusStoreInternal.set({ type: "starting" })
-    console.log("playing 4");
 
     source = ctx.createBufferSource();
-    console.log("playing 5");
     source.buffer = trackAudio.buffer;
-    console.log("playing 6");
     source.connect(ctx.destination);
-    console.log("playing 7");
     source.onended = stop;
-    console.log("playing 8");
     source.start(undefined, offset);
-    console.log("playing 9");
 
     audioStatusStoreInternal.set({
         type: "on",

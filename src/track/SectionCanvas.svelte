@@ -6,7 +6,7 @@
   import * as Audio from "../synth/audioPlayer";
 
   export let branchStore;
-  export let idx;
+  export let index;
   export let deselect;
 
   let canvas;
@@ -16,7 +16,7 @@
 
   $: branchState = $branchStore;
   $: path = branchState.path;
-  $: index = path[path.length - 1];
+  $: childIndex = path[path.length - 1];
   $: section = branchState === null ? null : branchState.section;
   $: notes = section === null ? null : section.notes;
   $: startsAt = section ? section.startsAt : null;
@@ -60,7 +60,7 @@
     ctx.fillStyle = "white";
     ctx.textAlign = "right";
     ctx.font = "14px arial";
-    const text = `Section ${index + 1}: ${index}`;
+    const text = `Section ${index + 1}: ${childIndex}`;
     ctx.fillText(text, canvas.width - 2.5, 12.5);
   }
 

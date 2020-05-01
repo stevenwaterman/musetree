@@ -27,7 +27,7 @@
     {#if selectedChildStore === null}
         <p class="placeholder">Use the controls below to begin</p>
     {:else}
-        <SectionCanvas branchStore={selectedChildStore} section={0} deselect="{() => root.select([])}"/>
+        <SectionCanvas branchStore={selectedChildStore} index={0} deselect="{() => root.select([])}"/>
     {/if}
 </div>
 <SectionRowOptions />
