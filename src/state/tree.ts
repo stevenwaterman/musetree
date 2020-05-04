@@ -56,14 +56,15 @@ type DefaultStoreDecoration_Base<RD, BD, RM, BM, TYPE extends "root" | "branch">
      * Adds a child to the store at the next available index.
      * The child's decoration is derived from the parent's state using the provided function
      */
-    addChild: (stateDecorationStore: Readable<BD>, storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>) => void;
+    addChild: (stateDecorationStore: Readable<BD>, storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>) => Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>>;
 
     /**
      * Deletes the child a the given index.
      * The selected/last selected child becomes null if it is deleted
      */
     deleteChild: (childIdx: number) => void;
-    selectedChildStore_2: StoreSafe_SelectedStore<RD, BD, RM, BM>
+    selectedChildStore_2: StoreSafe_SelectedStore<RD, BD, RM, BM>;
+    resetNextChildIndex: () => void;
 }
 type DefaultStoreDecoration_Root<RD, BD, RM, BM> = DefaultStoreDecoration_Base<RD, BD, RM, BM, "root"> & {
     /**
@@ -97,6 +98,7 @@ type StoreDecoration_Either<RD, BD, RM, BM> = StoreDecoration_Root<RD, BD, RM, B
  */
 type StoreUnsafePlain_State_Root<RD, BD, RM, BM> = Writable<State_Root<RD, BD, RM, BM>>;
 type StoreUnsafePlain_State_Branch<RD, BD, RM, BM> = Writable<State_Branch<RD, BD, RM, BM>>;
+type StoreUnsafePlain_State_Either<RD, BD, RM, BM> = StoreUnsafePlain_State_Branch<RD, BD, RM, BM> | StoreUnsafePlain_State_Root<RD, BD, RM, BM>;
 
 
 type StoreSafePlain_DecoratedState_Root<RD, BD, RM, BM> = Readable<DecoratedState_Root<RD, BD, RM, BM>>;
@@ -205,32 +207,34 @@ function branchSelect<RD, BD, RM, BM>(
     });
 }
 
-function addChild<
-    RD, BD, RM, BM,
-    STATE extends State_Either<RD, BD, RM, BM>
->(
+async function addChild<RD, BD, RM, BM,
+    STATE extends State_Either<RD, BD, RM, BM>>(
     internalStore: Writable<STATE>,
     decoratedStore: StoreSafePlain_DecoratedState_Either<RD, BD, RM, BM>,
     selectedStore: StoreUnsafe_SelectedStore<RD, BD, RM, BM>,
     stateDecorationStore: Readable<BD>,
     storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>
-): void {
-    internalStore.update((state: STATE) => {
-        const childIndex = state.nextChildIndex;
-        const selectionInfoStore: StoreSafe_DefaultStateDecoration<RD, BD, RM, BM> = derived(decoratedStore, ($parentTotal: DecoratedState_Either<RD, BD, RM, BM>) => ({
-            selectedByParent: $parentTotal.selectedChild === childIndex,
-            wasLastSelectedByParent: $parentTotal.lastSelected === childIndex,
-            onSelectedPath: $parentTotal.onSelectedPath && $parentTotal.selectedChild === childIndex
-        }));
-        const newChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> = createBranchStore([...state.path, childIndex], stateDecorationStore, storeDecorationSupplier, selectionInfoStore, selectedStore);
-        const children: Record<number, StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>> = {...state.children};
-        children[state.nextChildIndex] = newChild;
-        return {
-            ...state,
-            children,
-            nextChildIndex: childIndex + 1
-        }
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>> {
+    return await new Promise(resolve => {
+        internalStore.update((state: STATE) => {
+            const childIndex = state.nextChildIndex;
+            const selectionInfoStore: StoreSafe_DefaultStateDecoration<RD, BD, RM, BM> = derived(decoratedStore, ($parentTotal: DecoratedState_Either<RD, BD, RM, BM>) => ({
+                selectedByParent: $parentTotal.selectedChild === childIndex,
+                wasLastSelectedByParent: $parentTotal.lastSelected === childIndex,
+                onSelectedPath: $parentTotal.onSelectedPath && $parentTotal.selectedChild === childIndex
+            }));
+            const newChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> = createBranchStore([...state.path, childIndex], stateDecorationStore, storeDecorationSupplier, selectionInfoStore, selectedStore);
+            resolve(newChild);
+            const children: Record<number, StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>> = {...state.children};
+            children[state.nextChildIndex] = newChild;
+            return {
+                ...state,
+                children,
+                nextChildIndex: childIndex + 1
+            }
+        })
     })
+
 }
 
 function rootDeleteChild<
@@ -297,6 +301,14 @@ function branchDeleteChild<
     })
 }
 
+function nodeResetNextChildIdx<RD, BD, RM, BM>(store: StoreUnsafePlain_State_Either<RD, BD, RM, BM>): void {
+    //TODO statically type this, probably by splitting into 2 funcs
+    store.update((state: any) => ({
+        ...state,
+           nextChildIndex: Math.max(...Object.keys(state.children).map(str => parseInt(str)), 0) + 1
+    }));
+}
+
 function createRootStore<RD, BD, RM, BM>(stateDecorationStore: Readable<RD>, storeDecorationSupplier_Root: StoreDecorationSupplier_Root<RD, BD, RM, BM>): StoreSafeDecorated_DecoratedState_Root<RD, BD, RM, BM> {
     const initialState: State_Root<RD, BD, RM, BM> = {
         type: "root",
@@ -329,6 +341,7 @@ function createRootStore<RD, BD, RM, BM>(stateDecorationStore: Readable<RD>, sto
         addChild: (stateDecorationStore: Readable<BD>, storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>) => addChild(internalStore, decoratedStateStore, mutableSelectedStore, stateDecorationStore, storeDecorationSupplier),
         select: (path: number[]) => rootSelect(internalStore, mutableSelectedStore, path),
         deleteChild: (childIdx: number) => rootDeleteChild(internalStore, mutableSelectedStore, childIdx),
+        resetNextChildIndex: () => nodeResetNextChildIdx(internalStore),
         selectedStore_2: mutableSelectedStore,
         selectedChildStore_2: deriveSelectedChildStore(decoratedStateStore)
     };
@@ -367,7 +380,8 @@ function createBranchStore<RD, BD, RM, BM>(path: number[], decorationStore: Read
         selectedChildStore_2: deriveSelectedChildStore(decoratedStore),
         internalSelect: (path: number[]) => branchSelect(internalStore, select, path),
         addChild: (stateDecorationStore: Readable<BD>, storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>) => addChild(internalStore, decoratedStore, selectedStore, stateDecorationStore, storeDecorationSupplier),
-        deleteChild: (childIdx: number) => branchDeleteChild(internalStore, select, childIdx)
+        deleteChild: (childIdx: number) => branchDeleteChild(internalStore, select, childIdx),
+        resetNextChildIndex: () => nodeResetNextChildIdx(internalStore)
     };
     fullyDecorated = {
         ...partDecorated,

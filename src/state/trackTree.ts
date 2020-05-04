@@ -1,4 +1,4 @@
-import {derived, readable, Readable, Writable, writable} from "svelte/store";
+import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
 import {Section, SectionStore} from "./section";
 import {unwrapStore} from "../utils";
@@ -28,7 +28,7 @@ export type BranchStateDecoration = BaseStateDecoration & {
 };
 
 type BaseStoreDecoration = {
-    addChild: (sectionStore: SectionStore) => void;
+    addChild: (sectionStore: SectionStore) => Promise<BranchStore>;
     updatePendingLoad: (updater: (current: number) => number) => void;
 }
 type RootStoreDecoration = BaseStoreDecoration & {}
@@ -63,9 +63,9 @@ function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createE
 
 function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): StoreDecorationSupplier_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration> {
     return (partDecoratedStore: StoreSafePartDecorated_DecoratedState_Root<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>) => ({
-        addChild: (sectionStore: SectionStore) => {
+        addChild: async (sectionStore: SectionStore) => {
             const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
-            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+            return await partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
         },
         updatePendingLoad: (updater: (current: number) => number) => {
             pendingLoadStore.update(state => ({
@@ -78,9 +78,9 @@ function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): 
 
 function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): StoreDecorationSupplier_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration> {
     return (partDecoratedStore: StoreSafePartDecorated_DecoratedState_Branch<RootStateDecoration, BranchStateDecoration, RootStoreDecoration, BranchStoreDecoration>) => ({
-        addChild: (sectionStore: SectionStore) => {
+        addChild: async (sectionStore: SectionStore) => {
             const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
-            partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+            return await partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
         },
         updatePendingLoad: (updater: (current: number) => number) => {
             pendingLoadStore.update(state => ({

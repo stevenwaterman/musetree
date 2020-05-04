@@ -91,7 +91,7 @@
                     MuseTree
                 </button>
                 <button disabled={disallowExport} on:click={exportMusenet}>
-                    MuseNet (High Quality)
+                    MuseNet
                 </button>
                 <button disabled={disallowExport} on:click={exportMidi}>
                     Midi
