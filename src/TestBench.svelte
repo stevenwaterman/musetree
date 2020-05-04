@@ -1,6 +1,6 @@
 <script>
-    import {Piano} from "./synth/instruments/piano";
-    import {decode} from "./synth/decoder";
+    import {Piano} from "./audio/instruments/piano";
+    import {decode} from "./audio/decoder";
 
     let pitch = 60;
     let lengthInput = 5;

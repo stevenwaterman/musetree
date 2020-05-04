@@ -1,6 +1,6 @@
 <script>
     import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../state/settings";
-    import {play, stop, audioStatusStore} from "../synth/audioPlayer"
+    import {play, stop, audioStatusStore} from "../audio/audioPlayer"
 </script>
 
 <style>

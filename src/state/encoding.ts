@@ -23,3 +23,11 @@ export function createEncodingStore(parent: null | ({type: "root"}) | (Parameter
         return createBranchEncodingStore(parent, sectionStore);
     }
 }
+
+export function encodingToString(encoding: MusenetEncoding): string {
+    return encoding.map(it => it.toString()).join(" ");
+}
+
+export function encodingToArray(encoding: string): MusenetEncoding {
+    return encoding.split(" ").map(it => parseInt(it));
+}

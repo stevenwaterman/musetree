@@ -3,7 +3,7 @@
   import {pitchRange, pitchMin, instrumentSettings} from "../constants";
   import {afterUpdate} from "svelte";
   import {root} from "../state/trackTree";
-  import * as Audio from "../synth/audioPlayer";
+  import * as Audio from "../audio/audioPlayer";
 
   export let branchStore;
   export let index;

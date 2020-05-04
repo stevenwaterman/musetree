@@ -1,5 +1,5 @@
 <script>
-  import { audioStatusStore } from "../synth/audioPlayer";
+  import { audioStatusStore } from "../audio/audioPlayer";
   import {
     yScaleStore,
     autoScrollStore,

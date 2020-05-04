@@ -5,44 +5,9 @@ import {NodeState, NodeStore} from "./state/trackTree";
 import {createSectionStore, Section, SectionState} from "./state/section";
 import {Writable} from "svelte/store";
 import {createEmptyNotes, Note, Notes} from "./state/notes";
-import {MusenetEncoding} from "./state/encoding";
-import {renderAudio} from "./synth/audioRender";
+import {encodingToArray, encodingToString, MusenetEncoding} from "./state/encoding";
+import {renderAudio} from "./audio/audioRender";
 import {Instrument} from "./constants";
-import {combineSections} from "./synth/audioCombiner";
-import toWav from "audiobuffer-to-wav";
-
-export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
-
-export async function downloadMuseNetAudio(encoding: MusenetEncoding, format: AudioFormat, name: string): Promise<XMLHttpRequest | boolean> {
-    // Use fetch because `.blob` is great
-    return fetch("https://musenet.openai.com/audio", {
-        method: "POST",
-        body: JSON.stringify({
-            audioFormat: format,
-            encoding: encodingToString(encoding)
-        }),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-        .then(res => res.blob())
-        .then(blob => download(blob, `${name}.${format}`));
-}
-
-export async function downloadMuseTreeAudio(track: Section[], name: string) {
-    const {buffer} = await combineSections(track);
-    const wav = toWav(buffer);
-    const array = new Uint8Array(wav);
-    download(array, `${name}.wav`);
-}
-
-function encodingToString(encoding: MusenetEncoding): string {
-    return encoding.map(it => it.toString()).join(" ");
-}
-
-function encodingToArray(encoding: string): MusenetEncoding {
-    return encoding.split(" ").map(it => parseInt(it));
-}
 
 export async function request(config: Config, store: NodeStore, state: NodeState) {
     if (store.type === "root") {

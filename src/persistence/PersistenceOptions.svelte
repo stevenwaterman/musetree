@@ -1,6 +1,5 @@
 <script>
-    import {downloadMuseNetAudio, downloadMuseTreeAudio} from "../broker";
-    import download from "downloadjs";
+    import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export";
     import {
         root,
         selectedBranchStore,
@@ -34,7 +33,9 @@
     }
 
     function exportMidi() {
-
+        const encoding = $selectedEncodingStore;
+        if(encoding === null) return;
+        downloadMidiAudio(encoding, "MidiExport");
     }
 
     $: disallowExport = $selectedBranchStore === null;
