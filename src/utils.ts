@@ -17,13 +17,14 @@ export function unwrapStore<T, INNER extends Readable<T | null>>(store_2: Readab
                     (value !== null && state === null) ||
                     (value !== null && state !== null && !equality(value, state))
                 ) {
-                    console.log("Updating to ", state);
                     value = state;
                     output.set(state);
                 }
             })
         } else {
             unsubscribe = () => {};
+            value = null;
+            output.set(null);
         }
     });
     return output;

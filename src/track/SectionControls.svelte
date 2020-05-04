@@ -17,17 +17,13 @@
   $: selectedPath = nodeState.path;
   $: lastSelectedChild = nodeState.lastSelected;
   $: pendingLoad = nodeState.pendingLoad;
-  //
+
   function loadMore() {
     if(nodeState === null) return;
     return request($configStore, nodeStore, nodeState);
   }
-  // $: if (
-  //   $autoRequestStore &&
-  //   !$nodeStore.childOffset &&
-  //   !pendingLoad
-  // )
-  //   loadMore();
+
+  $: parentStore = selectedStore == null ? root : selectedStore;
 </script>
 
 <style>
@@ -48,8 +44,8 @@
 </style>
 
 <div class="buttonRow">
-  {#each Object.values(children) as childStore}
-    <ChildButton nodeStore={childStore} remove={() => console.log("removed")} />
+  {#each Object.entries(children) as [childIdx, childStore]}
+    <ChildButton nodeStore={childStore} remove={() => parentStore.deleteChild(childIdx)} />
   {/each}
   <button class="rowButton" on:click={loadMore}>
     Load More{pendingLoad ? ` (${pendingLoad} pending)` : ''}

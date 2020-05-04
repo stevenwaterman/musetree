@@ -88,7 +88,7 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
     })
 }
 
-const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2, (a,b) => arraysEqual(a.path, b.path));
+export const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2, (a,b) => arraysEqual(a.path, b.path));
 export const selectedPathStore: Readable<number[] | null> = derived(selectedBranchStore, state => state === null ? null : state.path);
 
 function arraysEqual(a: any[], b: any[]) {
@@ -101,3 +101,5 @@ function arraysEqual(a: any[], b: any[]) {
     }
     return true;
 }
+
+//TODO auto-request

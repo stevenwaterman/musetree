@@ -31,7 +31,7 @@ export class Drums extends InstrumentSynth<"drums"> {
         const pitch = note.pitch;
         const sample = this.samples[pitch];
         if (sample === undefined) {
-            console.log("Unknown drum sample " + pitch);
+            console.error("Unknown drum sample " + pitch);
             return;
         }
         await sample.loadNote(note, ctx, destination);

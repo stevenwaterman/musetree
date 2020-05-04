@@ -49,8 +49,6 @@ let trackAudio: TrackAudio | null = null;
 
 selectedPathStore.subscribe(load);
 async function load(path: number[] | null) {
-    console.log("Loading");
-
     stop();
 
     if(path === null) return;
@@ -65,7 +63,6 @@ async function load(path: number[] | null) {
         track.push(childState.section);
         node = childState;
     });
-    console.log("Sections: ", track)
 
     if (!track.length) {
         return;

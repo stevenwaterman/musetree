@@ -45,6 +45,5 @@ async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer>
 
 export async function renderAudio(encoding: MusenetEncoding, duration: number) {
     const notes = decode(encoding);
-    console.log(encoding, notes, duration);
     return await render(notes, duration);
 }

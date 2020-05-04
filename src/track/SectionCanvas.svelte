@@ -114,5 +114,5 @@
 {/if}
 
 {#if selectedChildStore !== null}
-  <svelte:self branchStore={selectedChildStore} section={index + 1} deselect="{() => root.select(path)}"/>
+  <svelte:self branchStore={selectedChildStore} index={index + 1} deselect="{() => root.select(path)}"/>
 {/if}
