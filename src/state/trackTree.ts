@@ -13,6 +13,9 @@ import {
     StoreSafePartDecorated_DecoratedState_Root
 } from "./tree";
 import {createNotesStore, Notes} from "./notes";
+import {request} from "../broker";
+import {autoRequestStore, Config, configStore} from "./settings";
+import {get_store_value} from "svelte/internal";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -102,4 +105,16 @@ function arraysEqual(a: any[], b: any[]) {
     return true;
 }
 
-//TODO auto-request
+let autoRequest: boolean = null as any;
+autoRequestStore.subscribe(value => {autoRequest = value});
+
+let config: Config = null as any;
+configStore.subscribe(value => {config = value});
+
+selectedBranchStore.subscribe(async state => {
+    if(state === null || !autoRequest) return;
+    if(Object.keys(state.children).length || state.pendingLoad) return;
+
+    const store = get_store_value(root.selectedStore_2);
+    await request(config, store, state);
+})
