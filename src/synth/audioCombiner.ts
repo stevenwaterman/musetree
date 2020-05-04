@@ -1,3 +1,5 @@
+import {Section} from "../state/section";
+
 export type AudioDatum = {
     buffer: AudioBuffer,
     start: number,
@@ -17,4 +19,18 @@ export async function combine(data: AudioDatum[]): Promise<AudioBuffer> {
     })
 
     return await ctx.startRendering();
+}
+
+export async function combineSections(sections: Section[]): Promise<{buffer: AudioBuffer, duration: number}> {
+    const data: AudioDatum[] = sections
+        .map(section => {
+            return {
+                start: section.startsAt,
+                end: section.endsAt,
+                buffer: section.audio
+            };
+        });
+    const buffer = await combine(data);
+    const duration = data[data.length - 1].end;
+    return {buffer, duration};
 }

@@ -8,17 +8,18 @@ import {createEmptyNotes, Note, Notes} from "./state/notes";
 import {MusenetEncoding} from "./state/encoding";
 import {renderAudio} from "./synth/audioRender";
 import {Instrument} from "./constants";
-
+import {combineSections} from "./synth/audioCombiner";
+import toWav from "audiobuffer-to-wav";
 
 export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
 
-export async function downloadAudio(encoding: MusenetEncoding, format: AudioFormat, name: string): Promise<XMLHttpRequest | boolean> {
+export async function downloadMuseNetAudio(encoding: MusenetEncoding, format: AudioFormat, name: string): Promise<XMLHttpRequest | boolean> {
     // Use fetch because `.blob` is great
     return fetch("https://musenet.openai.com/audio", {
         method: "POST",
         body: JSON.stringify({
             audioFormat: format,
-            encoding
+            encoding: encodingToString(encoding)
         }),
         headers: {
             "Content-Type": "application/json"
@@ -26,6 +27,13 @@ export async function downloadAudio(encoding: MusenetEncoding, format: AudioForm
     })
         .then(res => res.blob())
         .then(blob => download(blob, `${name}.${format}`));
+}
+
+export async function downloadMuseTreeAudio(track: Section[], name: string) {
+    const {buffer} = await combineSections(track);
+    const wav = toWav(buffer);
+    const array = new Uint8Array(wav);
+    download(array, `${name}.wav`);
 }
 
 function encodingToString(encoding: MusenetEncoding): string {

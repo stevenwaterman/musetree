@@ -1,4 +1,4 @@
-import {derived, Readable, Writable, writable} from "svelte/store";
+import {derived, readable, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
 import {Section, SectionStore} from "./section";
 import {unwrapStore} from "../utils";
@@ -93,6 +93,7 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
 
 export const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2, (a,b) => arraysEqual(a.path, b.path));
 export const selectedPathStore: Readable<number[] | null> = derived(selectedBranchStore, state => state === null ? null : state.path);
+export const selectedEncodingStore: Readable<number[] | null> = derived(selectedBranchStore, state => state === null ? null : state.encoding);
 
 function arraysEqual(a: any[], b: any[]) {
     if (a === b) return true;
@@ -117,4 +118,18 @@ selectedBranchStore.subscribe(async state => {
 
     const store = get_store_value(root.selectedStore_2);
     await request(config, store, state);
+})
+
+export const selectedSectionsStore: Readable<Section[] | null> = derived(selectedPathStore, path => {
+    //TODO do this properly with subscriptions and a util method
+    if(path === null) return null;
+    let node: NodeState = get_store_value(root);
+    const track: Section[] = [];
+    path.forEach((childIdx: number) => {
+        const childStore: BranchStore = node.children[childIdx];
+        const childState: BranchState = get_store_value(childStore);
+        track.push(childState.section);
+        node = childState;
+    });
+    return track;
 })

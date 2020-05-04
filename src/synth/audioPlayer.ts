@@ -5,11 +5,11 @@ import {
     BranchStore,
     NodeState,
     root,
-    selectedPathStore
+    selectedPathStore, selectedSectionsStore
 } from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
 import {autoPlayStore, preplayStore} from "../state/settings";
-import {AudioDatum, combine} from "./audioCombiner";
+import {combineSections} from "./audioCombiner";
 
 type AudioStatus_Base<TYPE extends string> = {
     type: TYPE;
@@ -47,42 +47,17 @@ type TrackAudio = {
 }
 let trackAudio: TrackAudio | null = null;
 
-selectedPathStore.subscribe(load);
-async function load(path: number[] | null) {
+selectedSectionsStore.subscribe(load);
+async function load(track: Section[] | null) {
     stop();
 
-    if(path === null) return;
+    if(track === null || track.length === 0) return;
 
     audioStatusStore.set({type: "loading"});
-
-    let node: NodeState = get_store_value(root);
-    const track: Section[] = [];
-    path.forEach((childIdx: number) => {
-        const childStore: BranchStore = node.children[childIdx];
-        const childState: BranchState = get_store_value(childStore);
-        track.push(childState.section);
-        node = childState;
-    });
-
-    if (!track.length) {
-        return;
-    }
-
-    const data: AudioDatum[] = track
-        .map(section => {
-            return {
-                start: section.startsAt,
-                end: section.endsAt,
-                buffer: section.audio
-            };
-        });
-
-    const buffer = await combine(data);
-    const duration = data[data.length - 1].end;
-    trackAudio = { buffer, duration };
+    trackAudio = await combineSections(track);
 
     if(autoPlay) {
-        const offset = data[data.length - 1].start - prePlayTime;
+        const offset = track[track.length -1].startsAt - prePlayTime;
         const clamped = Math.max(offset, 0);
         await play(clamped);
     }
