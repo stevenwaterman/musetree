@@ -122,7 +122,7 @@ type TokenStart = TokenBase<"start">
 
 export type Token = TokenNote | TokenWait | TokenStart;
 
-const tokenInfo: Array<[Instrument, number]> = [
+const tokenInfo = [
     ["piano", 0],
     ["piano", 24],
     ["piano", 32],
@@ -152,16 +152,17 @@ const tokenInfo: Array<[Instrument, number]> = [
     ["trumpet", 80],
     ["trumpet", 0],
     ["harp", 80],
-    ["harp", 0]
-];
+    ["harp", 0],
+    ["drums", 80]
+] as const;
 
 export function parseToken(token: number): Token | null {
-    if (token >= 0 && token < 3840) {
+    if (token >= 0 && token < 3968) {
         const [instrument, volume] = tokenInfo[token >> 7];
         return {type: "note", pitch: token % 128, instrument, volume};
     }
-    if (token < 3968) return {type: "note", pitch: token % 128, instrument: "drums", volume: 80};
     if (token < 4096) return {type: "wait", delay: (token % 128) + 1};
+    if (token === 4097) return {type: "wait", delay: (4067 % 128) + 1};
     return null;
 }
 

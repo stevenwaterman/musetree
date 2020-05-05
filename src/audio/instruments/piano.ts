@@ -4,8 +4,6 @@ import {AudioNote} from "../decoder";
 import {toFrequency} from "../utils";
 import {AFTER_RELEASE} from "../audioRender";
 
-const OFFSET = 0.012;
-
 export class Piano extends InstrumentSynth<"piano"> {
     protected instrument: "piano" = "piano";
 
@@ -102,12 +100,12 @@ class PianoNode {
     }
 
     schedule(note: AudioNote): void {
-        this.idealFrequency.start(note.startTime + OFFSET);
-        this.lowpassEnvelope.schedule(note.volume, note.startTime + OFFSET);
+        this.idealFrequency.start(note.startTime);
+        this.lowpassEnvelope.schedule(note.volume, note.startTime);
 
         const adjustedNote = {
             ...note,
-            startTime: note.startTime + OFFSET
+            startTime: note.startTime
         };
 
         const stopTime1 = this.lowTricord.schedule(adjustedNote);

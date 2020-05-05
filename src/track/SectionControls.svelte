@@ -7,6 +7,8 @@
   import { request } from "../broker";
   import {createSectionStore} from "../state/section";
 
+  import {decode} from "../audio/decoder";
+
   $: selectedStore_2 = root.selectedStore_2;
   $: selectedStore = $selectedStore_2;
 
@@ -52,7 +54,10 @@
   </button>
   <button
     class="rowButton"
-    on:click={() => console.log(JSON.stringify(nodeState))}>
+    on:click="{() => {{
+      console.log(JSON.stringify(nodeState.section.notes));
+      console.log(decode(nodeState.encoding));
+    }}}">
     Log
   </button>
 </div>

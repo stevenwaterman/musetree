@@ -2,10 +2,6 @@ import {InstrumentSynth} from "../nodes/InstrumentSynth";
 import {AudioNote} from "../decoder";
 import {NoteSynth} from "../nodes/NoteSynth";
 
-
-
-
-
 export class Drums extends InstrumentSynth<"drums"> {
     private static ENCODINGS: number[] = [
         3867, 3868, 3869, 3870, 3871, 3872, 3873, 3874, 3875, 3876, 3877, 3878,
@@ -45,7 +41,7 @@ export class Drums extends InstrumentSynth<"drums"> {
 }
 
 class DrumSample implements NoteSynth {
-    private static readonly OFFSET = 0;
+    private static readonly OFFSET = 0.051;
     private static readonly GAIN = 10;
     private readonly arrayBufferPromise: Promise<ArrayBuffer>;
     private audioBuffer: AudioBuffer = null as any;
@@ -67,7 +63,8 @@ class DrumSample implements NoteSynth {
 
         const bufferSource = ctx.createBufferSource();
         bufferSource.buffer = this.audioBuffer;
-        bufferSource.connect(gainNode);
-        bufferSource.start(ctx.currentTime + note.startTime - DrumSample.OFFSET);
+        bufferSource.connect(gainNode)
+        bufferSource.start(note.startTime, DrumSample.OFFSET);
+        bufferSource.stop(note.endTime);
     }
 }

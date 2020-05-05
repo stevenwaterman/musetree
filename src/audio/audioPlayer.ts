@@ -33,7 +33,7 @@ audioStatusStore.subscribe(newStatus => {
 });
 
 const ctx = new AudioContext({
-    sampleRate: 48000 
+    sampleRate: 44100
 });
 
 let autoPlay: boolean = false;

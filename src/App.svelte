@@ -5,7 +5,6 @@
   import TrackControls from "./track/TrackControls.svelte";
   import TreeVis from "./treeVis/TreeVis.svelte";
   import Links from "./links/Links.svelte";
-  import TestBench from "./TestBench.svelte";
 </script>
 
 <style>
@@ -45,4 +44,3 @@
     <Links />
   </div>
 </div>
-<!--<TestBench/>-->
