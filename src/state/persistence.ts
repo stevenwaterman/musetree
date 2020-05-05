@@ -1,21 +1,28 @@
 import {createSectionStore, Section} from "./section";
 import {BranchState, BranchStore, NodeStore, TreeState, TreeStore} from "./trackTree";
 import {get_store_value} from "svelte/internal";
+import {renderAudio} from "../audio/audioRender";
+import download from "downloadjs";
+
+type SectionDto = Omit<Section, "audio">;
 
 type TrackTreeDtoRoot = {
     children: TrackTreeDtoBranch[];
 }
 
 type TrackTreeDtoBranch = {
-    section: Section;
+    section: SectionDto;
     children: TrackTreeDtoBranch[];
 }
 
-function save(tree: TreeStore): TrackTreeDtoRoot {
-    return serialise_Root(tree);
+export function save(tree: TreeStore): void {
+    const serialised = serialise_Root(tree);
+    const json = JSON.stringify(serialised);
+    download(json, "Save.mst");
 }
 
-function serialise_Root(tree: TreeStore): TrackTreeDtoRoot {
+function serialise_Root(tree: TreeStore): TrackTreeDtoRoot
+{
     const state: TreeState = get_store_value(tree);
     const dto: TrackTreeDtoRoot = {
         children: []
@@ -28,8 +35,12 @@ function serialise_Root(tree: TreeStore): TrackTreeDtoRoot {
 
 function serialise_Branch(tree: BranchStore): TrackTreeDtoBranch {
     const state: BranchState = get_store_value(tree);
+    const sectionDto = {
+        ...state.section
+    };
+    delete sectionDto.audio;
     const dto: TrackTreeDtoBranch = {
-        section: state.section,
+        section: sectionDto,
         children: []
     };
     Object.values(state.children).forEach(child => {
@@ -38,24 +49,32 @@ function serialise_Branch(tree: BranchStore): TrackTreeDtoBranch {
     return dto;
 }
 
-async function load(tree: TreeStore, serialised: TrackTreeDtoRoot) {
+export async function load(tree: TreeStore, json: string) {
+    const serialised: TrackTreeDtoRoot = JSON.parse(json);
     clearTree(tree);
     await addToTree_Root(tree, serialised);
 }
 
 async function addToTree_Root(tree: NodeStore, serialised: TrackTreeDtoRoot) {
-    serialised.children.forEach(child => addToTree_Branch(tree, child))
+    await Promise.all(serialised.children.map(child => addToTree_Branch(tree, child)));
 }
 
 async function addToTree_Branch(tree: NodeStore, serialised: TrackTreeDtoBranch) {
-    const sectionStore = createSectionStore(serialised.section);
+    const encoding = serialised.section.encoding;
+    const duration = serialised.section.endsAt - serialised.section.startsAt;
+    const audio = await renderAudio(encoding, duration);
+    const section = {
+        ...serialised.section,
+        audio
+    }
+    const sectionStore = createSectionStore(section);
     const newBranch: BranchStore = await tree.addChild(sectionStore);
-    serialised.children.forEach(child => addToTree_Branch(newBranch, child))
+    await Promise.all(serialised.children.map(child => addToTree_Branch(newBranch, child)));
 }
 
 function clearTree(tree: TreeStore) {
     const treeState: TreeState = get_store_value(tree);
-    const childIndices = Object.keys(treeState.children).forEach(key => tree.deleteChild(key as any));
+    Object.keys(treeState.children).forEach(key => tree.deleteChild(key as any));
     tree.updatePendingLoad(() => 0);
     tree.resetNextChildIndex();
 }

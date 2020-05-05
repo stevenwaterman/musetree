@@ -9,6 +9,8 @@ import {encodingToArray, encodingToString, MusenetEncoding} from "./state/encodi
 import {renderAudio} from "./audio/audioRender";
 import {Instrument} from "./constants";
 
+//TODO cancel all requests when loading
+
 export async function request(config: Config, store: NodeStore, state: NodeState) {
     if (store.type === "root") {
         return await requestInternal(config, store, [], 0);

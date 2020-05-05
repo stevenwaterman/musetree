@@ -1,5 +1,6 @@
 <script>
-    import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export";
+    import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export"
+    import {save, load} from "../state/persistence";
     import {
         root,
         selectedBranchStore,
@@ -7,17 +8,14 @@
         selectedSectionsStore,
     } from "../state/trackTree";
 
-    function save() {
-        // download(JSON.stringify($trackTreeStore), "save.json");
-    }
-
     const reader = new FileReader();
-    reader.onload = event => {
-        // trackTreeStore.set(JSON.parse(event.target.result));
+    reader.onload = async event => {
+        await load(root, event.target.result);
+        alert("Loading Complete");
     };
 
-    function load(event) {
-        // reader.readAsText(event.target.files[0]);
+    function loadClicked(event) {
+        reader.readAsText(event.target.files[0]);
     }
 
     function exportMuseTree() {
@@ -71,7 +69,7 @@
     <div class="row">
         <button
                 disabled={$root.children.length === 0}
-                on:click={save}>
+                on:click={() => save(root)}>
             Save
         </button>
         <label for="upload">
@@ -79,9 +77,9 @@
             <input
                     id="upload"
                     type="file"
-                    accept=".json"
+                    accept=".mst"
                     multiple={false}
-                    on:change={load}
+                    on:change={loadClicked}
                     style="display:none"/>
         </label>
         <div class="dropdown">
