@@ -32,5 +32,5 @@ export async function downloadMuseTreeAudio(track: Section[], name: string) {
 
 export async function downloadMidiAudio(encoding: MusenetEncoding, name: string) {
     const blob = fromMusenetToMidi(encoding);
-    download(blob, `${name}.midi`);
+    download(blob, `${name}.mid`);
 }
