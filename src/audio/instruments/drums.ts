@@ -42,7 +42,6 @@ export class Drums extends InstrumentSynth<"drums"> {
 
 class DrumSample implements NoteSynth {
     private static readonly OFFSET = 0.051;
-    private static readonly GAIN = 10;
     private readonly arrayBufferPromise: Promise<ArrayBuffer>;
     private audioBuffer: AudioBuffer = null as any;
 
@@ -57,13 +56,9 @@ class DrumSample implements NoteSynth {
     }
 
     async loadNote(note: AudioNote, ctx: BaseAudioContext, destination: AudioNode) {
-        const gainNode = ctx.createGain();
-        gainNode.gain.value = DrumSample.GAIN;
-        gainNode.connect(destination);
-
         const bufferSource = ctx.createBufferSource();
         bufferSource.buffer = this.audioBuffer;
-        bufferSource.connect(gainNode)
+        bufferSource.connect(destination)
         bufferSource.start(note.startTime, DrumSample.OFFSET);
         bufferSource.stop(note.endTime);
     }

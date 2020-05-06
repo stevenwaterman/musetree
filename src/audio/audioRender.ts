@@ -32,7 +32,6 @@ const sampleRate = 44100;
 async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer> {
     const ctx = new OfflineAudioContext(1, (duration + 2) * sampleRate, sampleRate);
 
-
     const gain = ctx.createGain();
     gain.gain.value = 0.2;
     gain.connect(ctx.destination);
@@ -40,6 +39,7 @@ async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer>
     const promises = Object.values(synths).map(it => it.schedule(ctx, gain, notes));
     await Promise.all(promises);
 
+    console.log(ctx.currentTime);
     return await ctx.startRendering();
 }
 
