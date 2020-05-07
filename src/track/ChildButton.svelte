@@ -9,14 +9,8 @@
   $: path = state.path;
   $: index = path[path.length - 1];
 
-  // $: startsAt = $parentNodeStore.track ? $parentNodeStore.track.endsAt : 0;
-
   function select() {
     root.select(path);
-  //   const playFrom = Math.max(0, startsAt - $preplayStore);
-  //   if ($autoPlayStore) {
-  //     audio.play(playFrom);
-  //   }
   }
   //
 </script>

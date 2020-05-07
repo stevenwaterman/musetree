@@ -54,7 +54,9 @@ async function load(track: Section[] | null) {
     if(track === null || track.length === 0) return;
 
     audioStatusStore.set({type: "loading"});
-    trackAudio = await combineSections(track);
+    const buffer = await combineSections(track);
+    const duration = track[track.length - 1].endsAt;
+    trackAudio = {buffer, duration};
 
     if(autoPlay) {
         const offset = track[track.length -1].startsAt - prePlayTime;

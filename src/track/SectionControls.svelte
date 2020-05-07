@@ -55,6 +55,7 @@
   <button
     class="rowButton"
     on:click="{() => {{
+      console.log(nodeState.section.endsAt);
       console.log(JSON.stringify(nodeState.section.notes));
       console.log(decode(nodeState.encoding));
     }}}">

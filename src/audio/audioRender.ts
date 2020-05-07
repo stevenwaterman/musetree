@@ -39,7 +39,6 @@ async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer>
     const promises = Object.values(synths).map(it => it.schedule(ctx, gain, notes));
     await Promise.all(promises);
 
-    console.log(ctx.currentTime);
     return await ctx.startRendering();
 }
 

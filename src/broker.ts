@@ -34,25 +34,22 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
 
     store.updatePendingLoad(it => it + 4);
 
-    return axios({
-        method: "POST",
-        url: "https://musenet.openai.com/sample",
-        data
-    })
-        .then((res: AxiosResponse<ResponseData>) =>
-            res.data.completions)
-        .then((completions: Completion[]) => {
-            const promises = completions.map((completion: Completion) => parseCompletion(completion, prevEncoding, prevDuration));
-            return Promise.all(promises)
+    let response: Completion[] | null = null;
+    while (response === null) {
+        response = await axios({
+            method: "POST",
+            url: "https://musenet.openai.com/sample",
+            data
         })
-        .then((sections: Section[]) =>
-            sections.map((section: Section) =>
-                createSectionStore(section)))
+            .then((res: AxiosResponse<ResponseData>) => res.data.completions)
+            .catch(() => null);
+    }
+    const promises = response.map((completion: Completion) => parseCompletion(completion, prevEncoding, prevDuration));
+    return Promise.all(promises)
+        .then((sections: Section[]) => sections.map((section: Section) => createSectionStore(section)))
         .then((sectionStores: Writable<SectionState>[]) =>
-            sectionStores.map((sectionStore: Writable<SectionState>) =>
-                store.addChild(sectionStore)))
-        .finally(() =>
-            store.updatePendingLoad(it => it - 4))
+            sectionStores.map((sectionStore: Writable<SectionState>) => store.addChild(sectionStore)))
+        .finally(() => store.updatePendingLoad(it => it - 4));
 }
 
 type Completion = {

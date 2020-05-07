@@ -21,7 +21,7 @@ export async function combine(data: AudioDatum[]): Promise<AudioBuffer> {
     return await ctx.startRendering();
 }
 
-export async function combineSections(sections: Section[]): Promise<{buffer: AudioBuffer, duration: number}> {
+export async function combineSections(sections: Section[]): Promise<AudioBuffer> {
     const data: AudioDatum[] = sections
         .map(section => {
             return {
@@ -30,7 +30,5 @@ export async function combineSections(sections: Section[]): Promise<{buffer: Aud
                 buffer: section.audio
             };
         });
-    const buffer = await combine(data);
-    const duration = data[data.length - 1].end;
-    return {buffer, duration};
+    return await combine(data);
 }
