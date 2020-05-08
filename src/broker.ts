@@ -23,7 +23,7 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
     const data = {
         ...config,
         encoding: encodingToString(prevEncoding),
-        audioFormat: ""
+        audioFormat: "mp3"
     };
 
     type ResponseData = {
@@ -57,6 +57,7 @@ type Completion = {
     //     instrument: Instrument,
     //     notes: Note[]
     // }>
+    audioFile: string;
 }
 
 async function parseCompletion(completion: Completion, prevEncoding: MusenetEncoding, prevDuration: number): Promise<Section> {
@@ -65,6 +66,15 @@ async function parseCompletion(completion: Completion, prevEncoding: MusenetEnco
     const notes = await decode(encoding);
     const startsAt = prevDuration;
     const endsAt = Math.max(...Object.values(notes).flatMap(track => track).map(note => note.endTime));
-    const audio = await render(notes, endsAt - startsAt);
+    // const audio = await render(notes, endsAt - startsAt);
+
+    // This is a stop-gap measure while the musetree audio synthesis improves
+    const audioFile = completion.audioFile;
+    const trimmed = audioFile.substring(2, audioFile.length - 1);
+    const uint8Array: Uint8Array = Uint8Array.from(atob(trimmed), c => c.charCodeAt(0));
+    console.log(audioFile, trimmed, uint8Array);
+    const ctx = new AudioContext({sampleRate: 44100});
+    const audio = await ctx.decodeAudioData(uint8Array.buffer);
+
     return {encoding, startsAt, endsAt, notes, audio};
 }
