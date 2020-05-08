@@ -1,8 +1,9 @@
 import {createSectionStore, Section} from "./section";
 import {BranchState, BranchStore, NodeStore, TreeState, TreeStore} from "./trackTree";
 import {get_store_value} from "svelte/internal";
-import {renderAudio} from "../audio/audioRender";
+import {render} from "../audio/audioRender";
 import download from "downloadjs";
+import {decode} from "../audio/decoder";
 
 type SectionDto = Omit<Section, "audio">;
 
@@ -60,9 +61,8 @@ async function addToTree_Root(tree: NodeStore, serialised: TrackTreeDtoRoot) {
 }
 
 async function addToTree_Branch(tree: NodeStore, serialised: TrackTreeDtoBranch) {
-    const encoding = serialised.section.encoding;
     const duration = serialised.section.endsAt - serialised.section.startsAt;
-    const audio = await renderAudio(encoding, duration);
+    const audio = await render(serialised.section.notes, duration);
     const section = {
         ...serialised.section,
         audio

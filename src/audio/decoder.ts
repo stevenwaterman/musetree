@@ -1,31 +1,9 @@
 import {MusenetEncoding} from "../state/encoding";
 import {Instrument} from "../constants";
+import {Notes} from "../state/notes";
 
-export type AudioNote = {
-    /**
-     * Musenet Pitch
-     */
-    pitch: number;
-
-    /**
-     * Start time, in seconds
-     */
-    startTime: number;
-
-    /**
-     * Duration, in seconds
-     */
-    endTime: number;
-
-    /**
-     * Volume on a 0..1 scale
-     */
-    volume: number;
-};
-export type AudioNotes = Record<Instrument, AudioNote[]>;
-
-export function decode(encoded: MusenetEncoding): AudioNotes {
-    const notes: AudioNotes = {
+export function decode(encoded: MusenetEncoding): Notes {
+    const notes: Notes = {
         piano: [],
         violin: [],
         cello: [],

@@ -3,10 +3,26 @@ import {SectionStore} from "./section";
 import {Instrument, instruments} from "../constants";
 
 export type Note = {
-    time_on: number;
+    /**
+     * Musenet Pitch
+     */
     pitch: number;
-    duration: number;
-}
+
+    /**
+     * Start time, in seconds
+     */
+    startTime: number;
+
+    /**
+     * Duration, in seconds
+     */
+    endTime: number;
+
+    /**
+     * Volume on a 0..1 scale
+     */
+    volume: number;
+};
 export type Notes = Record<Instrument, Note[]>;
 export type NotesState = { notes: Notes; }
 export type NotesStore = Readable<NotesState>;

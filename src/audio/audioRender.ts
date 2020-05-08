@@ -1,8 +1,6 @@
 import {Piano} from "./instruments/piano";
 import {Instrument} from "../constants";
 import {NotesPlayer} from "./nodes/NotesPlayer";
-import {MusenetEncoding} from "../state/encoding";
-import {AudioNotes, decode} from "./decoder";
 import {Bass} from "./instruments/bass";
 import {Clarinet} from "./instruments/clarinet";
 import {Cello} from "./instruments/cello";
@@ -12,6 +10,7 @@ import {Harp} from "./instruments/harp";
 import {Trumpet} from "./instruments/trumpet";
 import {Violin} from "./instruments/violin";
 import {Drums} from "./instruments/drums";
+import {Notes} from "../state/notes";
 
 export const AFTER_RELEASE = 5;
 
@@ -29,7 +28,7 @@ const synths: Record<Instrument, NotesPlayer> = {
 };
 
 const sampleRate = 44100;
-async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer> {
+export async function render(notes: Notes, duration: number): Promise<AudioBuffer> {
     const ctx = new OfflineAudioContext(1, (duration + 2) * sampleRate, sampleRate);
 
     const gain = ctx.createGain();
@@ -42,7 +41,3 @@ async function render(notes: AudioNotes, duration: number): Promise<AudioBuffer>
     return await ctx.startRendering();
 }
 
-export async function renderAudio(encoding: MusenetEncoding, duration: number) {
-    const notes = decode(encoding);
-    return await render(notes, duration);
-}

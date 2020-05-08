@@ -72,9 +72,10 @@
     notes.forEach(note => {
       const xStart =
               Math.round((xOffset + note.pitch - pitchMin) * xScale) + 0.5;
-      const yStart = Math.round(note.time_on * $yScaleStore) + 0.5;
+      const yStart = Math.round(note.startTime * $yScaleStore) + 0.5;
       const noteWidth = Math.round(xScale);
-      const noteHeight = Math.round(note.duration * $yScaleStore);
+      const duration = note.endTime - note.startTime;
+      const noteHeight = Math.round(duration * $yScaleStore);
       ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
       if (noteHeight > 2) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
     });

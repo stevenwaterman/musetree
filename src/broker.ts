@@ -1,13 +1,11 @@
 import axios, {AxiosResponse} from "axios";
-import download from "downloadjs";
 import {Config} from "./state/settings";
 import {NodeState, NodeStore} from "./state/trackTree";
 import {createSectionStore, Section, SectionState} from "./state/section";
 import {Writable} from "svelte/store";
-import {createEmptyNotes, Note, Notes} from "./state/notes";
 import {encodingToArray, encodingToString, MusenetEncoding} from "./state/encoding";
-import {renderAudio} from "./audio/audioRender";
-import {Instrument} from "./constants";
+import {render} from "./audio/audioRender";
+import {decode} from "./audio/decoder";
 
 //TODO cancel all requests when loading
 
@@ -54,37 +52,19 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
 
 type Completion = {
     encoding: string;
-    totalTime: number;
-    tracks: Array<{
-        instrument: Instrument,
-        notes: Note[]
-    }>
+    // totalTime: number;
+    // tracks: Array<{
+    //     instrument: Instrument,
+    //     notes: Note[]
+    // }>
 }
 
 async function parseCompletion(completion: Completion, prevEncoding: MusenetEncoding, prevDuration: number): Promise<Section> {
     const fullEncoding = encodingToArray(completion.encoding);
     const encoding = fullEncoding.slice(prevEncoding.length);
+    const notes = await decode(encoding);
     const startsAt = prevDuration;
-    const endsAt = completion.totalTime;
-    const notes = parseNotes(completion, prevDuration);
-    const audio = await renderAudio(encoding, endsAt - startsAt);
+    const endsAt = Math.max(...Object.values(notes).flatMap(track => track).map(note => note.endTime));
+    const audio = await render(notes, endsAt - startsAt);
     return {encoding, startsAt, endsAt, notes, audio};
 }
-
-function transposeNotes(notes: Note[], subtract: number): Note[] {
-    return notes
-        .filter(note => note.time_on >= subtract)
-        .filter(note => note.duration > 0)
-        .map(note => ({...note, time_on: note.time_on - subtract}))
-}
-
-function parseNotes({tracks}: Completion, prevDuration: number): Notes {
-    const notesPerInstrument: Notes = createEmptyNotes();
-
-    tracks.forEach(({instrument, notes}) =>
-        notesPerInstrument[instrument] = transposeNotes(notes, prevDuration)
-    );
-
-    return notesPerInstrument;
-}
-
