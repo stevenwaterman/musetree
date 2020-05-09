@@ -1,9 +1,9 @@
 import {Instrument} from "../../constants";
 import {InstrumentSynth} from "./InstrumentSynth";
-import {AudioNote} from "../decoder";
 import {AhdsrEnvelope, ENVELOPE_AHDSR} from "./envelopes";
 import {toFrequency} from "../utils";
 import {AFTER_RELEASE} from "../audioRender";
+import {Note} from "../../state/notes";
 
 export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     protected abstract amplitudeGain: number;
@@ -18,7 +18,7 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
 
     async setup(){};
 
-    async loadNote(note: AudioNote, ctx: BaseAudioContext, destination: AudioNode) {
+    async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
         const freq = toFrequency(note.pitch);
 
         const adjustedAmplitudeEnvelope: ENVELOPE_AHDSR = {
@@ -37,7 +37,7 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
 
         const ampGain = new AhdsrEnvelope(
             ctx,
-            this.amplitudeGain * note.volume,
+            this.amplitudeGain,
             adjustedAmplitudeEnvelope,
         );
         ampOsc.connect(ampGain.input);
@@ -65,7 +65,7 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
         );
         freqOsc.connect(freqGain.input);
         freqGain.connect(ampOsc.frequency);
-        freqGain.schedule(note.volume, note.startTime, note.endTime);
+        freqGain.schedule(1, note.startTime, note.endTime);
 
 
     }

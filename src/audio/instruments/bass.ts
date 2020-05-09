@@ -7,7 +7,7 @@ export class Bass extends FmSynth<"bass"> {
     protected amplitudeEnvelope: ENVELOPE_AHDSR = {
         attack: 0.001,
         hold: 0.01,
-        decay: 0.3,
+        decay: 0.5,
         sustain: 0,
         release: 0.05
     };

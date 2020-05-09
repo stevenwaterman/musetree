@@ -1,6 +1,5 @@
-import {Instrument} from "../../constants";
-import {AudioNotes} from "../decoder";
+import {Notes} from "../../state/notes";
 
 export interface NotesPlayer {
-    schedule(ctx: BaseAudioContext, destination: AudioNode, notes: AudioNotes): Promise<void>;
+    schedule(ctx: BaseAudioContext, destination: AudioNode, notes: Notes): Promise<void>;
 }
