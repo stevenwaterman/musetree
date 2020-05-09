@@ -1,8 +1,8 @@
 import {AhdEnvelope, AhdsrEnvelope, ENVELOPE_AHD, ENVELOPE_AHDSR} from "../nodes/envelopes";
 import {InstrumentSynth} from "../nodes/InstrumentSynth";
-import {AudioNote} from "../decoder";
 import {toFrequency} from "../utils";
 import {AFTER_RELEASE} from "../audioRender";
+import {Note} from "../../state/notes";
 
 export class Piano extends InstrumentSynth<"piano"> {
     protected instrument: "piano" = "piano";
@@ -10,7 +10,7 @@ export class Piano extends InstrumentSynth<"piano"> {
     async setup(ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
     }
 
-    async loadNote(note: AudioNote, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+    async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
         const node = new PianoNode(ctx);
         node.frequencyParam.value = toFrequency(note.pitch);
         node.connect(destination);
@@ -99,7 +99,7 @@ class PianoNode {
         return this;
     }
 
-    schedule(note: AudioNote): void {
+    schedule(note: Note): void {
         this.idealFrequency.start(note.startTime);
         this.lowpassEnvelope.schedule(note.volume, note.startTime);
 
@@ -180,7 +180,7 @@ class TricordNode {
         return this;
     }
 
-    schedule({startTime, endTime: releaseTime, volume}: AudioNote): number {
+    schedule({startTime, endTime: releaseTime, volume}: Note): number {
         const fundamentalStopTime = releaseTime + AFTER_RELEASE * TricordNode.FUNDAMENTAL_ENVELOPE.release;
         this.fundamentalFrequency.start(startTime);
         this.fundamentalFrequency.stop(fundamentalStopTime);
@@ -238,7 +238,7 @@ class HammerNode {
         return this;
     }
 
-    schedule({startTime, volume}: AudioNote): number {
+    schedule({startTime, volume}: Note): number {
         const stopTime = startTime + HammerNode.ENVELOPE.hold + AFTER_RELEASE * HammerNode.ENVELOPE.decay;
         this.frequency.start(startTime);
         this.frequency.stop(stopTime);

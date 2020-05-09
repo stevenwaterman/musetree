@@ -42,7 +42,7 @@ export function decode(encoded: MusenetEncoding): {
             if (instrument === "drums") {
                 instrumentNotes.push({
                     startTime: time,
-                    endTime: time + drumDuration(pitch),
+                    endTime: time + drumDuration(token.original),
                     pitch: pitch,
                     volume: 80
                 })
@@ -105,6 +105,7 @@ type TokenBase<TYPE extends string> = {
 
 type TokenNote = TokenBase<"note"> & {
     pitch: number;
+    original: number;
     instrument: Instrument;
     volume: number;
 }
@@ -154,7 +155,7 @@ const tokenInfo = [
 export function parseToken(token: number): Token | null {
     if (token >= 0 && token < 3968) {
         const [instrument, volume] = tokenInfo[token >> 7];
-        return {type: "note", pitch: token % 128, instrument, volume};
+        return {type: "note", original: token, pitch: token % 128, instrument, volume};
     }
     if (token < 4096) return {type: "wait", delay: (token % 128) + 1};
     if (token === 4097) return {type: "wait", delay: (4067 % 128) + 1};

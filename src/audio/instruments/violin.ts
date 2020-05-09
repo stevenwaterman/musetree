@@ -63,7 +63,6 @@ export class Violin extends InstrumentSynth<"violin">{
         ];
 
         const highPass = ctx.createBiquadFilter();
-        highPass.connect(destination);
         highPass.type = "highpass";
         highPass.gain.value = 12;
         highPass.frequency.value = 200;
@@ -81,7 +80,11 @@ export class Violin extends InstrumentSynth<"violin">{
             gain.connect(filter);
             filter.connect(highPass);
         });
-        // lowPass.connect(highPass);
+
+        const outGain = ctx.createGain();
+        outGain.gain.value = 0.3;
+        highPass.connect(outGain);
+        outGain.connect(destination);
 
         osc.start(note.startTime);
         osc.stop(note.endTime + 1);

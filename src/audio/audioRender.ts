@@ -41,6 +41,6 @@ export async function render(notes: Notes, duration: number): Promise<AudioBuffe
     return await ctx.startRendering();
 }
 
-export function drumDuration(pitch: number): number {
-    return synths.drums.durationOf(pitch);
+export function drumDuration(token: number): number {
+    return synths.drums.durationOf(token);
 }

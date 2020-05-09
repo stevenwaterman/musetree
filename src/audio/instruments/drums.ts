@@ -101,8 +101,9 @@ export class Drums extends InstrumentSynth<"drums"> {
         await sample.loadNote(note, ctx, destination);
     };
 
-    durationOf(pitch: number): number {
-        return Drums.DURATIONS[pitch];
+    durationOf(token: number): number {
+        const idx = Drums.ENCODINGS.indexOf(token);
+        return Drums.DURATIONS[idx];
     }
 }
 
