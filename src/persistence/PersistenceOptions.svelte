@@ -1,6 +1,6 @@
 <script>
     import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export"
-    import {save, load} from "../state/persistence";
+    import {save, load} from "./persistence";
     import {
         root,
         selectedBranchStore,
@@ -27,7 +27,7 @@
     function exportMusenet() {
         const encoding = $selectedEncodingStore;
         if(encoding === null) return;
-        downloadMuseNetAudio(encoding, "wav", "MuseNetExport")
+        downloadMuseNetAudio(encoding, "mp3", "MuseNetExport")
     }
 
     function exportMidi() {

@@ -63,18 +63,10 @@ type Completion = {
 async function parseCompletion(completion: Completion, prevEncoding: MusenetEncoding, prevDuration: number): Promise<Section> {
     const fullEncoding = encodingToArray(completion.encoding);
     const encoding = fullEncoding.slice(prevEncoding.length);
-    const notes = await decode(encoding);
+    const {notes, duration} = await decode(encoding);
     const startsAt = prevDuration;
-    const endsAt = Math.max(...Object.values(notes).flatMap(track => track).map(note => note.endTime));
-    // const audio = await render(notes, endsAt - startsAt);
-
-    // This is a stop-gap measure while the musetree audio synthesis improves
-    const audioFile = completion.audioFile;
-    const trimmed = audioFile.substring(2, audioFile.length - 1);
-    const uint8Array: Uint8Array = Uint8Array.from(atob(trimmed), c => c.charCodeAt(0));
-    console.log(audioFile, trimmed, uint8Array);
-    const ctx = new AudioContext({sampleRate: 44100});
-    const audio = await ctx.decodeAudioData(uint8Array.buffer);
+    const endsAt = startsAt + duration;
+    const audio = await render(notes, endsAt - startsAt);
 
     return {encoding, startsAt, endsAt, notes, audio};
 }

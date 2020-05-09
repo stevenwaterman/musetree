@@ -14,7 +14,7 @@ import {Notes} from "../state/notes";
 
 export const AFTER_RELEASE = 5;
 
-const synths: Record<Instrument, NotesPlayer> = {
+const synths: Record<Instrument, NotesPlayer> & {drums: Drums} = {
     bass: new Bass(),
     cello: new Cello(),
     clarinet: new Clarinet(),
@@ -41,3 +41,6 @@ export async function render(notes: Notes, duration: number): Promise<AudioBuffe
     return await ctx.startRendering();
 }
 
+export function drumDuration(pitch: number): number {
+    return synths.drums.durationOf(pitch);
+}

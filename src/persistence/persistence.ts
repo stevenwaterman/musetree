@@ -1,18 +1,17 @@
-import {createSectionStore, Section} from "./section";
-import {BranchState, BranchStore, NodeStore, TreeState, TreeStore} from "./trackTree";
+import {createSectionStore, Section} from "../state/section";
+import {BranchState, BranchStore, NodeStore, TreeState, TreeStore} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
 import {render} from "../audio/audioRender";
 import download from "downloadjs";
 import {decode} from "../audio/decoder";
-
-type SectionDto = Omit<Section, "audio">;
+import {encodingToArray, encodingToString} from "../state/encoding";
 
 type TrackTreeDtoRoot = {
     children: TrackTreeDtoBranch[];
 }
 
 type TrackTreeDtoBranch = {
-    section: SectionDto;
+    encoding: string;
     children: TrackTreeDtoBranch[];
 }
 
@@ -41,7 +40,7 @@ function serialise_Branch(tree: BranchStore): TrackTreeDtoBranch {
     };
     delete sectionDto.audio;
     const dto: TrackTreeDtoBranch = {
-        section: sectionDto,
+        encoding: encodingToString(state.section.encoding),
         children: []
     };
     Object.values(state.children).forEach(child => {
@@ -57,19 +56,24 @@ export async function load(tree: TreeStore, json: string) {
 }
 
 async function addToTree_Root(tree: NodeStore, serialised: TrackTreeDtoRoot) {
-    await Promise.all(serialised.children.map(child => addToTree_Branch(tree, child)));
+    await Promise.all(serialised.children.map(child => addToTree_Branch(tree, 0, child)));
 }
 
-async function addToTree_Branch(tree: NodeStore, serialised: TrackTreeDtoBranch) {
-    const duration = serialised.section.endsAt - serialised.section.startsAt;
-    const audio = await render(serialised.section.notes, duration);
-    const section = {
-        ...serialised.section,
+async function addToTree_Branch(tree: NodeStore, startsAt: number, {encoding, children}: TrackTreeDtoBranch) {
+    const encodingArray = encodingToArray(encoding);
+    const {notes, duration} = await decode(encodingArray);
+    const audio = await render(notes, duration);
+    const endsAt = startsAt + duration;
+    const section: Section = {
+        encoding: encodingArray,
+        notes,
+        startsAt,
+        endsAt,
         audio
     }
     const sectionStore = createSectionStore(section);
     const newBranch: BranchStore = await tree.addChild(sectionStore);
-    await Promise.all(serialised.children.map(child => addToTree_Branch(newBranch, child)));
+    await Promise.all(children.map(child => addToTree_Branch(newBranch, endsAt, child)));
 }
 
 function clearTree(tree: TreeStore) {

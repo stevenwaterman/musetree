@@ -1,6 +1,6 @@
 import {InstrumentSynth} from "../nodes/InstrumentSynth";
-import {AudioNote} from "../decoder";
 import {NoteSynth} from "../nodes/NoteSynth";
+import {Note} from "../../state/notes";
 
 export class Drums extends InstrumentSynth<"drums"> {
     private static ENCODINGS: number[] = [
@@ -9,6 +9,69 @@ export class Drums extends InstrumentSynth<"drums"> {
         3891, 3892, 3893, 3894, 3895, 3896, 3897, 3898, 3899, 3900, 3901, 3902,
         3903, 3904, 3905, 3906, 3907, 3908, 3909, 3910, 3911, 3912, 3913, 3914,
         3915, 3916, 3917, 3918, 3919, 3920, 3921, 3922, 3923, 3924, 3925, 3926, 3927];
+    private static DURATIONS: number[] = [
+        0.2612244897959184,
+        0.2873469387755102,
+        0.23510204081632652,
+        0.2612244897959184,
+        0.23510204081632652,
+        0.0783673469387755,
+        0.0783673469387755,
+        1.253877551020408,
+        0.2873469387755102,
+        0.2612244897959184,
+        0.23510204081632652,
+        0.23510204081632652,
+        0.313469387755102,
+        0.313469387755102,
+        0.6791836734693878,
+        0.1306122448979592,
+        0.6008163265306122,
+        0.1306122448979592,
+        0.6008163265306122,
+        0.2612244897959184,
+        0.5485714285714286,
+        0.47020408163265304,
+        2.246530612244898,
+        0.3657142857142857,
+        1.2016326530612245,
+        1.123265306122449,
+        1.123265306122449,
+        0.4179591836734694,
+        0.7836734693877551,
+        0.23510204081632652,
+        1.906938775510204,
+        0.6791836734693878,
+        1.28,
+        0.156734693877551,
+        0.23510204081632652,
+        0.156734693877551,
+        0.2873469387755102,
+        0.3395918367346939,
+        0.313469387755102,
+        0.39183673469387753,
+        0.156734693877551,
+        0.18285714285714286,
+        0.1306122448979592,
+        0.156734693877551,
+        0.313469387755102,
+        0.6008163265306122,
+        0.1306122448979592,
+        0.3657142857142857,
+        0.1306122448979592,
+        0.2089795918367347,
+        0.2612244897959184,
+        0.3395918367346939,
+        0.3657142857142857,
+        0.18285714285714286,
+        0.2612244897959184,
+        0.1306122448979592,
+        0.4963265306122449,
+        2.6383673469387756,
+        0.10448979591836735,
+        0.23510204081632652,
+        0.9404081632653061
+    ]
     private static ENCODING_OFFSET: number = 3840;
 
     protected instrument = "drums" as const;
@@ -28,7 +91,7 @@ export class Drums extends InstrumentSynth<"drums"> {
         await Promise.all(promises);
     };
 
-    async loadNote(note: AudioNote, ctx: BaseAudioContext, destination: AudioNode) {
+    async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
         const pitch = note.pitch;
         const sample = this.samples[pitch];
         if (sample === undefined) {
@@ -38,14 +101,18 @@ export class Drums extends InstrumentSynth<"drums"> {
         await sample.loadNote(note, ctx, destination);
     };
 
+    durationOf(pitch: number): number {
+        return Drums.DURATIONS[pitch];
+    }
 }
 
 class DrumSample implements NoteSynth {
     private static readonly OFFSET = 0.051;
     private readonly arrayBufferPromise: Promise<ArrayBuffer>;
     private audioBuffer: AudioBuffer = null as any;
-
+    private pitch: number;
     constructor(pitch: number) {
+        this.pitch = pitch;
         this.arrayBufferPromise = fetch(`drums/${pitch}.mp3`)
             .then(response => response.arrayBuffer())
     }
@@ -55,11 +122,10 @@ class DrumSample implements NoteSynth {
         this.audioBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
     }
 
-    async loadNote(note: AudioNote, ctx: BaseAudioContext, destination: AudioNode) {
+    async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
         const bufferSource = ctx.createBufferSource();
         bufferSource.buffer = this.audioBuffer;
         bufferSource.connect(destination)
         bufferSource.start(note.startTime, DrumSample.OFFSET);
-        bufferSource.stop(note.endTime);
     }
 }

@@ -1,8 +1,12 @@
 import {MusenetEncoding} from "../state/encoding";
 import {Instrument} from "../constants";
 import {Notes} from "../state/notes";
+import {drumDuration} from "./audioRender";
 
-export function decode(encoded: MusenetEncoding): Notes {
+export function decode(encoded: MusenetEncoding): {
+    notes: Notes;
+    duration: number;
+} {
     const notes: Notes = {
         piano: [],
         violin: [],
@@ -15,7 +19,7 @@ export function decode(encoded: MusenetEncoding): Notes {
         harp: [],
         drums: []
     };
-    const notesStarted: Record<Instrument, Record<number, {startTime: number, volume: number}>> = {
+    const notesStarted: Record<Instrument, Record<number, { startTime: number, volume: number }>> = {
         piano: {},
         violin: {},
         cello: {},
@@ -35,30 +39,39 @@ export function decode(encoded: MusenetEncoding): Notes {
         if (token.type === "note") {
             const {instrument, pitch} = token;
             const instrumentNotes = notes[instrument];
-            if(token.volume === 0) {
-                const start = notesStarted[instrument][pitch];
-                if(start !== undefined) {
-                    const {startTime, volume} = start;
-                    instrumentNotes.push({
-                        startTime: startTime,
-                        endTime: time,
-                        pitch: pitch,
-                        volume: volume / 80
-                    });
-                    delete notesStarted[instrument][pitch]
-                }
+            if (instrument === "drums") {
+                instrumentNotes.push({
+                    startTime: time,
+                    endTime: time + drumDuration(pitch),
+                    pitch: pitch,
+                    volume: 80
+                })
             } else {
-                const previous = notesStarted[instrument][pitch];
-                if(previous !== undefined) {
-                    const {startTime, volume} = previous;
-                    instrumentNotes.push({
-                        startTime: startTime,
-                        endTime: time,
-                        pitch: pitch,
-                        volume: volume / 80
-                    });
+                if (token.volume === 0) {
+                    const start = notesStarted[instrument][pitch];
+                    if (start !== undefined) {
+                        const {startTime, volume} = start;
+                        instrumentNotes.push({
+                            startTime: startTime,
+                            endTime: time,
+                            pitch: pitch,
+                            volume: volume / 80
+                        });
+                        delete notesStarted[instrument][pitch]
+                    }
+                } else {
+                    const previous = notesStarted[instrument][pitch];
+                    if (previous !== undefined) {
+                        const {startTime, volume} = previous;
+                        instrumentNotes.push({
+                            startTime: startTime,
+                            endTime: time,
+                            pitch: pitch,
+                            volume: volume / 80
+                        });
+                    }
+                    notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
                 }
-                notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
             }
         } else if (token.type == "wait") {
             const delay = token.delay;
@@ -79,8 +92,11 @@ export function decode(encoded: MusenetEncoding): Notes {
         )
     );
 
-    Object.values(notes).forEach(instrumentNotes => instrumentNotes.sort((a,b) => a.startTime - b.startTime));
-    return notes;
+    Object.values(notes).forEach(instrumentNotes => instrumentNotes.sort((a, b) => a.startTime - b.startTime));
+    return {
+        notes,
+        duration: time
+    };
 }
 
 type TokenBase<TYPE extends string> = {
