@@ -19,7 +19,7 @@ export class Piano extends InstrumentSynth<"piano"> {
 }
 
 class PianoNode {
-    private static readonly VOLUME = 0.2;
+    private static readonly VOLUME = 0.21;
     private static readonly DETUNE = 1.003;
     private static readonly LOW_FREQ_MULT = 0.9997;
     private static readonly HIGH_FREQ_MULT = 1.0008;
@@ -121,7 +121,7 @@ class TricordNode {
     private static readonly FUNDAMENTAL_VOLUME = 0.2;
     private static readonly HARMONIC_VOLUME = 0.1;
     private static readonly FUNDAMENTAL_ENVELOPE: ENVELOPE_AHDSR = {
-        attack: 0.001,
+        attack: 0.003,
         hold: 0.01,
         decay: 2,
         sustain: 0,

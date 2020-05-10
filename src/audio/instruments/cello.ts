@@ -1,34 +1,98 @@
-import {FmSynth} from "../nodes/FmSynth";
-import {ENVELOPE_AHDSR} from "../nodes/envelopes";
+import {AhdsrEnvelope} from "../nodes/envelopes";
+import {InstrumentSynth} from "../nodes/InstrumentSynth";
+import {Note} from "../../state/notes";
+import {toFrequency} from "../utils";
 
-export class Cello extends FmSynth<"cello"> {
+export class Cello extends InstrumentSynth<"cello">{
     protected instrument = "cello" as const;
 
-    protected amplitudeEnvelope: ENVELOPE_AHDSR = {
-        attack: 0.1,
-        hold: 0.01,
-        decay: 11,
-        sustain: 0,
-        release: 0.05
-    };
-    protected amplitudeGain: number = 0.15;
-    protected amplitudeWave: OscillatorType = "sawtooth";
-    protected amplitudePitchAdjustment: number | null = null;
-    protected amplitudeFrequencyMultiplier: number = 1;
+    async setup(ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+    }
 
+    async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+        const freq = toFrequency(note.pitch);
 
-    protected frequencyEnvelope: ENVELOPE_AHDSR = {
-        attack: 0.001,
-        hold: 0.01,
-        decay: 11,
-        sustain: 0.2,
-        release: 0.05
-    };
-    protected frequencyGain: number = 5;
-    protected frequencyWave: OscillatorType = "sine";
-    protected frequencyPitchAdjustment: number | null = null;
-    protected frequencyFrequencyMultiplier: number = 0.5;
+        const osc = ctx.createOscillator();
+        osc.frequency.value = freq;
+        osc.type = "sawtooth";
 
+        const vibrato = ctx.createOscillator();
+        vibrato.frequency.value = 6.43;
+        vibrato.type = "sine";
 
-    protected offDelay: number = 0.25;
+        const vibratoEnvelope = new AhdsrEnvelope(ctx, 25, {
+            attack: 0.3,
+            hold: 0.1,
+            decay: 1,
+            sustain: 0.9,
+            release: 0.01
+        });
+        vibrato.connect(vibratoEnvelope.input);
+        vibratoEnvelope.connect(osc.detune);
+
+        const envelope = new AhdsrEnvelope(ctx, 1, {
+            attack: 0.1,
+            hold: 0,
+            decay: 0.3,
+            sustain: 0.7,
+            release: 0.1
+        });
+        osc.connect(envelope.input);
+
+        const lowPass = ctx.createBiquadFilter();
+        envelope.connect(lowPass);
+        lowPass.type = "lowpass";
+        lowPass.gain.value = 12;
+        lowPass.frequency.value = 4000;
+
+        const filterBankSettings = [
+            {
+                sigIn: 0.5,
+                gain: 24,
+                freq: 150,
+                resonance: 3.5
+            }, {
+                sigIn: 0.8,
+                gain: 24,
+                freq: 350,
+                resonance: 3.5
+            }, {
+                sigIn: 1,
+                gain: 12,
+                freq: freq,
+                resonance: 2
+            }
+        ];
+
+        const highPass = ctx.createBiquadFilter();
+        highPass.type = "highpass";
+        highPass.gain.value = 12;
+        highPass.frequency.value = 100;
+
+        const filterBank = filterBankSettings.map(settings => {
+            const gain = ctx.createGain();
+            gain.gain.value = settings.sigIn;
+
+            const filter = ctx.createBiquadFilter();
+            filter.frequency.value = settings.freq;
+            filter.gain.value = settings.gain;
+            filter.Q.value = settings.resonance;
+            filter.type = "bandpass";
+            lowPass.connect(gain);
+            gain.connect(filter);
+            filter.connect(highPass);
+        });
+
+        const outGain = ctx.createGain();
+        outGain.gain.value = 0.21;
+        highPass.connect(outGain);
+        outGain.connect(destination);
+
+        osc.start(note.startTime);
+        osc.stop(note.endTime + 1);
+        vibrato.start(note.startTime);
+        vibrato.stop(note.endTime + 1);
+        vibratoEnvelope.schedule(1, note.startTime, note.endTime);
+        envelope.schedule(note.volume, note.startTime, note.endTime);
+    }
 }

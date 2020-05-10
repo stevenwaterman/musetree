@@ -64,7 +64,7 @@ export class AhdsrEnvelope {
     schedule(volume: number, startTime: number, releaseTime: number): AhdsrEnvelope {
         this.attackNode.gain.setValueAtTime(0, startTime);
         this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
-        this.decayNode.gain.setTargetAtTime(this.gain * volume * this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        this.decayNode.gain.setTargetAtTime(this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
         this.releaseNode.gain.setTargetAtTime(0, releaseTime, this.envelope.release);
         return this;
     }

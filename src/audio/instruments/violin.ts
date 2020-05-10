@@ -10,16 +10,18 @@ export class Violin extends InstrumentSynth<"violin">{
     }
 
     async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+        const freq = toFrequency(note.pitch);
+
         const osc = ctx.createOscillator();
-        osc.frequency.value = toFrequency(note.pitch);
+        osc.frequency.value = freq;
         osc.type = "sawtooth";
 
         const vibrato = ctx.createOscillator();
         vibrato.frequency.value = 6.43;
         vibrato.type = "sine";
 
-        const vibratoEnvelope = new AhdsrEnvelope(ctx, 5, {
-            attack: 1,
+        const vibratoEnvelope = new AhdsrEnvelope(ctx, 25, {
+            attack: 0.3,
             hold: 0.1,
             decay: 1,
             sustain: 0.9,
@@ -33,7 +35,7 @@ export class Violin extends InstrumentSynth<"violin">{
             hold: 0,
             decay: 0.3,
             sustain: 0.6,
-            release: 0.03
+            release: 0.05
         });
         osc.connect(envelope.input);
 
@@ -48,17 +50,17 @@ export class Violin extends InstrumentSynth<"violin">{
                 sigIn: 0.5,
                 gain: 24,
                 freq: 300,
-                resonance: 3
+                resonance: 3.5
             }, {
                 sigIn: 0.8,
                 gain: 24,
                 freq: 700,
-                resonance: 3
+                resonance: 3.5
             }, {
                 sigIn: 1,
                 gain: 12,
-                freq: 3000,
-                resonance: 0.5
+                freq: freq,
+                resonance: 2
             }
         ];
 
@@ -82,7 +84,7 @@ export class Violin extends InstrumentSynth<"violin">{
         });
 
         const outGain = ctx.createGain();
-        outGain.gain.value = 0.3;
+        outGain.gain.value = 0.2;
         highPass.connect(outGain);
         outGain.connect(destination);
 

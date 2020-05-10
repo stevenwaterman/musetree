@@ -11,7 +11,7 @@ export class Harp extends FmSynth<"harp"> {
         sustain: 0,
         release: 0.5
     };
-    protected amplitudeGain: number = 0.3;
+    protected amplitudeGain: number = 0.07;
     protected amplitudeWave: OscillatorType = "sine";
     protected amplitudePitchAdjustment: number | null = null;
     protected amplitudeFrequencyMultiplier: number = 1;

@@ -11,9 +11,8 @@ export class Bass extends FmSynth<"bass"> {
         sustain: 0,
         release: 0.05
     };
-    protected amplitudeGain: number = 0.5;
+    protected amplitudeGain: number = 0.1;
     protected amplitudeWave: OscillatorType = "sine";
-    protected amplitudeFrequencyMultiplier: number = 0.5;
 
 
     protected frequencyEnvelope: ENVELOPE_AHDSR = {

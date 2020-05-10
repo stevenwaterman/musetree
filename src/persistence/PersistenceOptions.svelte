@@ -27,7 +27,7 @@
     function exportMusenet() {
         const encoding = $selectedEncodingStore;
         if(encoding === null) return;
-        downloadMuseNetAudio(encoding, "mp3", "MuseNetExport")
+        downloadMuseNetAudio(encoding, "wav", "MuseNetExport")
     }
 
     function exportMidi() {

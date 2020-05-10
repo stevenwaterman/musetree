@@ -124,9 +124,13 @@ class DrumSample implements NoteSynth {
     }
 
     async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
+        const gain = ctx.createGain();
+        gain.gain.value = 0.25;
+        gain.connect(destination);
+
         const bufferSource = ctx.createBufferSource();
         bufferSource.buffer = this.audioBuffer;
-        bufferSource.connect(destination)
+        bufferSource.connect(gain);
         bufferSource.start(note.startTime, DrumSample.OFFSET);
     }
 }

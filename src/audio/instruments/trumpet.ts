@@ -11,7 +11,7 @@ export class Trumpet extends FmSynth<"trumpet"> {
         sustain: 0.6,
         release: 0.04
     };
-    protected amplitudeGain: number = 0.1;
+    protected amplitudeGain: number = 0.18;
     protected amplitudeWave: OscillatorType = "square";
     protected amplitudePitchAdjustment: number | null = null;
     protected amplitudeFrequencyMultiplier: number = 1;

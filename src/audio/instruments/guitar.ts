@@ -11,7 +11,7 @@ export class Guitar extends FmSynth<"guitar"> {
         sustain: 0,
         release: 0.05
     };
-    protected amplitudeGain: number = 0.3;
+    protected amplitudeGain: number = 0.12;
     protected amplitudeWave: OscillatorType = "sine";
     protected amplitudePitchAdjustment: number | null = null;
     protected amplitudeFrequencyMultiplier: number = 1;

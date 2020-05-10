@@ -9,7 +9,6 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     protected abstract amplitudeGain: number;
     protected abstract amplitudeWave: OscillatorType;
     protected abstract amplitudeEnvelope: ENVELOPE_AHDSR;
-    protected abstract amplitudeFrequencyMultiplier: number = 1;
 
     protected abstract frequencyGain: number;
     protected abstract frequencyWave: OscillatorType;
@@ -31,7 +30,7 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
 
         const ampOsc = ctx.createOscillator();
         ampOsc.type = this.amplitudeWave;
-        ampOsc.frequency.value = freq * this.amplitudeFrequencyMultiplier ;
+        ampOsc.frequency.value = freq ;
         ampOsc.start(note.startTime);
         ampOsc.stop(note.endTime + AFTER_RELEASE * this.amplitudeEnvelope.release);
 
