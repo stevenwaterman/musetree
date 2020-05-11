@@ -41,8 +41,6 @@
 
     $: disallowExport = $selectedBranchStore === null;
     $: disallowSave = Object.keys($root.children).length === 0;
-
-    $: console.log($root, disallowSave);
 </script>
 
 <style>
@@ -73,12 +71,12 @@
 <div class="container">
     <h1>Save</h1>
     <div class="row">
-        <FileInput fileTypes=".mst" on:selected={loadClicked}> Load </FileInput>
+        <FileInput fileTypes=".mst" on:change={loadClicked}> Load </FileInput>
         <Button disabled={disallowSave} on:click={() => save(root)}> Save </Button>
     </div>
     <div class="row">
         <div class="dropdown">
-            <Button disabled={disallowExport} class="dropbtn">Export</Button>
+            <Button disabled={disallowExport}>Export</Button>
             <div class="dropdown-content">
                 <Button disabled={disallowExport} on:click={exportMuseTree}> MuseTree </Button>
                 <Button disabled={disallowExport} on:click={exportMusenet}> MuseNet </Button>

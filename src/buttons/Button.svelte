@@ -1,9 +1,6 @@
 <script>
-    import {createEventDispatcher} from "svelte";
-
     export let disabled = false;
-
-    const dispatch = createEventDispatcher();
+    export let style = "";
 </script>
 
 <style>
@@ -18,6 +15,7 @@
         box-sizing: border-box;
         text-align: center;
         transition: all 0.1s;
+        cursor: pointer;
     }
 
     .button:hover {
@@ -35,15 +33,16 @@
         border-radius: 0.12em;
         box-sizing: border-box;
         text-align: center;
+        cursor: default;
     }
 </style>
 
 {#if disabled}
-    <div class="button-disabled">
+    <div class="button-disabled" style={style}>
         <slot/>
     </div>
 {:else}
-    <div class="button" on:click={() => dispatch("click")} on:contextMenu={() => dispatch("contextmenu")}>
+    <div class="button" on:click on:contextMenu style={style}>
         <slot/>
     </div>
 {/if}

@@ -1,10 +1,6 @@
 <script>
-    import {createEventDispatcher} from "svelte";
-
     export let disabled = false;
     export let fileTypes = "";
-
-    const dispatch = createEventDispatcher();
 </script>
 
 <style>
@@ -19,6 +15,7 @@
         box-sizing: border-box;
         text-align: center;
         transition: all 0.1s;
+        cursor: pointer;
     }
 
     .button:hover {
@@ -36,6 +33,7 @@
         border-radius: 0.12em;
         box-sizing: border-box;
         text-align: center;
+        cursor: default;
     }
 
     .hidden {
@@ -56,7 +54,7 @@
                 type="file"
                 accept={fileTypes}
                 multiple={false}
-                on:change={() => dispatch("selected")}
+                on:change
         />
     </label>
 {/if}
