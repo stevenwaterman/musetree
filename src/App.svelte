@@ -5,6 +5,7 @@
   import TrackControls from "./track/TrackControls.svelte";
   import TreeVis from "./treeVis/TreeVis.svelte";
   import Links from "./links/Links.svelte";
+  import ModalWrapper from "./modals/ModalWrapper.svelte";
 </script>
 
 <style>
@@ -31,6 +32,7 @@
 </style>
 
 <div class="columns">
+  <ModalWrapper/>
   <div class="col">
     <Track />
     <TrackControls />

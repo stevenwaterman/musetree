@@ -7,14 +7,16 @@
         selectedEncodingStore,
         selectedSectionsStore,
     } from "../state/trackTree";
+    import {isLoadingStore} from "../modals/ModalState";
 
     const reader = new FileReader();
     reader.onload = async event => {
         await load(root, event.target.result);
-        alert("Loading Complete");
+        isLoadingStore.set(false);
     };
 
     function loadClicked(event) {
+        isLoadingStore.set(true);
         reader.readAsText(event.target.files[0]);
     }
 

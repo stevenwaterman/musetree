@@ -64,6 +64,7 @@
     "musenet-midi": "github:stevenwaterman/musenet-midi#dist",
     "npm-check-updates": "^4.1.1",
     "panzoom": "^9.2.1",
-    "sirv-cli": "^0.4.5"
+    "sirv-cli": "^0.4.5",
+    "svelte-simple-modal": "^0.4.2"
   }
 }
