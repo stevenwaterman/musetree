@@ -1,6 +1,5 @@
 <script>
   import {root} from "../state/trackTree";
-  import {writable} from "svelte/store";
 
   import ChildButton from "./ChildButton.svelte";
   import {configStore} from "../state/settings";
@@ -8,6 +7,7 @@
   import {createSectionStore} from "../state/section";
 
   import {decode} from "../audio/decoder";
+  import Button from "../buttons/Button.svelte";
 
   $: selectedStore_2 = root.selectedStore_2;
   $: selectedStore = $selectedStore_2;
@@ -49,16 +49,15 @@
   {#each Object.entries(children) as [childIdx, childStore]}
     <ChildButton nodeStore={childStore} remove={() => parentStore.deleteChild(childIdx)} />
   {/each}
-  <button class="rowButton" on:click={loadMore}>
+  <Button on:click={loadMore}>
     Load More{pendingLoad ? ` (${pendingLoad} pending)` : ''}
-  </button>
-  <button
-    class="rowButton"
+  </Button>
+  <Button
     on:click="{() => {{
       console.log(nodeState.section.endsAt);
       console.log(JSON.stringify(nodeState.section.notes));
       console.log(decode(nodeState.encoding));
     }}}">
     Log
-  </button>
+  </Button>
 </div>

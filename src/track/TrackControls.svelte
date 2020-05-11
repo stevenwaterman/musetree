@@ -1,6 +1,7 @@
 <script>
     import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../state/settings";
     import {play, stop, audioStatusStore} from "../audio/audioPlayer"
+    import Button from "../buttons/Button.svelte";
 </script>
 
 <style>
@@ -45,11 +46,11 @@
 
 <div class="container row center">
     {#if $audioStatusStore.type === "on"}
-        <button on:click={stop}>Stop</button>
+        <Button on:click={stop}>Stop</Button>
     {:else if $audioStatusStore.type === "loading"}
-        <button disabled>Play</button>
+        <Button disabled>Play</Button>
     {:else}
-        <button on:click={() => play(0)}>Play</button>
+        <Button on:click={() => play(0)}>Play</Button>
     {/if}
 
     <div class="col margin">

@@ -11,7 +11,7 @@
 </style>
 
 <div class="container">
-  <h1>Links</h1>
+  <h1>About</h1>
   <span>
     <a href="https://openai.com/blog/musenet/">
       Music generation using Musenet's API

@@ -13,6 +13,7 @@
     import {genres, instrumentCategories} from "../constants";
     import {getContext} from "svelte";
     import GenresModal from "./GenresModal.svelte";
+    import Button from "../buttons/Button.svelte";
 
     const {open} = getContext("simple-modal");
 
@@ -67,7 +68,7 @@
     <div class="optionElement">
         <label for="genre">Genre:</label>
         <span id="genre">{$genreStore[0]}</span>
-        <button on:click={showGenreModal} style="font-size: 24px; padding: 0 4px 0 4px; margin: 0 0 0 8px;">⚙</button>
+        <Button on:click={showGenreModal} style="font-size: 24px; padding: 0 4px 0 4px; margin: 0 0 0 8px;">⚙</Button>
     </div>
 
 

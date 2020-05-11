@@ -1,6 +1,7 @@
 <script>
     import {Piano} from "./audio/instruments/piano";
     import {decode} from "./audio/decoder";
+    import Button from "./buttons/Button.svelte";
 
     let pitch = 60;
     let lengthInput = 5;
@@ -60,5 +61,5 @@
     <input type="range" min=1 max=10 bind:value={lengthInput}>
 </label>
 
-<button on:click={play}>Play</button>
-<button on:click={playAll}>Play All</button>
+<Button on:click={play}>Play</Button>
+<Button on:click={playAll}>Play All</Button>

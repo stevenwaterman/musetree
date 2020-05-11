@@ -7,6 +7,8 @@
         selectedEncodingStore,
         selectedSectionsStore,
     } from "../state/trackTree";
+    import Button from "../buttons/Button.svelte";
+    import FileInput from "../buttons/FileInput.svelte";
 
     const reader = new FileReader();
     reader.onload = async event => {
@@ -21,23 +23,26 @@
 
     function exportMuseTree() {
         const track = $selectedSectionsStore;
-        if(track === null) return;
+        if (track === null) return;
         downloadMuseTreeAudio(track, "MuseTreeExport");
     }
 
     function exportMusenet() {
         const encoding = $selectedEncodingStore;
-        if(encoding === null) return;
+        if (encoding === null) return;
         downloadMuseNetAudio(encoding, "wav", "MuseNetExport")
     }
 
     function exportMidi() {
         const encoding = $selectedEncodingStore;
-        if(encoding === null) return;
+        if (encoding === null) return;
         downloadMidiAudio(encoding, "MidiExport");
     }
 
     $: disallowExport = $selectedBranchStore === null;
+    $: disallowSave = Object.keys($root.children).length === 0;
+
+    $: console.log($root, disallowSave);
 </script>
 
 <style>
@@ -66,35 +71,18 @@
 </style>
 
 <div class="container">
-    <h1>Persistence</h1>
+    <h1>Save</h1>
     <div class="row">
-        <button
-                disabled={$root.children.length === 0}
-                on:click={() => save(root)}>
-            Save
-        </button>
-        <label for="upload">
-            <span>Load</span>
-            <input
-                    id="upload"
-                    type="file"
-                    accept=".mst"
-                    multiple={false}
-                    on:change={loadClicked}
-                    style="display:none"/>
-        </label>
+        <FileInput fileTypes=".mst" on:selected={loadClicked}> Load </FileInput>
+        <Button disabled={disallowSave} on:click={() => save(root)}> Save </Button>
+    </div>
+    <div class="row">
         <div class="dropdown">
-            <button disabled={disallowExport} class="dropbtn">Export</button>
+            <Button disabled={disallowExport} class="dropbtn">Export</Button>
             <div class="dropdown-content">
-                <button disabled={disallowExport} on:click={exportMuseTree}>
-                    MuseTree
-                </button>
-                <button disabled={disallowExport} on:click={exportMusenet}>
-                    MuseNet
-                </button>
-                <button disabled={disallowExport} on:click={exportMidi}>
-                    Midi
-                </button>
+                <Button disabled={disallowExport} on:click={exportMuseTree}> MuseTree </Button>
+                <Button disabled={disallowExport} on:click={exportMusenet}> MuseNet </Button>
+                <Button disabled={disallowExport} on:click={exportMidi}> Midi </Button>
             </div>
         </div>
     </div>
