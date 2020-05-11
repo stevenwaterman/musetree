@@ -1,6 +1,5 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {Genre, instrumentCategories, InstrumentCategory} from "../constants";
-import {AudioFormat} from "../broker";
 import {MusenetEncoding} from "./encoding";
 
 export const instrumentStores: Record<InstrumentCategory, Writable<boolean>> = instrumentCategories
@@ -22,7 +21,7 @@ const instrumentsStore = derived<[Readable<boolean>, ...Readable<boolean>[]], Re
 
 export const generationLengthStore: Writable<number> = writable(300);
 
-export const genreStore: Writable<Genre> = writable("broadway");
+export const genreStore: Writable<[string, Genre]> = writable(["Chopin", "chopin"]);
 export const temperatureStore: Writable<number> = writable(1);
 export const truncationStore: Writable<number> = writable(27);
 
@@ -36,7 +35,6 @@ export const preplayStore: Writable<number> = writable(2.5);
 export const yScaleStore: Writable<number> = writable(100);
 
 export type Config = {
-    audioFormat: AudioFormat,
     encoding: MusenetEncoding,
     generationLength: number,
     genre: Genre,
@@ -63,7 +61,7 @@ export const configStore: Readable<Config> = derived(
         audioFormat: "mp3",
         encoding: [],
         generationLength: $generationLengthStore,
-        genre: $genreStore,
+        genre: $genreStore[1],
         instrument: $instrumentsStore,
         temperature: $temperatureStore,
         truncation: $truncationStore
