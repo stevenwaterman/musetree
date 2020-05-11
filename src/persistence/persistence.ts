@@ -5,7 +5,9 @@ import {render} from "../audio/audioRender";
 import download from "downloadjs";
 import {decode} from "../audio/decoder";
 import {encodingToArray, encodingToString} from "../state/encoding";
-import {isLoadingStore} from "../modals/ModalState";
+import {writable, Writable} from "svelte/store";
+
+export const isLoadingStore: Writable<boolean> = writable(false);
 
 type TrackTreeDtoRoot = {
     children: TrackTreeDtoBranch[];

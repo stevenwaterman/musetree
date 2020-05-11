@@ -1,13 +1,12 @@
 <script>
     import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export"
-    import {save, load} from "./persistence";
+    import {save, load, isLoadingStore} from "./persistence";
     import {
         root,
         selectedBranchStore,
         selectedEncodingStore,
         selectedSectionsStore,
     } from "../state/trackTree";
-    import {isLoadingStore} from "../modals/ModalState";
 
     const reader = new FileReader();
     reader.onload = async event => {

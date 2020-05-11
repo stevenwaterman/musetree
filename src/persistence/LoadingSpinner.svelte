@@ -1,12 +1,19 @@
-<script>
-
-</script>
-
 <style>
     .center {
         display: flex;
         flex-direction: row;
         justify-content: center;
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .loadingText {
+        color: white;
+        text-align: center;
     }
 
     .lds-spinner {
@@ -104,18 +111,21 @@
 </style>
 
 <div class="center">
-    <div class="lds-spinner">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="column">
+        <div class="lds-spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <p class="loadingText">Loading</p>
     </div>
 </div>

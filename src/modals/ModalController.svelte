@@ -1,7 +1,7 @@
 <script>
+    import {isLoadingStore} from "../persistence/persistence";
+    import LoadingSpinner from "../persistence/LoadingSpinner.svelte";
     import {getContext} from "svelte";
-    import LoadingSpinner from "./LoadingSpinner.svelte";
-    import {isLoadingStore} from "./ModalState";
 
     const {open, close} = getContext("simple-modal");
 
@@ -16,7 +16,7 @@
                 }
             });
         } else {
-            close()
+            close();
         }
     })
 </script>
