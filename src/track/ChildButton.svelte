@@ -1,5 +1,6 @@
 <script>
   import {root} from "../state/trackTree";
+  import Button from "../buttons/Button.svelte";
 
   export let nodeStore;
   export let remove;
@@ -12,29 +13,16 @@
   function select() {
     root.select(path);
   }
-  //
+
+  function preventDefaultRemove(event) {
+    event.preventDefault();
+    remove(event);
+  }
 </script>
 
-<style>
-  .childButton {
-    font-weight: 700;
-    min-width: 40px;
-    background: white;
-    margin: 4px;
-    padding: 4px;
-    border: 1px solid black;
-    cursor: pointer;
-    text-align: center;
-  }
-  .selected {
-    background: #aaa;
-  }
-</style>
-
-<button
-  class="childButton"
-  class:selected
+<Button
+  inverted={selected}
   on:click={select}
-  on:contextmenu|preventDefault={remove}>
+  on:contextmenu={preventDefaultRemove}>
   {index}
-</button>
+</Button>

@@ -1,6 +1,7 @@
 <script>
     import {genreStore} from "../state/settings";
     import {getContext} from "svelte";
+    import Button from "../buttons/Button.svelte";
 
     export let text;
     export let genre;
@@ -15,15 +16,4 @@
     }
 </script>
 
-<style>
-    button {
-        margin-bottom: 0;
-    }
-
-    .selected {
-        background-color: black;
-        color: white;
-    }
-</style>
-
-<button class:selected on:click={clicked}>{text}</button>
+<Button inverted={selected} on:click={clicked}>{text}</Button>
