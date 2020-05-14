@@ -20,9 +20,11 @@ export async function request(config: Config, store: NodeStore, state: NodeState
 }
 
 async function requestInternal(config: Config, store: NodeStore, prevEncoding: MusenetEncoding, prevDuration: number) {
+    const truncatedEncoding = prevEncoding.slice(-config.requestLength);
+
     const data = {
         ...config,
-        encoding: encodingToString(prevEncoding),
+        encoding: encodingToString(truncatedEncoding),
         audioFormat: "mp3"
     };
 
@@ -42,7 +44,7 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
             .then((res: AxiosResponse<ResponseData>) => res.data.completions)
             .catch(() => null);
     }
-    const promises = response.map((completion: Completion) => parseCompletion(completion, prevEncoding, prevDuration));
+    const promises = response.map((completion: Completion) => parseCompletion(completion, truncatedEncoding, prevDuration));
     return Promise.all(promises)
         .then((sections: Section[]) => sections.map((section: Section) => createSectionStore(section)))
         .then((sectionStores: Writable<SectionState>[]) =>

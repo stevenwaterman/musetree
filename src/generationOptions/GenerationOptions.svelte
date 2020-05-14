@@ -2,6 +2,7 @@
     import {
         genreStore,
         generationLengthStore,
+        maxResponseLengthStore,
         instrumentStores,
         truncationStore,
         temperatureStore,
@@ -83,6 +84,19 @@
                 max="1000"
                 step="10"/>
         <span>{$generationLengthStore}</span>
+    </div>
+
+    <div class="optionElement">
+        <label for="responselength">Max Length:</label>
+        <input
+                class="slider"
+                id="responselength"
+                bind:value={$maxResponseLengthStore}
+                type="range"
+                min="500"
+                max="3000"
+                step="100"/>
+        <span>{$maxResponseLengthStore}</span>
     </div>
 
     <label>Instruments:</label>

@@ -20,6 +20,8 @@ const instrumentsStore = derived<[Readable<boolean>, ...Readable<boolean>[]], Re
 );
 
 export const generationLengthStore: Writable<number> = writable(300);
+export const maxResponseLengthStore: Writable<number> = writable(1500);
+export const maxRequestLengthStore: Readable<number> = derived([generationLengthStore, maxResponseLengthStore], ([$generationLengthStore, $maxResponseLengthStore]) => $maxResponseLengthStore - $generationLengthStore);
 
 export const genreStore: Writable<[string, Genre]> = writable(["Chopin", "chopin"]);
 export const temperatureStore: Writable<number> = writable(1);
@@ -37,6 +39,7 @@ export const yScaleStore: Writable<number> = writable(100);
 export type Config = {
     encoding: MusenetEncoding,
     generationLength: number,
+    requestLength: number,
     genre: Genre,
     instrument: Record<InstrumentCategory, boolean>,
     temperature: number,
@@ -46,6 +49,7 @@ export type Config = {
 export const configStore: Readable<Config> = derived(
     [
         generationLengthStore,
+        maxRequestLengthStore,
         genreStore,
         instrumentsStore,
         temperatureStore,
@@ -53,6 +57,7 @@ export const configStore: Readable<Config> = derived(
     ],
     ([
          $generationLengthStore,
+         $maxRequestLengthStore,
          $genreStore,
          $instrumentsStore,
          $temperatureStore,
@@ -61,6 +66,7 @@ export const configStore: Readable<Config> = derived(
         audioFormat: "mp3",
         encoding: [],
         generationLength: $generationLengthStore,
+        requestLength: $maxRequestLengthStore,
         genre: $genreStore[1],
         instrument: $instrumentsStore,
         temperature: $temperatureStore,
