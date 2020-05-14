@@ -1,6 +1,8 @@
 <script>
     export let disabled = false;
     export let fileTypes = "";
+    export let handleFile = () => {
+    };
 </script>
 
 <style>
@@ -46,16 +48,18 @@
         <slot/>
     </label>
 {:else}
-    <label for="upload" class="button">
-        <slot/>
-        <input
-                id="upload"
-                class="hidden"
-                type="file"
-                accept={fileTypes}
-                multiple={false}
-                on:change
-        />
-    </label>
+    <div on:dragover|preventDefault|stopPropagation on:drop|preventDefault|stopPropagation={event => handleFile(event.dataTransfer.files.item(0))}>
+        <label for="upload" class="button">
+            <slot/>
+            <input
+                    id="upload"
+                    class="hidden"
+                    type="file"
+                    accept={fileTypes}
+                    multiple={false}
+                    on:change|preventDefault|stopPropagation={event => handleFile(event.target.files[0])}
+            />
+        </label>
+    </div>
 {/if}
 

@@ -16,9 +16,9 @@
         isLoadingStore.set(false);
     };
 
-    function loadClicked(event) {
+    function loadClicked(file) {
         isLoadingStore.set(true);
-        reader.readAsText(event.target.files[0]);
+        reader.readAsText(file);
     }
 
     function exportMuseTree() {
@@ -71,7 +71,7 @@
 <div class="container">
     <h1>Save</h1>
     <div class="row">
-        <FileInput fileTypes=".mst" on:change={loadClicked}> Load </FileInput>
+        <FileInput fileTypes=".mst" handleFile={loadClicked}> Load </FileInput>
         <Button disabled={disallowSave} on:click={() => save(root)}> Save </Button>
     </div>
     <div class="row">
