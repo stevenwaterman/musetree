@@ -7,6 +7,10 @@
     import Links from "./links/Links.svelte";
     import Modal from "svelte-simple-modal";
     import ModalController from "./modals/ModalController.svelte";
+
+    alert("MuseTree has been updated.\n" +
+            "Your old save files will no longer work.\n" +
+            "The old version is available at musetree-legacy.stevenwaterman.uk");
 </script>
 
 <style>
