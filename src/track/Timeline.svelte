@@ -1,20 +1,14 @@
 <script>
-  import { selectedTrackStore } from "./trackTree.js";
-  import { audioStatusStore } from "./audio.js";
+  import { audioStatusStore } from "../audio/audioPlayer";
   import {
     yScaleStore,
     autoScrollStore,
     isScrollingStore
-  } from "../settings.js";
+  } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  function traverse(node, { startTime }) {
-    const track = $selectedTrackStore;
-    if (track == null) return;
-
-    const endTime = track.endsAt;
+  function traverse(node, {offset: startTime, duration: endTime}) {
     const transTime = endTime - startTime;
-
     return {
       duration: transTime * 1000,
       tick: t => {
@@ -35,16 +29,14 @@
 
   let element;
   let transition;
-  let visible = false;
+  let hidden = true;
 
-  audioStatusStore.subscribe(({ playing, time }) => {
+  audioStatusStore.subscribe(status => {
     if (transition) transition.end();
-    visible = playing;
-    if (visible) {
+    hidden = status.type !== "on";
+    if (!hidden) {
       isScrollingStore.set($autoScrollStore);
-      transition = create_in_transition(element, traverse, {
-        startTime: time
-      });
+      transition = create_in_transition(element, traverse, status);
       transition.start();
     }
   });
@@ -72,10 +64,8 @@
 </style>
 
 <div
-  bind:this={element}
-  on:introend={() => {
-    visible = false;
-  }}
-  class="anchor">
-  <div hidden={!visible} class="line" />
+        bind:this={element}
+        on:introend="{() => { hidden = true; }}"
+        class="anchor">
+  <div class="line" hidden={hidden}></div>
 </div>

@@ -1,35 +1,33 @@
 <script>
-  import { selectedPathStore, selectedTrackAudioStore } from "./trackTree.js";
-  import Timeline from "./Timeline.svelte";
-  import TrackRowOptions from "./TrackRowOptions.svelte";
-  import TrackCanvas from "./TrackCanvas.svelte";
-  import { isScrollingStore } from "../settings.js";
+    import SectionRowOptions from "./SectionControls.svelte";
+    import SectionCanvas from "./SectionCanvas.svelte";
+    import {isScrollingStore} from "../state/settings";
+    import {root} from "../state/trackTree";
+    import Timeline from "./Timeline.svelte";
 
-  $: rows = $selectedPathStore.map((element, idx, array) => ({
-    path: array.slice(0, idx),
-    selected: array[idx]
-  }));
+    $: selectedChildStore_2 = root.selectedChildStore_2;
+    $: selectedChildStore = $selectedChildStore_2;
 </script>
 
 <style>
-  .container {
-    overflow-y: scroll;
-    background-color: black;
-    height: 100%;
-  }
+    .container {
+        overflow-y: scroll;
+        background-color: black;
+        height: 100%;
+    }
 
-  .placeholder {
-    color: white;
-    text-align: center;
-  }
+    .placeholder {
+        color: white;
+        text-align: center;
+    }
 </style>
 
 <div class="container" on:wheel={() => isScrollingStore.set(false)}>
-  <Timeline />
-  {#each rows as { path, selected }, idx (JSON.stringify(path) + selected)}
-        <TrackCanvas path={[...path, selected]} section={idx} />
-  {:else}
-    <p class="placeholder">Use the controls below to begin</p>
-  {/each}
+      <Timeline />
+    {#if selectedChildStore === null}
+        <p class="placeholder">Use the controls below to begin</p>
+    {:else}
+        <SectionCanvas branchStore={selectedChildStore} index={0} deselect="{() => root.select([])}"/>
+    {/if}
 </div>
-<TrackRowOptions path={$selectedPathStore} />
+<SectionRowOptions />

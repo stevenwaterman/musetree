@@ -1,48 +1,28 @@
 <script>
-  import { deriveNodeStore, trackTreeStore } from "./trackTree.js";
-  import { audio } from "./audio.js";
-  import { preplayStore, autoPlayStore } from "../settings.js";
+  import {root} from "../state/trackTree";
+  import Button from "../buttons/Button.svelte";
 
-  export let path;
-  export let siblingId;
+  export let nodeStore;
+  export let remove;
 
-  $: parentNodeStore = deriveNodeStore(path);
-  $: highlight = $parentNodeStore.lastSelected === siblingId;
-  $: startsAt = $parentNodeStore.track ? $parentNodeStore.track.endsAt : 0;
+  $: state = $nodeStore;
+  $: selected = state.wasLastSelectedByParent;
+  $: path = state.path;
+  $: index = path[path.length - 1];
 
   function select() {
-    trackTreeStore.select(path, siblingId);
-    const playFrom = Math.max(0, startsAt - $preplayStore);
-    if ($autoPlayStore) {
-      audio.play(playFrom);
-    }
+    root.select(path);
   }
 
-  function remove() {
-    parentStore.deleteChild(siblingId);
+  function preventDefaultRemove(event) {
+    event.preventDefault();
+    remove(event);
   }
 </script>
 
-<style>
-  .childButton {
-    font-weight: 700;
-    min-width: 40px;
-    background: white;
-    margin: 4px;
-    padding: 4px;
-    border: 1px solid black;
-    cursor: pointer;
-    text-align: center;
-  }
-  .highlight {
-    background: #aaa;
-  }
-</style>
-
-<button
-  class="childButton"
-  class:highlight
+<Button
+  inverted={selected}
   on:click={select}
-  on:contextmenu|preventDefault={remove}>
-  {siblingId}
-</button>
+  on:contextmenu={preventDefaultRemove}>
+  {index}
+</Button>

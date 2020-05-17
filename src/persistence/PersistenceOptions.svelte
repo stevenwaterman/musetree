@@ -1,86 +1,87 @@
 <script>
-  import { downloadAudio } from "../broker.js";
-  import {
-    trackTreeStore,
-    selectedTrackEncodingStore
-  } from "../track/trackTree.js";
-  import download from "downloadjs";
+    import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export"
+    import {save, load, isLoadingStore} from "./persistence";
+    import {
+        root,
+        selectedBranchStore,
+        selectedEncodingStore,
+        selectedSectionsStore,
+    } from "../state/trackTree";
+    import Button from "../buttons/Button.svelte";
+    import FileInput from "../buttons/FileInput.svelte";
 
-  function save() {
-    download(JSON.stringify($trackTreeStore), "save.json");
-  }
+    const reader = new FileReader();
+    reader.onload = async event => {
+        await load(root, event.target.result);
+        isLoadingStore.set(false);
+    };
 
-  const reader = new FileReader();
-  reader.onload = event => {
-    trackTreeStore.set(JSON.parse(event.target.result));
-  };
+    function loadClicked(file) {
+        isLoadingStore.set(true);
+        reader.readAsText(file);
+    }
 
-  function load(event) {
-    reader.readAsText(event.target.files[0]);
-  }
+    function exportMuseTree() {
+        const track = $selectedSectionsStore;
+        if (track === null) return;
+        downloadMuseTreeAudio(track, "MuseTreeExport");
+    }
 
-  function exportAudio(format) {
-    downloadAudio($selectedTrackEncodingStore, format, "export");
-  }
+    function exportMusenet() {
+        const encoding = $selectedEncodingStore;
+        if (encoding === null) return;
+        downloadMuseNetAudio(encoding, "wav", "MuseNetExport")
+    }
 
-  $: trackLoaded = $selectedTrackEncodingStore === "";
+    function exportMidi() {
+        const encoding = $selectedEncodingStore;
+        if (encoding === null) return;
+        downloadMidiAudio(encoding, "MidiExport");
+    }
+
+    $: disallowExport = $selectedBranchStore === null;
+    $: disallowSave = Object.keys($root.children).length === 0;
 </script>
 
 <style>
-  .container {
-    padding: 12px;
-  }
-  .row {
-    display: flex;
-    flex-direction: row;
-  }
-  .dropdown-content {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-  }
-  .dropdown:hover .dropdown-content {
-    display: flex;
-  }
-  button {
-    margin: 4px;
-  }
+    .container {
+        padding: 12px;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .dropdown-content {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: flex;
+    }
+
+    button {
+        margin: 4px;
+    }
 </style>
 
 <div class="container">
-  <h1>Persistence</h1>
-  <div class="row">
-    <button
-      disabled={Object.keys($trackTreeStore.children).length === 0}
-      on:click={save}>
-      Save
-    </button>
-    <label for="upload">
-      <span>Load</span>
-      <input
-        id="upload"
-        type="file"
-        accept=".json"
-        multiple={false}
-        on:change={load}
-        style="display:none" />
-    </label>
-    <div class="dropdown">
-      <button disabled={trackLoaded} class="dropbtn">Export</button>
-      <div class="dropdown-content">
-        <button disabled={trackLoaded} on:click={() => exportAudio('mp3')}>
-          .mp3
-        </button>
-        <button disabled={trackLoaded} on:click={() => exportAudio('wav')}>
-          .wav
-        </button>
-        <button disabled={trackLoaded} on:click={() => exportAudio('ogg')}>
-          .ogg
-        </button>
-        <button disabled={trackLoaded} on:click={() => exportAudio('midi')}>
-          .midi
-        </button>
-      </div>
+    <h1>Save</h1>
+    <div class="row">
+        <FileInput fileTypes=".mst" handleFile={loadClicked}> Load </FileInput>
+        <Button disabled={disallowSave} on:click={() => save(root)}> Save </Button>
     </div>
-  </div>
+    <div class="row">
+        <div class="dropdown">
+            <Button disabled={disallowExport}>Export</Button>
+            <div class="dropdown-content">
+                <Button disabled={disallowExport} on:click={exportMuseTree}> MuseTree </Button>
+                <Button disabled={disallowExport} on:click={exportMusenet}> MuseNet </Button>
+                <Button disabled={disallowExport} on:click={exportMidi}> Midi </Button>
+            </div>
+        </div>
+    </div>
 </div>
