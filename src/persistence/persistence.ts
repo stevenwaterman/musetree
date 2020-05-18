@@ -4,7 +4,7 @@ import {get_store_value} from "svelte/internal";
 import {render} from "../audio/audioRender";
 import download from "downloadjs";
 import {decode} from "../audio/decoder";
-import {encodingToArray, encodingToString} from "../state/encoding";
+import {encodingToArray, encodingToString, MusenetEncoding} from "../state/encoding";
 import {writable, Writable} from "svelte/store";
 
 export const isLoadingStore: Writable<boolean> = writable(false);
@@ -64,19 +64,10 @@ async function addToTree_Root(tree: NodeStore, serialised: TrackTreeDtoRoot) {
 
 async function addToTree_Branch(tree: NodeStore, startsAt: number, {encoding, children}: TrackTreeDtoBranch) {
     const encodingArray = encodingToArray(encoding);
-    const {notes, duration} = await decode(encodingArray);
-    const audio = await render(notes, duration);
-    const endsAt = startsAt + duration;
-    const section: Section = {
-        encoding: encodingArray,
-        notes,
-        startsAt,
-        endsAt,
-        audio
-    }
+    const section = await createSectionFromEncoding(encodingArray, startsAt);
     const sectionStore = createSectionStore(section);
     const newBranch: BranchStore = await tree.addChild(sectionStore);
-    await Promise.all(children.map(child => addToTree_Branch(newBranch, endsAt, child)));
+    await Promise.all(children.map(child => addToTree_Branch(newBranch, section.endsAt, child)));
 }
 
 function clearTree(tree: TreeStore) {
@@ -84,4 +75,17 @@ function clearTree(tree: TreeStore) {
     Object.keys(treeState.children).forEach(key => tree.deleteChild(key as any));
     tree.updatePendingLoad(() => 0);
     tree.resetNextChildIndex();
+}
+
+export async function createSectionFromEncoding(encoding: MusenetEncoding, startsAt: number): Promise<Section> {
+    const {notes, duration} = await decode(encoding);
+    const audio = await render(notes, duration);
+    const endsAt = startsAt + duration;
+    return {
+        encoding: encoding,
+        notes,
+        startsAt,
+        endsAt,
+        audio
+    };
 }

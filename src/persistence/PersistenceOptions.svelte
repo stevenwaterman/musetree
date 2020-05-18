@@ -9,6 +9,8 @@
     } from "../state/trackTree";
     import Button from "../buttons/Button.svelte";
     import FileInput from "../buttons/FileInput.svelte";
+    import ImportModal from "./ImportModal.svelte";
+    import {getContext} from "svelte";
 
     const reader = new FileReader();
     reader.onload = async event => {
@@ -41,6 +43,12 @@
 
     $: disallowExport = $selectedBranchStore === null;
     $: disallowSave = Object.keys($root.children).length === 0;
+
+    const {open} = getContext("simple-modal");
+
+    function openImportModal() {
+        open(ImportModal, {}, {})
+    }
 </script>
 
 <style>
@@ -75,6 +83,7 @@
         <Button disabled={disallowSave} on:click={() => save(root)}> Save </Button>
     </div>
     <div class="row">
+        <Button on:click={openImportModal}> Import </Button>
         <div class="dropdown">
             <Button disabled={disallowExport}>Export</Button>
             <div class="dropdown-content">
