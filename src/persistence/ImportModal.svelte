@@ -91,7 +91,7 @@
     <textarea id="encoding" class="encoding" bind:value={encoding} placeholder="MuseNet Encoding"></textarea>
 
     <div class="row">
-        <Button on:click={placeUnderSelected}>Under selected</Button>
         <Button on:click={placeUnderRoot}>Under root</Button>
+        <Button disabled={selectedState === undefined} on:click={placeUnderSelected}>Under selected</Button>
     </div>
 </div>
