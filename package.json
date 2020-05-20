@@ -1,6 +1,6 @@
 {
   "name": "svelte-app",
-  "version": "1.0.0",
+  "version": "2.1.2",
   "scripts": {
     "build": "rollup -c",
     "autobuild": "rollup -c -w",
@@ -61,7 +61,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "downloadjs": "^1.4.7",
-    "musenet-midi": "github:stevenwaterman/musenet-midi#dist",
+    "musenet-midi": "github:stevenwaterman/musenet-midi#ebf94fe3627006213d2d13b5fad5dc5af8b24dc2",
     "npm-check-updates": "^4.1.1",
     "panzoom": "^9.2.1",
     "sirv-cli": "^0.4.5",
