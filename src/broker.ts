@@ -64,8 +64,8 @@ type Completion = {
 
 async function parseCompletion(completion: Completion, prevEncoding: MusenetEncoding, prevDuration: number): Promise<Section> {
     const fullEncoding = encodingToArray(completion.encoding);
-    const encoding = fullEncoding.slice(prevEncoding.length);
-    const {notes, duration} = await decode(encoding);
+    const originalEncoding = fullEncoding.slice(prevEncoding.length);
+    const {encoding, notes, duration} = await decode(originalEncoding);
     const startsAt = prevDuration;
     const endsAt = startsAt + duration;
     const audio = await render(notes, endsAt - startsAt);

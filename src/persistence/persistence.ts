@@ -77,8 +77,8 @@ function clearTree(tree: TreeStore) {
     tree.resetNextChildIndex();
 }
 
-export async function createSectionFromEncoding(encoding: MusenetEncoding, startsAt: number): Promise<Section> {
-    const {notes, duration} = await decode(encoding);
+export async function createSectionFromEncoding(originalEncoding: MusenetEncoding, startsAt: number): Promise<Section> {
+    const {encoding, notes, duration} = await decode(originalEncoding);
     const audio = await render(notes, duration);
     const endsAt = startsAt + duration;
     return {
