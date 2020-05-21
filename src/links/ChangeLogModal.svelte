@@ -1,5 +1,7 @@
 <script>
     import changelog from "./Changelog";
+
+    //TODO add link to github repo at commit hash
 </script>
 
 <style>
