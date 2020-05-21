@@ -1,5 +1,19 @@
 <script>
+  import Button from "../buttons/Button.svelte";
+  import {getContext} from "svelte";
+  import ChangeLogModal from "./ChangeLogModal.svelte";
 
+  const {open} = getContext("simple-modal");
+
+  function openChangelog(){
+    open(ChangeLogModal, {}, {
+      styleWindow: {
+        background: "black",
+        border: "1px solid white",
+        color: "white"
+      }
+    });
+  }
 </script>
 
 <style>
@@ -25,5 +39,5 @@
   <span>
     <a href="http://www.stevenwaterman.uk">Developed by Steven Waterman</a>
   </span>
-  <span>v2.1.5</span>
+  <Button on:click={openChangelog}>Changelog</Button>
 </div>
