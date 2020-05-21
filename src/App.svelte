@@ -24,6 +24,12 @@
         height: 100vh;
     }
 
+    .settings {
+        background-color: black;
+        border-left: 1px solid white;
+        color: white;
+    }
+
     :global(body) {
         padding: 0;
         margin: 0;
@@ -43,7 +49,7 @@
         <div class="col">
             <TreeVis/>
         </div>
-        <div class="col">
+        <div class="col settings">
             <GenerationOptions/>
             <PersistenceOptions/>
             <Links/>
