@@ -19,7 +19,13 @@
     const {open} = getContext("simple-modal");
 
     function showGenreModal() {
-        open(GenresModal, {}, {})
+        open(GenresModal, {}, {
+            styleWindow: {
+                background: "black",
+                border: "1px solid white",
+                color: "white"
+            }
+        })
     }
 </script>
 

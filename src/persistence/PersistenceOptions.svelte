@@ -47,7 +47,11 @@
     const {open} = getContext("simple-modal");
 
     function openImportModal() {
-        open(ImportModal, {}, {})
+        open(ImportModal, {}, {styleWindow: {
+                background: "black",
+                border: "1px solid white",
+                color: "white"
+            }})
     }
 </script>
 

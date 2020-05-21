@@ -6,7 +6,7 @@
     export let text;
     export let genre;
 
-    const selected = $genreStore[1] === genre;
+    const invert = $genreStore[1] !== genre;
 
     const {close} = getContext("simple-modal");
 
@@ -16,4 +16,4 @@
     }
 </script>
 
-<Button inverted={selected} on:click={clicked}>{text}</Button>
+<Button inverted={invert} on:click={clicked}>{text}</Button>
