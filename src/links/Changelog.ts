@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,1,7],
         date: new Date(2020, 5, 21),
-        commitHash: "TODO",
+        commitHash: "fb1bd9b720f31b3bdcded4faf25e8797c3e9f630",
         changes: [
             "Fixed issue #2, improved colour scheme",
             "Fixed import modal buttons, disabling them when encoding box is empty"
