@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,1,6],
         date: new Date(2020, 5, 21),
-        commitHash: "TODO",
+        commitHash: "eaad8693e3c4f18cff8e11bbbfe21d459954ffc3",
         changes: [
             "Added this changelog modal"
         ]
