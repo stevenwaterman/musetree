@@ -25,5 +25,5 @@
   <span>
     <a href="http://www.stevenwaterman.uk">Developed by Steven Waterman</a>
   </span>
-  <span>v2.1.3</span>
+  <span>v2.1.4</span>
 </div>

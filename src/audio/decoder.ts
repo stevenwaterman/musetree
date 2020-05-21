@@ -51,38 +51,46 @@ export function decode(originalEncoding: MusenetEncoding): {
                 })
             } else {
                 if (token.volume === 0) {
-                    outputEncoding.push(tokenToEncoding(token));
                     const start = notesStarted[instrument][pitch];
                     if (start !== undefined) {
-                        const {startTime, volume} = start;
-                        instrumentNotes.push({
-                            startTime: startTime,
-                            endTime: time,
-                            pitch: pitch,
-                            volume: volume / 80
-                        });
+                        if (start.startTime !== time) {
+                            outputEncoding.push(tokenToEncoding(token));
+                            const {startTime, volume} = start;
+                            instrumentNotes.push({
+                                startTime: startTime,
+                                endTime: time,
+                                pitch: pitch,
+                                volume: volume / 80
+                            });
+                        }
                         delete notesStarted[instrument][pitch]
                     }
                 } else {
                     const previous = notesStarted[instrument][pitch];
                     if (previous !== undefined) {
-                        outputEncoding.push(tokenToEncoding({
-                            original: null as any,
-                            type: "note",
-                            pitch: pitch,
-                            instrument: instrument,
-                            volume: 0
-                        }));
-                        const {startTime, volume} = previous;
-                        instrumentNotes.push({
-                            startTime: startTime,
-                            endTime: time,
-                            pitch: pitch,
-                            volume: volume / 80
-                        });
+                        if (previous.startTime !== time) {
+                            outputEncoding.push(tokenToEncoding({
+                                original: null as any,
+                                type: "note",
+                                pitch: pitch,
+                                instrument: instrument,
+                                volume: 0
+                            }));
+                            const {startTime, volume} = previous;
+                            instrumentNotes.push({
+                                startTime: startTime,
+                                endTime: time,
+                                pitch: pitch,
+                                volume: volume / 80
+                            });
+                            outputEncoding.push(tokenToEncoding(token));
+                            notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
+                        }
+                    } else {
+                        outputEncoding.push(tokenToEncoding(token));
+                        notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
                     }
-                    outputEncoding.push(tokenToEncoding(token));
-                    notesStarted[instrument][pitch] = {startTime: time, volume: token.volume};
+
                 }
             }
         } else if (token.type == "wait") {
