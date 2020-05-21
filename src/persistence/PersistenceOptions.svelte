@@ -11,6 +11,7 @@
     import FileInput from "../buttons/FileInput.svelte";
     import ImportModal from "./ImportModal.svelte";
     import {getContext} from "svelte";
+    import colorLookup, {modalOptions} from "../colors";
 
     const reader = new FileReader();
     reader.onload = async event => {
@@ -47,11 +48,7 @@
     const {open} = getContext("simple-modal");
 
     function openImportModal() {
-        open(ImportModal, {}, {styleWindow: {
-                background: "black",
-                border: "1px solid white",
-                color: "white"
-            }})
+        open(ImportModal, {}, modalOptions)
     }
 </script>
 
@@ -80,20 +77,20 @@
     }
 </style>
 
-<div class="container">
+<div class="container" style={"color: " + colorLookup.textDark}>
     <h1>Save</h1>
     <div class="row">
-        <FileInput fileTypes=".mst" handleFile={loadClicked}> Load </FileInput>
-        <Button disabled={disallowSave} on:click={() => save(root)}> Save </Button>
+        <FileInput fileTypes=".mst" handleFile={loadClicked}> Load</FileInput>
+        <Button disabled={disallowSave} on:click={() => save(root)}> Save</Button>
     </div>
     <div class="row">
-        <Button on:click={openImportModal}> Import </Button>
+        <Button on:click={openImportModal}> Import</Button>
         <div class="dropdown">
             <Button disabled={disallowExport}>Export</Button>
             <div class="dropdown-content">
-                <Button disabled={disallowExport} on:click={exportMuseTree}> MuseTree </Button>
-                <Button disabled={disallowExport} on:click={exportMusenet}> MuseNet </Button>
-                <Button disabled={disallowExport} on:click={exportMidi}> Midi </Button>
+                <Button disabled={disallowExport} on:click={exportMuseTree}> MuseTree</Button>
+                <Button disabled={disallowExport} on:click={exportMusenet}> MuseNet</Button>
+                <Button disabled={disallowExport} on:click={exportMidi}> Midi</Button>
             </div>
         </div>
     </div>

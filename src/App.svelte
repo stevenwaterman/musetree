@@ -7,6 +7,7 @@
     import Links from "./links/Links.svelte";
     import Modal from "svelte-simple-modal";
     import ModalController from "./modals/ModalController.svelte";
+    import colorLookup from "./colors";
 </script>
 
 <style>
@@ -24,12 +25,6 @@
         height: 100vh;
     }
 
-    .settings {
-        background-color: black;
-        border-left: 1px solid white;
-        color: white;
-    }
-
     :global(body) {
         padding: 0;
         margin: 0;
@@ -37,19 +32,31 @@
         height: 100vh;
         overflow: hidden;
     }
+
+    :global(a) {
+        color: #c3e88d
+    }
+
+    :global(a:active) {
+        color: #c3e88d
+    }
+
+    :global(a:visited) {
+        color: #c3e88d
+    }
 </style>
 
 <Modal>
     <ModalController/>
-    <div class="columns">
-        <div class="col">
+    <div class="columns" style={"color: " + colorLookup.text}>
+        <div class="col" style={"background-color: " + colorLookup.bgDark}>
             <Track/>
             <TrackControls/>
         </div>
         <div class="col">
             <TreeVis/>
         </div>
-        <div class="col settings">
+        <div class="col" style={"background-color: " + colorLookup.bgDark + "; border-left: 1px solid " + colorLookup.border}>
             <GenerationOptions/>
             <PersistenceOptions/>
             <Links/>

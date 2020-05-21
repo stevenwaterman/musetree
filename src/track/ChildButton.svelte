@@ -21,7 +21,7 @@
 </script>
 
 <Button
-  inverted={selected}
+  emphasise={selected}
   on:click={select}
   on:contextmenu={preventDefaultRemove}>
   {index}

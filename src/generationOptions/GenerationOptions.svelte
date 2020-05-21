@@ -15,17 +15,12 @@
     import {getContext} from "svelte";
     import GenresModal from "./GenresModal.svelte";
     import Button from "../buttons/Button.svelte";
+    import colorLookup, {modalOptions} from "../colors";
 
     const {open} = getContext("simple-modal");
 
     function showGenreModal() {
-        open(GenresModal, {}, {
-            styleWindow: {
-                background: "black",
-                border: "1px solid white",
-                color: "white"
-            }
-        })
+        open(GenresModal, {}, modalOptions)
     }
 </script>
 
@@ -69,7 +64,7 @@
     }
 </style>
 
-<div class="options">
+<div class="options" style={"color: " + colorLookup.textDark}>
     <h1 class="header">Generator:</h1>
 
     <div class="optionElement">

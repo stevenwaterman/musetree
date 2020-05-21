@@ -2,22 +2,17 @@
     import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../state/settings";
     import {play, stop, audioStatusStore} from "../audio/audioPlayer"
     import Button from "../buttons/Button.svelte";
+    import colorLookup from "../colors";
 </script>
 
 <style>
     .container {
-        background-color: black;
-        border-top: 1px solid white;
         flex-shrink: 0;
         padding: 4px 0;
     }
 
     button {
         margin: 4px;
-    }
-
-    label {
-        color: white;
     }
 
     .col {
@@ -44,7 +39,7 @@
     }
 </style>
 
-<div class="container row center">
+<div class="container row center" style={"color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border}>
     {#if $audioStatusStore.type === "on"}
         <Button on:click={stop}>Stop</Button>
     {:else if $audioStatusStore.type === "loading"}

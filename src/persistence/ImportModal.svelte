@@ -7,6 +7,7 @@
     import {root} from "../state/trackTree";
     import {createSectionStore} from "../state/section";
     import {createSectionFromEncoding, isLoadingStore} from "./persistence";
+    import colorLookup from "../colors";
 
     const {close} = getContext("simple-modal");
 
@@ -52,26 +53,6 @@
         display: inline;
     }
 
-    .TT_trigger {
-    }
-
-    .TT_text {
-        visibility: hidden;
-        border: 1px solid black;
-        background-color: white;
-        padding: 5px;
-        font-weight: 400;
-        font-size: 12px;
-        margin-left: 12px;
-
-        position: absolute;
-        z-index: 1;
-    }
-
-    .TT_trigger:hover .TT_text {
-        visibility: visible;
-    }
-
     .row {
         display: flex;
         flex-direction: row;
@@ -80,7 +61,6 @@
     .encoding {
         width: 100%;
         height: 300px;
-        background-color: #222;
         border: none;
     }
 </style>
@@ -90,10 +70,10 @@
 
     <FileInput fileTypes=".mid" handleFile={midiSelected}>Select Midi</FileInput>
     <label for="encoding" style="display: none">Encoding</label>
-    <textarea id="encoding" class="encoding" bind:value={encoding} placeholder="MuseNet Encoding"></textarea>
+    <textarea id="encoding" class="encoding" bind:value={encoding} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark}></textarea>
 
     <div class="row">
-        <Button on:click={placeUnderRoot}>Under root</Button>
-        <Button disabled={selectedState === undefined} on:click={placeUnderSelected}>Under selected</Button>
+        <Button disabled={encoding === ""} on:click={placeUnderRoot}>Under root</Button>
+        <Button disabled={selectedState === undefined || encoding === ""} on:click={placeUnderSelected}>Under selected</Button>
     </div>
 </div>

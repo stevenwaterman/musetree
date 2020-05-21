@@ -4,6 +4,7 @@
     import {isScrollingStore} from "../state/settings";
     import {root} from "../state/trackTree";
     import Timeline from "./Timeline.svelte";
+    import colorLookup from "../colors";
 
     $: selectedChildStore_2 = root.selectedChildStore_2;
     $: selectedChildStore = $selectedChildStore_2;
@@ -12,12 +13,23 @@
 <style>
     .container {
         overflow-y: scroll;
-        background-color: black;
+        scrollbar-color: #c3cee3 #1f292e;
         height: 100%;
     }
 
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1f292e;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #c3cee3;
+    }
+
     .placeholder {
-        color: white;
         text-align: center;
     }
 </style>

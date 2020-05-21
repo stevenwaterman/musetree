@@ -1,9 +1,10 @@
 <script>
   import {yScaleStore} from "../state/settings";
-  import {pitchRange, pitchMin, instrumentSettings} from "../constants";
+  import {pitchRange, pitchMin, instruments} from "../constants";
   import {afterUpdate} from "svelte";
   import {root} from "../state/trackTree";
   import * as Audio from "../audio/audioPlayer";
+  import colorLookup from "../colors";
 
   export let branchStore;
   export let index;
@@ -36,7 +37,7 @@
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const border = "white";
+    const border = colorLookup.border;
     ctx.strokeStyle = border;
     ctx.lineWidth = 1;
     ctx.moveTo(0, canvas.height - 0.5);
@@ -45,19 +46,18 @@
 
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
-      const settings = instrumentSettings[instrument];
-      const {color} = settings;
+      const color = colorLookup[instrument];
 
       drawInstrument(
               ctx,
               instrumentNotes,
               color,
-              idx / Object.keys(instrumentSettings).length,
-              "black"
+              idx / Object.keys(instruments).length,
+              colorLookup.border
       );
     });
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle = colorLookup.text;
     ctx.textAlign = "right";
     ctx.font = "14px arial";
     const text = `Section ${index + 1}: ${childIndex}`;
@@ -104,6 +104,7 @@
     bind:clientWidth
     bind:clientHeight
     class="sectionCanvas"
+    style={"background-color: " + colorLookup.bgLight}
     on:click="{play}"
     on:contextmenu|preventDefault={deselect()}
     bind:this={canvas}

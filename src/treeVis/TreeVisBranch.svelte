@@ -3,6 +3,7 @@
     import {fade} from "svelte/transition";
     import {configStore} from "../state/settings";
     import {request} from "../broker"
+    import colorLookup from "../colors";
 
     export let parentStore;
     export let branchStore;
@@ -33,7 +34,7 @@
 
     $: onSelectedPath = branchState.onSelectedPath;
     $: selectedByParent = branchState.selectedByParent;
-    $: nodeColor = onSelectedPath ? "#f00" : selectedByParent ? "#f90" : "#fff";
+    $: nodeColor = onSelectedPath ? colorLookup.nodeActive : selectedByParent ? colorLookup.nodeWarm : colorLookup.nodeInactive;
 </script>
 
 <style>
@@ -62,7 +63,6 @@
 
 .pendingLoad {
     font-size: 18px;
-    color: white;
 }
 
 .row {
@@ -84,7 +84,7 @@
             on:mousedown={leftClick}
             on:contextmenu|preventDefault={rightClick}
             class="node"
-            style={"background-color: " + nodeColor + ";"}
+            style={"background-color: " + nodeColor}
     >
         <span class="label" transition:fade>
             {childIndex}

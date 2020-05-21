@@ -2,17 +2,12 @@
   import Button from "../buttons/Button.svelte";
   import {getContext} from "svelte";
   import ChangeLogModal from "./ChangeLogModal.svelte";
+  import colorLookup, {modalOptions} from "../colors";
 
   const {open} = getContext("simple-modal");
 
   function openChangelog(){
-    open(ChangeLogModal, {}, {
-      styleWindow: {
-        background: "black",
-        border: "1px solid white",
-        color: "white"
-      }
-    });
+    open(ChangeLogModal, {}, modalOptions);
   }
 </script>
 
@@ -24,7 +19,7 @@
   }
 </style>
 
-<div class="container">
+<div class="container" style={"color: " + colorLookup.textDark}>
   <h1>About</h1>
   <span>
     <a href="https://openai.com/blog/musenet/">

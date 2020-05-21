@@ -4,6 +4,7 @@
     import {configStore} from "../state/settings";
     import {request} from "../broker"
     import TreeVisBranch from "./TreeVisBranch.svelte";
+    import colorLookup from "../colors";
 
     $: branchState = $root;
     $: pendingLoad = branchState.pendingLoad;
@@ -46,12 +47,10 @@
     border-radius: 50%;
 
     cursor: pointer;
-    background: red;
 }
 
 .pendingLoad {
     font-size: 18px;
-    color: white;
 }
 
 .row {
@@ -69,7 +68,7 @@
 </style>
 
 <div class="column" transition:fade>
-    <div on:mousedown={leftClick} on:contextmenu|preventDefault={rightClick} class="node"></div>
+    <div on:mousedown={leftClick} on:contextmenu|preventDefault={rightClick} class="node" style={"background-color: " + colorLookup.nodeActive}></div>
     {#if pendingLoad > 0}
         <span class="pendingLoad" transition:fade>
                 +{pendingLoad}

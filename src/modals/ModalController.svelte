@@ -2,6 +2,7 @@
     import {isLoadingStore} from "../persistence/persistence";
     import LoadingSpinner from "../persistence/LoadingSpinner.svelte";
     import {getContext} from "svelte";
+    import colorLookup from "../colors";
 
     const {open, close} = getContext("simple-modal");
 
@@ -12,7 +13,8 @@
                 closeOnEsc: false,
                 closeOnOuterClick: false,
                 styleWindow: {
-                    background: "transparent"
+                    background: "transparent",
+                    color: colorLookup.text
                 }
             });
         } else {

@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,1,7],
+        date: new Date(2020, 5, 21),
+        commitHash: "TODO",
+        changes: [
+            "Fixed issue #2, improved colour scheme",
+            "Fixed import modal buttons, disabling them when encoding box is empty"
+        ]
+    },
+    {
         version: [2,1,6],
         date: new Date(2020, 5, 21),
         commitHash: "eaad8693e3c4f18cff8e11bbbfe21d459954ffc3",

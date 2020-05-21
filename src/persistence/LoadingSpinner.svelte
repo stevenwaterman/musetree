@@ -1,3 +1,7 @@
+<script>
+    import colorLookup from "../colors";
+</script>
+
 <style>
     .center {
         display: flex;
@@ -12,7 +16,6 @@
     }
 
     .loadingText {
-        color: white;
         text-align: center;
     }
 
@@ -37,7 +40,7 @@
         width: 6px;
         height: 18px;
         border-radius: 20%;
-        background: #fff;
+        background: #c3cee3;
     }
 
     .lds-spinner div:nth-child(1) {

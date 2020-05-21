@@ -5,6 +5,7 @@
   import {root} from "../state/trackTree";
   import panzoom from "panzoom";
   import TreeVisRoot from "./TreeVisRoot.svelte";
+  import colorLookup from "../colors";
 
   let container;
 
@@ -21,11 +22,9 @@
 
 <style>
   .tree-container {
-    border-left: 1px solid white;
     height: 100%;
     width: 100%;
     flex-shrink: 0;
-    background-color: black;
     overflow: hidden;
   }
 
@@ -43,7 +42,7 @@
 </style>
 
 {#if root != null}
-  <div class="tree-container">
+  <div class="tree-container" style={"color: " + colorLookup.textEmphasis + ";background-color: " + colorLookup.bgLight + "; border-left: 1px solid " + colorLookup.border}>
     <div class="pan-container" bind:this={container}>
       <div class="tree-position">
         <TreeVisRoot/>

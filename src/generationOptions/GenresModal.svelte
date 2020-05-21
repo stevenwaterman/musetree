@@ -2,6 +2,7 @@
     import {getContext} from "svelte";
     import GenreOption from "./GenreOption.svelte";
     import {genres} from "../constants";
+    import colorLookup from "../colors";
 
     const {close} = getContext("simple-modal");
 
@@ -29,6 +30,8 @@
 
     const experimentalExclude = [...simpleGenres.map(pair => pair[1]), ...advancedGenres.map(pair => pair[1])];
     const experimentalGenres = genres.filter(genre => !experimentalExclude.includes(genre));
+
+    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
 
 <style>
@@ -45,8 +48,6 @@
 
     .TT_text {
         visibility: hidden;
-        border: 1px solid black;
-        background-color: white;
         padding: 5px;
         font-weight: 400;
         font-size: 12px;
@@ -71,7 +72,7 @@
 
     <h2 class="TT_trigger">
         Simple
-        <span class="TT_text">
+        <span class="TT_text" style={tt_text_style}>
             These genres are the most reliable<br/>
             They are available in the official MuseNet tool
         </span>
@@ -85,7 +86,7 @@
 
     <h2 class="TT_trigger">
         Advanced
-        <span class="TT_text">
+        <span class="TT_text" style={tt_text_style}>
             These genres are reliable<br/>
             They are available in the official MuseNet tool<br/>
             after clicking 'show advanced settings'
@@ -100,7 +101,7 @@
 
     <h2 class="TT_trigger">
         Experimental
-        <span class="TT_text">
+        <span class="TT_text" style={tt_text_style}>
             These genres are not reliable<br/>
             They are not supported by MuseNet, but usually work<br/>
             Don't be surprised if they sound very strange&#33;

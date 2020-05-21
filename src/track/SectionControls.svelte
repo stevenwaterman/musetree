@@ -8,6 +8,7 @@
 
   import {decode} from "../audio/decoder";
   import Button from "../buttons/Button.svelte";
+  import colorLookup from "../colors";
 
   $: selectedStore_2 = root.selectedStore_2;
   $: selectedStore = $selectedStore_2;
@@ -35,8 +36,6 @@
     flex-wrap: wrap;
     flex-grow: 0;
     flex-shrink: 0;
-    background: black;
-    border-top: 1px solid white;
     justify-content: center;
   }
   .rowButton {
@@ -45,7 +44,7 @@
   }
 </style>
 
-<div class="buttonRow">
+<div class="buttonRow" style={"background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border}>
   {#each Object.entries(children) as [childIdx, childStore]}
     <ChildButton nodeStore={childStore} remove={() => parentStore.deleteChild(childIdx)} />
   {/each}
