@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,2,0],
         date: new Date(2020, 5, 23),
-        commitHash: "TODO",
+        commitHash: "13628ec1f3d72b6cc51012b6c284ca3e4057673e",
         changes: [
             "Fixed 'pending load' text colour in tree visualisation",
             "Fixed issue #39, Added lines between nodes in tree visualisation"
