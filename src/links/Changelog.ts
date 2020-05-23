@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,3,0],
         date: new Date(2020, 5, 23),
-        commitHash: "TODO",
+        commitHash: "4c299141bda04c07760cdfcb96eda27e9d9ab66c",
         changes: [
             "Add support for custom MIDI tempos"
         ]
