@@ -39,7 +39,7 @@
     $: onSelectedPath = branchState.onSelectedPath;
     $: selectedByParent = branchState.selectedByParent;
     $: nodeColor = onSelectedPath ? colorLookup.nodeActive : selectedByParent ? colorLookup.nodeWarm : colorLookup.nodeInactive;
-    $: edgeColor = onSelectedPath ? colorLookup.edgeActive: selectedByParent ? colorLookup.edgeWarm: colorLookup.edgeInactive;
+    $: edgeColor = onSelectedPath ? colorLookup.edgeActive : selectedByParent ? colorLookup.edgeWarm : colorLookup.edgeInactive;
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
@@ -50,16 +50,19 @@
 
         children.forEach(([idx, child]) => {
             const width = get_store_value(child.numberOfLeavesStore);
-            childPlacements.push([idx, child, currOffset + (width/2)]);
+            childPlacements.push([idx, child, currOffset + (width / 2)]);
             currOffset += width;
         });
 
         return childPlacements;
     }
+
     $: childPlacements = getChildPlacements(children, numberOfLeaves);
 
-    $: offsetWidth = Math.abs(parentOffset - offset) + 1;
-    $: lineWidth = offsetWidth * 60;
+    $: offsetWidth = Math.abs(parentOffset - offset);
+    $: cw = offsetWidth * 60 / 2;
+    $: ch = 150 / 2;
+    $: lineWidth = (offsetWidth + 1) * 60;
     $: lineLeft = Math.min(offset, parentOffset) * 60 - 30;
 </script>
 
@@ -109,22 +112,19 @@
         </span>
     </div>
     {#if pendingLoad > 0}
-        <p class="pendingLoad" style={"color: " + colorLookup.text}>
-                +{pendingLoad}
+        <p class="pendingLoad" style={"color: " + colorLookup.pendingLoadText} transition:fade>
+            +{pendingLoad}
         </p>
     {/if}
 </div>
 {#if childPlacements.length > 0}
     {#each childPlacements as [index, child, childOffset] (index)}
-        <svelte:self parentStore={branchStore} branchStore={child} depth={depth + 1} offset={childOffset} parentOffset={offset}/>
+        <svelte:self parentStore={branchStore} branchStore={child} depth={depth + 1} offset={childOffset}
+                     parentOffset={offset}/>
     {/each}
 {/if}
-{#if offset < parentOffset}
-    <svg class="line" width={lineWidth} height={150} style={"left: " + lineLeft + "px; top: " + (depth * 150 - 125) + "px;"}>
-        <line x1="30" x2={lineWidth - 30} y1="150" y2="0" stroke={edgeColor} stroke-width="5px"/>
-    </svg>
-{:else}
-    <svg class="line" width={lineWidth} height={150} style={"left: " + lineLeft + "px; top: " + (depth * 150 - 125) + "px;"}>
-        <line x1="30" x2={lineWidth - 30} y1="0" y2="150" stroke={edgeColor} stroke-width="5px"/>
-    </svg>
-{/if}
+<svg class="line" width={lineWidth} height={ch * 2}
+     style={"left: " + lineLeft + "px; top: " + ((depth-1) * ch * 2 + 25) + "px;" + (offset < parentOffset ? "transform: scaleX(-1)" : "")}>
+    <path d={"m 30 0 c 0 " + ch + " " + cw/2 + " " + ch + " " + cw + " " + ch + " c " + cw + " 0 " + cw + " " + ch/2 + " " + cw + " " + ch}
+          stroke={edgeColor} stroke-width="2px" fill="none"/>
+</svg>

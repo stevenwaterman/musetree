@@ -64,7 +64,9 @@
     .pendingLoad {
         font-size: 18px;
         text-align: center;
-        margin: 0;
+        margin: 8px 0 0 0;
+        border-radius: 30%;
+        width: 100%;
     }
 
     .placement {
@@ -84,7 +86,7 @@
         </span>
     </div>
     {#if pendingLoad > 0}
-        <p class="pendingLoad" style={"color: " + colorLookup.text} transition:fade>
+        <p class="pendingLoad" style={"color: " + colorLookup.textDark + "; background-color: " + colorLookup.bgDark + "; border: 2px solid " + colorLookup.border} transition:fade>
                 +{pendingLoad}
         </p>
     {/if}

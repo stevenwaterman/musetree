@@ -1,6 +1,6 @@
 import {Instrument} from "./constants";
 
-type ColorKeys = Instrument | "bgLight" | "bgDark" | "text" | "textDark" | "textEmphasis" | "border" | "buttonBg" | "buttonBgDisabled" | "nodeActive" | "nodeWarm" | "nodeInactive" | "edgeActive" | "edgeWarm" | "edgeInactive";
+type ColorKeys = Instrument | "bgLight" | "bgDark" | "text" | "textDark" | "textEmphasis" | "border" | "buttonBg" | "buttonBgDisabled" | "nodeActive" | "nodeWarm" | "nodeInactive" | "edgeActive" | "edgeWarm" | "edgeInactive" | "pendingLoadText";
 const colorLookup: Record<ColorKeys, string> = {
     bass: "#f07178",
     drums: "#c3e88d",
@@ -25,7 +25,8 @@ const colorLookup: Record<ColorKeys, string> = {
     nodeInactive: "#c3cee3",
     edgeActive: "#f07178",
     edgeWarm: "#f78c6c",
-    edgeInactive: "#1f292e99"
+    edgeInactive: "#c3cee3",
+    pendingLoadText: "c3e88d"
 };
 
 export const modalOptions = {
