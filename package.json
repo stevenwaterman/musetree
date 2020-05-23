@@ -61,7 +61,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "downloadjs": "^1.4.7",
-    "musenet-midi": "github:stevenwaterman/musenet-midi#3a9cc41e73bf863b92dfddd877aee02441333e7f",
+    "musenet-midi": "github:stevenwaterman/musenet-midi#46d228a461b83e70596f4b2ba921c0d45db94bbe",
     "npm-check-updates": "^4.1.1",
     "panzoom": "^9.2.1",
     "sirv-cli": "^0.4.5",

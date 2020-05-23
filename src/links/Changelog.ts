@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,3,0],
+        date: new Date(2020, 5, 23),
+        commitHash: "TODO",
+        changes: [
+            "Add support for custom MIDI tempos"
+        ]
+    },
+    {
         version: [2,2,1],
         date: new Date(2020, 5, 23),
         commitHash: "6370688f82de45d5de4b5238a36e617acfa09fc0",
