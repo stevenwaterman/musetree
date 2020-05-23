@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,2,1],
         date: new Date(2020, 5, 23),
-        commitHash: "TODO",
+        commitHash: "6370688f82de45d5de4b5238a36e617acfa09fc0",
         changes: [
             "Improved visual look of lines connecting nodes in tree view"
         ]
