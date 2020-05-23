@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,2,0],
+        date: new Date(2020, 5, 23),
+        commitHash: "TODO",
+        changes: [
+            "Fixed 'pending load' text colour in tree visualisation",
+            "Fixed issue #39, Added lines between nodes in tree visualisation"
+        ]
+    },
+    {
         version: [2,1,7],
         date: new Date(2020, 5, 21),
         commitHash: "fb1bd9b720f31b3bdcded4faf25e8797c3e9f630",

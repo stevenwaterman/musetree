@@ -5,6 +5,7 @@
     import {request} from "../broker"
     import TreeVisBranch from "./TreeVisBranch.svelte";
     import colorLookup from "../colors";
+    import {get_store_value} from "svelte/internal";
 
     $: branchState = $root;
     $: pendingLoad = branchState.pendingLoad;
@@ -27,56 +28,65 @@
     function rightClick() {
         children.map(pair => pair[0]).forEach(idx => root.deleteChild(idx));
     }
+
+    $: numberOfLeavesStore = root.numberOfLeavesStore;
+    $: numberOfLeaves = $numberOfLeavesStore;
+
+    function getChildPlacements(children, numberOfLeaves) {
+        const childPlacements = [];
+        let currOffset = -(numberOfLeaves) / 2;
+
+        children.forEach(([idx, child]) => {
+            const width = get_store_value(child.numberOfLeavesStore);
+            childPlacements.push([idx, child, currOffset + (width/2)]);
+            currOffset += width;
+        });
+
+        return childPlacements;
+    }
+
+    $: childPlacements = getChildPlacements(children, numberOfLeaves);
 </script>
 
 <style>
-.column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    .node {
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-.node {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
 
-    width: 50px;
-    height: 50px;
-    margin: 10px;
-    border-radius: 50%;
+        cursor: pointer;
+    }
 
-    cursor: pointer;
-}
+    .pendingLoad {
+        font-size: 18px;
+        text-align: center;
+        margin: 0;
+    }
 
-.pendingLoad {
-    font-size: 18px;
-}
-
-.row {
-    display: inline-flex;
-    align-items: flex-start;
-    justify-content: center;
-    flex-direction: row;
-    border-left: 1px solid white;
-
-    border-top: 1px solid white;
-    border-right: 1px solid white;
-    border-top-left-radius: 25px;
-    border-top-right-radius: 25px;
-}
+    .placement {
+        position: absolute;
+    }
 </style>
-
-<div class="column" transition:fade>
-    <div on:mousedown={leftClick} on:contextmenu|preventDefault={rightClick} class="node" style={"background-color: " + colorLookup.nodeActive}></div>
-    {#if pendingLoad > 0}
-        <span class="pendingLoad" transition:fade>
-                +{pendingLoad}
+{#if childPlacements.length > 0}
+    {#each childPlacements as [index, child, offset] (index)}
+        <TreeVisBranch parentStore={root} branchStore={child} depth={1} offset={offset} parentOffset={0}/>
+    {/each}
+{/if}
+<div class="placement" style="left: -25px">
+    <div on:mousedown={leftClick} on:contextmenu|preventDefault={rightClick} class="node"
+         style={"background-color: " + colorLookup.nodeActive}>
+        <span class="label" transition:fade>
+            Root
         </span>
-    {/if}
-    <div class="row">
-        {#each children as [index, child] (index)}
-            <TreeVisBranch parentStore={root} branchStore={child}/>
-        {/each}
     </div>
+    {#if pendingLoad > 0}
+        <p class="pendingLoad" style={"color: " + colorLookup.text} transition:fade>
+                +{pendingLoad}
+        </p>
+    {/if}
 </div>
+
