@@ -9,6 +9,16 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,6,1],
+        date: new Date(2020, 5, 24),
+        commitHash: "TODO",
+        changes: [
+            "Improve play/stop button",
+            "Change favicon",
+            "Improve import modal examples selection"
+        ]
+    },
+    {
         version: [2,6,0],
         date: new Date(2020, 5, 24),
         commitHash: "54437db7ef38530c0d842760259d5c13c653c164",

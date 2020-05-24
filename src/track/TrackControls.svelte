@@ -10,7 +10,6 @@
 <style>
     .container {
         flex-shrink: 0;
-        padding-top: 4px;
     }
 
     button {
@@ -57,15 +56,22 @@
     .TT_trigger:hover .TT_text {
         visibility: visible;
     }
+
+    .playStop {
+        font-size: 24pt;
+        cursor: pointer;
+        margin-right: 12px;
+        margin-top: -2px;
+    }
 </style>
 
 <div class="container row center" style={"color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgDark}>
     {#if $audioStatusStore.type === "on"}
-        <Button on:click={stop}>⏹</Button>
+        <div class="playStop" on:click={stop} style={`color: ${colorLookup.text}`}>■</div>
     {:else if $audioStatusStore.type === "loading"}
-        <Button disabled>▶</Button>
+        <div class="playStop" style={`color: ${colorLookup.text}; cursor: default`}>▶</div>
     {:else}
-        <Button on:click={() => play(0)}>▶</Button>
+        <div class="playStop" on:click={() => play(0)} style={`color: ${colorLookup.text}`}>▶</div>
     {/if}
 
     <div class="col center margin">

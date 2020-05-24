@@ -15,7 +15,7 @@
 <style>
     .grid {
         display: grid;
-        grid-template-rows: 1fr auto 50px;
+        grid-template-rows: 1fr auto 46px;
         height: 100vh;
         width: 100vw;
     }

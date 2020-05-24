@@ -74,6 +74,7 @@
         <FileInput fileTypes=".mid" handleFile={midiSelected}>Upload Midi</FileInput>
             <label for="example" style="margin-left: auto; margin-right: 12px;">Examples:</label>
             <select id="example" bind:value={encoding} style={`margin: 0; background-color: ${colorLookup.buttonBg}; border-color: ${colorLookup.border}; color: ${colorLookup.textDark}`}>
+                <option selected></option>
                 {#each Object.entries(examples) as [name, exampleEncoding]}
                     <option value={exampleEncoding}>{name}</option>
                 {/each}
