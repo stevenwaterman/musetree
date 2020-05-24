@@ -50,11 +50,14 @@
     function openImportModal() {
         open(ImportModal, {}, modalOptions)
     }
+
+    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
 
 <style>
     h1 {
         margin: 0;
+        text-align: center;
     }
 
     .container {
@@ -64,9 +67,8 @@
     .grid {
         display: grid;
         grid-template-rows: 1fr 1fr;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         place-items: center;
-        width: 200px;
     }
 
     .dropdown-content {
@@ -79,16 +81,45 @@
         display: flex;
     }
 
-    button {
-        margin: 4px;
+    .TT_trigger {
+    }
+
+    .TT_text {
+        visibility: hidden;
+        padding: 5px;
+        font-weight: 400;
+        font-size: 12px;
+        margin-left: 12px;
+
+        position: absolute;
+        z-index: 1;
+    }
+
+    .TT_trigger:hover .TT_text {
+        visibility: visible;
     }
 </style>
-
+<!--TODO export modal with more info-->
 <div class="container" style={"color: " + colorLookup.textDark}>
-    <h1>Save</h1>
+    <h1 style={"color: " + colorLookup.text}>Save</h1>
     <div class="grid">
+        <span class="TT_trigger">
+            Tree
+            <span class="TT_text" style={tt_text_style}>
+                Save the raw encoding of when each note happens, for the entire tree.
+                This lets you load the whole tree back into MuseTree at a later time.
+            </span>
+        </span>
         <FileInput fileTypes=".mst" handleFile={loadClicked}> Load</FileInput>
         <Button disabled={disallowSave} on:click={() => save(root)}> Save</Button>
+
+        <span class="TT_trigger">
+            Audio
+            <span class="TT_text" style={tt_text_style}>
+                Save an audio file that you can listen to or upload to other sites.
+                You can also save/load MIDI files into MuseTree.
+            </span>
+        </span>
         <Button on:click={openImportModal}> Import</Button>
         <div class="dropdown">
             <Button disabled={disallowExport}>Export</Button>

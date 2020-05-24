@@ -64,7 +64,8 @@
         border: none;
     }
 </style>
-
+<!--TODO hardcode some examples-->
+<!--TODO provide a guide like MrCheeze's-->
 <div>
     <h1>Import</h1>
 

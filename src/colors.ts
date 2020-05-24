@@ -1,17 +1,19 @@
 import {Instrument} from "./constants";
 
-type ColorKeys = Instrument | "bgLight" | "bgDark" | "text" | "textDark" | "textEmphasis" | "border" | "buttonBg" | "buttonBgDisabled" | "nodeActive" | "nodeWarm" | "nodeInactive" | "edgeActive" | "edgeWarm" | "edgeInactive" | "pendingLoadText";
+type ColorKeys = Instrument | "strings" | "winds" | "bgLight" | "bgDark" | "text" | "textDark" | "textEmphasis" | "border" | "buttonBg" | "buttonBgDisabled" | "nodeActive" | "nodeWarm" | "nodeInactive" | "edgeActive" | "edgeWarm" | "edgeInactive" | "pendingLoadText";
 const colorLookup: Record<ColorKeys, string> = {
     bass: "#f07178",
     drums: "#c3e88d",
     guitar: "#89ddff",
     harp: "#f78c6c",
     piano: "#ffcb6b",
+    strings: "#c792ea",
     violin: "#c792ea",
     cello: "#c792ea",
     flute: "#c3cee3",
     trumpet: "#c3cee3",
     clarinet: "#c3cee3",
+    winds: "#c3cee3",
     bgLight: "#263238",
     bgDark: "#1f292e",
     text: "#c3cee3",

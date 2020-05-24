@@ -85,8 +85,10 @@
 
     .pendingLoad {
         font-size: 18px;
-        margin: 0;
         text-align: center;
+        margin: 8px 0 0 0;
+        border-radius: 30%;
+        width: 100%;
     }
 
     .line {
@@ -112,7 +114,7 @@
         </span>
     </div>
     {#if pendingLoad > 0}
-        <p class="pendingLoad" style={"color: " + colorLookup.pendingLoadText} transition:fade>
+        <p class="pendingLoad" style={"color: " + colorLookup.textDark + "; background-color: " + colorLookup.bgDark + "; border: 2px solid " + colorLookup.border} transition:fade>
             +{pendingLoad}
         </p>
     {/if}

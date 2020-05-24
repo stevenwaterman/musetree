@@ -9,6 +9,19 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,4,1],
+        date: new Date(2020, 5, 24),
+        commitHash: "TODO",
+        changes: [
+            "Updated readme for real this time",
+            "Coloured the instruments in the options panel",
+            "Added tooltips to the options panel",
+            "Converted all links to buttons in 'About'",
+            "Changed colour & center aligned headers in options panel",
+            "Fixed pending load display on branch nodes"
+        ]
+    },
+    {
         version: [2,4,0],
         date: new Date(2020, 5, 24),
         commitHash: "321ecf89124925cc7beefb542925ea37bc155f58",
