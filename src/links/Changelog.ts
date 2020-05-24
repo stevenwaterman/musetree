@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,6,2],
         date: new Date(2020, 5, 25),
-        commitHash: "TODO",
+        commitHash: "28c79f3bb3c8f0124c0cd5128fdfcdd59b9e9cba",
         changes: [
             "Hide scrollbar in options when possible"
         ]
