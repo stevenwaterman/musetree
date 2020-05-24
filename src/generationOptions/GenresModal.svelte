@@ -31,7 +31,7 @@
     const experimentalExclude = [...simpleGenres.map(pair => pair[1]), ...advancedGenres.map(pair => pair[1])];
     const experimentalGenres = genres.filter(genre => !experimentalExclude.includes(genre));
 
-    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
+    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.textDark;
 </script>
 
 <style>
@@ -68,9 +68,9 @@
 </style>
 
 <div>
-    <h1>Genres</h1>
+    <h1 style={"color: " + colorLookup.text}>Genres</h1>
 
-    <h2 class="TT_trigger">
+    <h2 class="TT_trigger" style={"color: " + colorLookup.text}>
         Simple
         <span class="TT_text" style={tt_text_style}>
             These genres are the most reliable<br/>
@@ -84,7 +84,7 @@
         {/each}
     </div>
 
-    <h2 class="TT_trigger">
+    <h2 class="TT_trigger" style={"color: " + colorLookup.text}>
         Advanced
         <span class="TT_text" style={tt_text_style}>
             These genres are reliable<br/>
@@ -99,7 +99,7 @@
         {/each}
     </div>
 
-    <h2 class="TT_trigger">
+    <h2 class="TT_trigger" style={"color: " + colorLookup.text}>
         Experimental
         <span class="TT_text" style={tt_text_style}>
             These genres are not reliable<br/>

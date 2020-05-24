@@ -8,6 +8,7 @@
     import {createSectionStore} from "../state/section";
     import {createSectionFromEncoding, isLoadingStore} from "./persistence";
     import colorLookup from "../colors";
+    import examples from "./examples";
 
     const {close} = getContext("simple-modal");
 
@@ -56,6 +57,7 @@
     .row {
         display: flex;
         flex-direction: row;
+        align-items: center;
     }
 
     .encoding {
@@ -64,12 +66,21 @@
         border: none;
     }
 </style>
-<!--TODO hardcode some examples-->
 <!--TODO provide a guide like MrCheeze's-->
 <div>
-    <h1>Import</h1>
+    <h1 style={"color: " + colorLookup.text}>Import</h1>
 
-    <FileInput fileTypes=".mid" handleFile={midiSelected}>Select Midi</FileInput>
+    <div class="row">
+        <FileInput fileTypes=".mid" handleFile={midiSelected}>Upload Midi</FileInput>
+            <label for="example" style="margin-left: auto; margin-right: 12px;">Examples:</label>
+            <select id="example" bind:value={encoding} style={`margin: 0; background-color: ${colorLookup.buttonBg}; border-color: ${colorLookup.border}; color: ${colorLookup.textDark}`}>
+                {#each Object.entries(examples) as [name, exampleEncoding]}
+                    <option value={exampleEncoding}>{name}</option>
+                {/each}
+            </select>
+    </div>
+
+
     <label for="encoding" style="display: none">Encoding</label>
     <textarea id="encoding" class="encoding" bind:value={encoding} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark}></textarea>
 
