@@ -60,7 +60,7 @@
     $: childPlacements = getChildPlacements(children, numberOfLeaves);
 
     $: offsetWidth = Math.abs(parentOffset - offset);
-    $: cw = offsetWidth * 60 / 2;
+    $: cw = offsetWidth * 30;
     $: ch = 150 / 2;
     $: lineWidth = (offsetWidth + 1) * 60;
     $: lineLeft = Math.min(offset, parentOffset) * 60 - 30;
@@ -127,6 +127,6 @@
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2}
      style={"left: " + lineLeft + "px; top: " + ((depth-1) * ch * 2 + 25) + "px;" + (offset < parentOffset ? "transform: scaleX(-1)" : "")}>
-    <path d={"m 30 0 c 0 " + ch + " " + cw/2 + " " + ch + " " + cw + " " + ch + " c " + cw + " 0 " + cw + " " + ch/2 + " " + cw + " " + ch}
+    <path d={`m 30 0 c 0 ${ch} ${cw*2} ${ch} ${cw*2} ${ch*2}`}
           stroke={edgeColor} stroke-width="2px" fill="none"/>
 </svg>

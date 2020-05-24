@@ -67,7 +67,7 @@
     .grid {
         display: grid;
         grid-template-rows: 1fr 1fr;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 50px 1fr 1fr;
         place-items: center;
     }
 
@@ -103,7 +103,7 @@
 <div class="container" style={"color: " + colorLookup.textDark}>
     <h1 style={"color: " + colorLookup.text}>Save</h1>
     <div class="grid">
-        <span class="TT_trigger">
+        <span class="TT_trigger" style="place-self: center start">
             Tree
             <span class="TT_text" style={tt_text_style}>
                 Save the raw encoding of when each note happens, for the entire tree.
@@ -113,7 +113,7 @@
         <FileInput fileTypes=".mst" handleFile={loadClicked}> Load</FileInput>
         <Button disabled={disallowSave} on:click={() => save(root)}> Save</Button>
 
-        <span class="TT_trigger">
+        <span class="TT_trigger" style="place-self: center start">
             Audio
             <span class="TT_text" style={tt_text_style}>
                 Save an audio file that you can listen to or upload to other sites.

@@ -9,15 +9,25 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
-        version: [2,5,0],
-        date: new Date(2020,5,24),
+        version: [2, 5, 1],
+        date: new Date(2020, 5, 24),
+        commitHash: "TODO",
+        changes: [
+            "Adjusted column widths in save options",
+            "The button that opens this modal now displays the current version",
+            "Improve tree vis line shape"
+        ]
+    },
+    {
+        version: [2, 5, 0],
+        date: new Date(2020, 5, 24),
         commitHash: "ee86226aa80db94681b4fd4bb0c0a5111aea0cb1",
         changes: [
             "Github issue #6, allow changing size of each view"
         ]
     },
     {
-        version: [2,4,1],
+        version: [2, 4, 1],
         date: new Date(2020, 5, 24),
         commitHash: "33835b36cc2c7ba94dd49242ebfcb60f13dd784b",
         changes: [
@@ -30,7 +40,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,4,0],
+        version: [2, 4, 0],
         date: new Date(2020, 5, 24),
         commitHash: "321ecf89124925cc7beefb542925ea37bc155f58",
         changes: [
@@ -45,7 +55,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,3,0],
+        version: [2, 3, 0],
         date: new Date(2020, 5, 23),
         commitHash: "4c299141bda04c07760cdfcb96eda27e9d9ab66c",
         changes: [
@@ -53,7 +63,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,2,1],
+        version: [2, 2, 1],
         date: new Date(2020, 5, 23),
         commitHash: "6370688f82de45d5de4b5238a36e617acfa09fc0",
         changes: [
@@ -61,7 +71,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,2,0],
+        version: [2, 2, 0],
         date: new Date(2020, 5, 23),
         commitHash: "13628ec1f3d72b6cc51012b6c284ca3e4057673e",
         changes: [
@@ -70,7 +80,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,7],
+        version: [2, 1, 7],
         date: new Date(2020, 5, 21),
         commitHash: "fb1bd9b720f31b3bdcded4faf25e8797c3e9f630",
         changes: [
@@ -79,7 +89,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,6],
+        version: [2, 1, 6],
         date: new Date(2020, 5, 21),
         commitHash: "eaad8693e3c4f18cff8e11bbbfe21d459954ffc3",
         changes: [
@@ -87,7 +97,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,5],
+        version: [2, 1, 5],
         date: new Date(2020, 5, 21),
         commitHash: "630c8c2a119353abb893e6efcaf489a9957a18f3",
         changes: [
@@ -96,7 +106,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,4],
+        version: [2, 1, 4],
         date: new Date(2020, 5, 21),
         commitHash: "bc5e79d479d4ae8e6fd723f3bab911277b0902a9",
         changes: [
@@ -104,7 +114,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,3],
+        version: [2, 1, 3],
         date: new Date(2020, 5, 20),
         commitHash: "411924dde1796c0ab6975121cac10517990c5c60",
         changes: [
@@ -112,7 +122,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,2],
+        version: [2, 1, 2],
         date: new Date(2020, 5, 20),
         commitHash: "de8f1cec607da56cb2c81c28eebf7aaa9af453c7",
         changes: [
@@ -120,7 +130,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,1],
+        version: [2, 1, 1],
         date: new Date(2020, 5, 18),
         commitHash: "312560c1f72448cda816d2cadaa132b2a0884bc5",
         changes: [
@@ -128,7 +138,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,1,0],
+        version: [2, 1, 0],
         date: new Date(2020, 5, 18),
         commitHash: "93ef56a3c56924f674a8fbdde6dcac2ff17db9c9",
         changes: [
@@ -136,7 +146,7 @@ const changelog: Changelog = [
         ]
     },
     {
-        version: [2,0,0],
+        version: [2, 0, 0],
         date: new Date(2020, 5, 17),
         commitHash: "739d69b3a54a05e1f5e5bd46c84f3e3dc062eef3",
         changes: [
