@@ -100,6 +100,19 @@
         <span>{$maxResponseLengthStore}</span>
     </div>
 
+    <div class="optionElement">
+        <label for="temperature">Temperature:</label>
+        <input
+                class="slider"
+                id="temperature"
+                bind:value={$temperatureStore}
+                type="range"
+                min="0.8"
+                max="1.2"
+                step="0.01"/>
+        <span>{$temperatureStore}</span>
+    </div>
+
     <label>Instruments:</label>
     {#each instrumentCategories as instrument}
         <InstrumentCheckbox {instrument}/>

@@ -17,6 +17,10 @@
     flex-direction: column;
     padding: 12px;
   }
+
+  h1 {
+    margin: 0;
+  }
 </style>
 
 <div class="container" style={"color: " + colorLookup.textDark}>

@@ -9,6 +9,21 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,4,0],
+        date: new Date(2020, 5, 24),
+        commitHash: "TODO",
+        changes: [
+            "Add temperature to generation options",
+            "Prevented the 'Load more' and 'Log' buttons going on separate lines",
+            "Fixed the gaps between sections in the track view",
+            "Added border between sections and scroll bar in track view",
+            "Prevented timeline from scrolling you off the page on low-resolution screens",
+            "Improve alignment of persistence options buttons",
+            "Remove margin around headers in options",
+            "Update readme"
+        ]
+    },
+    {
         version: [2,3,0],
         date: new Date(2020, 5, 23),
         commitHash: "4c299141bda04c07760cdfcb96eda27e9d9ab66c",

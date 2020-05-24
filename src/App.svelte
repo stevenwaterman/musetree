@@ -8,21 +8,16 @@
     import Modal from "svelte-simple-modal";
     import ModalController from "./modals/ModalController.svelte";
     import colorLookup from "./colors";
+    import SectionControls from "./track/SectionControls.svelte";
 </script>
 
 <style>
-    .columns {
+    .grid {
         display: grid;
         grid-template-columns: 1fr 1fr 300px;
-        grid-template-rows: auto;
+        grid-template-rows: 1fr auto 50px;
+        height: 100vh;
         width: 100vw;
-        height: 100vh;
-    }
-
-    .col {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
     }
 
     :global(body) {
@@ -48,15 +43,12 @@
 
 <Modal>
     <ModalController/>
-    <div class="columns" style={"color: " + colorLookup.text}>
-        <div class="col" style={"background-color: " + colorLookup.bgDark}>
-            <Track/>
-            <TrackControls/>
-        </div>
-        <div class="col">
-            <TreeVis/>
-        </div>
-        <div class="col" style={"background-color: " + colorLookup.bgDark + "; border-left: 1px solid " + colorLookup.border}>
+    <div class="grid" style={"color: " + colorLookup.text}>
+        <div style="grid-column: 1; grid-row: 1; min-height: 0"><Track/></div>
+        <div style="grid-column: 1; grid-row: 2"><SectionControls/></div>
+        <div style="grid-column: 2; grid-row: 1 /span 2"><TreeVis/></div>
+        <div style="grid-column: 1 / span 2; grid-row: 3"><TrackControls/></div>
+        <div style={`grid-column: 3; grid-row: 1 / span 3; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}`}>
             <GenerationOptions/>
             <PersistenceOptions/>
             <Links/>

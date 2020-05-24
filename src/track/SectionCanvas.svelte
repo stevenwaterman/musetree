@@ -44,6 +44,10 @@
     ctx.lineTo(canvas.width, canvas.height - 0.5);
     ctx.stroke();
 
+    ctx.moveTo(canvas.width - 0.5, 0);
+    ctx.lineTo(canvas.width - 0.5, canvas.height);
+    ctx.stroke();
+
     Object.keys(notes).forEach((instrument, idx) => {
       const instrumentNotes = notes[instrument];
       const color = colorLookup[instrument];

@@ -8,7 +8,7 @@
 <style>
     .container {
         flex-shrink: 0;
-        padding: 4px 0;
+        padding-top: 4px;
     }
 
     button {
@@ -39,7 +39,7 @@
     }
 </style>
 
-<div class="container row center" style={"color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border}>
+<div class="container row center" style={"color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgDark}>
     {#if $audioStatusStore.type === "on"}
         <Button on:click={stop}>Stop</Button>
     {:else if $audioStatusStore.type === "loading"}

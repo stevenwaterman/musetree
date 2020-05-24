@@ -15,6 +15,8 @@
         overflow-y: scroll;
         scrollbar-color: #c3cee3 #1f292e;
         height: 100%;
+        display:flex;
+        flex-direction: column;
     }
 
     ::-webkit-scrollbar {
@@ -34,12 +36,11 @@
     }
 </style>
 
-<div class="container" on:wheel={() => isScrollingStore.set(false)}>
-      <Timeline />
+<div class="container" on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
+    <Timeline/>
     {#if selectedChildStore === null}
         <p class="placeholder">Use the controls below to begin</p>
     {:else}
         <SectionCanvas branchStore={selectedChildStore} index={0} deselect="{() => root.select([])}"/>
     {/if}
 </div>
-<SectionRowOptions />

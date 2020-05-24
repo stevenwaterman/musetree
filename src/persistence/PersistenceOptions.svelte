@@ -53,13 +53,20 @@
 </script>
 
 <style>
+    h1 {
+        margin: 0;
+    }
+
     .container {
         padding: 12px;
     }
 
-    .row {
-        display: flex;
-        flex-direction: row;
+    .grid {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        place-items: center;
+        width: 200px;
     }
 
     .dropdown-content {
@@ -79,11 +86,9 @@
 
 <div class="container" style={"color: " + colorLookup.textDark}>
     <h1>Save</h1>
-    <div class="row">
+    <div class="grid">
         <FileInput fileTypes=".mst" handleFile={loadClicked}> Load</FileInput>
         <Button disabled={disallowSave} on:click={() => save(root)}> Save</Button>
-    </div>
-    <div class="row">
         <Button on:click={openImportModal}> Import</Button>
         <div class="dropdown">
             <Button disabled={disallowExport}>Export</Button>
