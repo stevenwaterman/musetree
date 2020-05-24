@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2, 5, 1],
         date: new Date(2020, 5, 24),
-        commitHash: "TODO",
+        commitHash: "ecf0e5aea21dd04af80e84690d4c17c189a10203",
         changes: [
             "Adjusted column widths in save options",
             "The button that opens this modal now displays the current version",
