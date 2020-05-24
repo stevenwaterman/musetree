@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,4,0],
         date: new Date(2020, 5, 24),
-        commitHash: "TODO",
+        commitHash: "321ecf89124925cc7beefb542925ea37bc155f58",
         changes: [
             "Add temperature to generation options",
             "Prevented the 'Load more' and 'Log' buttons going on separate lines",
