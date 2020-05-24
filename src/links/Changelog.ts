@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,5,0],
         date: new Date(2020,5,24),
-        commitHash: "TODO",
+        commitHash: "ee86226aa80db94681b4fd4bb0c0a5111aea0cb1",
         changes: [
             "Github issue #6, allow changing size of each view"
         ]
