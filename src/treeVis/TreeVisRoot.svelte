@@ -81,7 +81,7 @@
 <div class="placement" style="left: -25px">
     <div on:mousedown={leftClick} on:contextmenu|preventDefault={rightClick} class="node"
          style={"background-color: " + colorLookup.nodeActive}>
-        <span class="label" transition:fade>
+        <span class="label">
             Root
         </span>
     </div>

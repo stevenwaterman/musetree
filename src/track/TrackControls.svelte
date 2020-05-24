@@ -1,5 +1,5 @@
 <script>
-    import {preplayStore, autoScrollStore, yScaleStore, autoPlayStore} from "../state/settings";
+    import {preplayStore, autoScrollStore, splitStore, yScaleStore, autoPlayStore} from "../state/settings";
     import {play, stop, audioStatusStore} from "../audio/audioPlayer"
     import Button from "../buttons/Button.svelte";
     import colorLookup from "../colors";
@@ -81,6 +81,11 @@
     <div class="col margin">
         <label for="yScale">Zoom: {$yScaleStore}%</label>
         <input class="slider" id="yScale" bind:value={$yScaleStore} type="range" min="10" max="500" step="10"/>
+    </div>
+
+    <div class="col margin">
+        <label for="split">Split: {$splitStore}%</label>
+        <input class="slider" id="split" bind:value={$splitStore} type="range" min="0" max="100" step="5"/>
     </div>
 
     <div class="col center margin">

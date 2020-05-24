@@ -35,6 +35,7 @@ export const autoPlayStore: Writable<boolean> = writable(true);
 export const preplayStore: Writable<number> = writable(2.5);
 
 export const yScaleStore: Writable<number> = writable(100);
+export const splitStore: Writable<number> = writable(50);
 
 export type Config = {
     encoding: MusenetEncoding,
