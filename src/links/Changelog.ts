@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,6,1],
         date: new Date(2020, 5, 24),
-        commitHash: "TODO",
+        commitHash: "5118bda71d2830d9970eec205671605747b2cd78",
         changes: [
             "Improve play/stop button",
             "Change favicon",
