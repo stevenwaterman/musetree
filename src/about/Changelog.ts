@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,7,0],
+        date: new Date(2020, 5, 25),
+        commitHash: "TODO",
+        changes: [
+            "Added 'About' modal to replace links.svelte",
+            "Fixed height of buttons in track controls"
+        ]
+    },
+    {
         version: [2,6,4],
         date: new Date(2020, 5, 25),
         commitHash: "18be619c88ad49064b7b196409a447a8a321ccfe",

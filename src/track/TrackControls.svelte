@@ -3,6 +3,7 @@
     import {play, stop, audioStatusStore} from "../audio/audioPlayer"
     import Button from "../buttons/Button.svelte";
     import colorLookup from "../colors";
+    import AboutModalButton from "../about/AboutModalButton.svelte";
 
     const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
@@ -26,6 +27,7 @@
     .center {
         justify-content: center;
         text-align: center;
+        align-items: center;
     }
 
     .margin {
@@ -58,7 +60,7 @@
         font-size: 24pt;
         cursor: pointer;
         margin-right: 12px;
-        margin-top: -2px;
+        margin-top: -5px;
     }
 </style>
 
@@ -110,4 +112,6 @@
         </label>
         <input class="slider" id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5"/>
     </div>
+
+    <AboutModalButton/>
 </div>

@@ -4,7 +4,6 @@
     import PersistenceOptions from "./persistence/PersistenceOptions.svelte";
     import TrackControls from "./track/TrackControls.svelte";
     import TreeVis from "./treeVis/TreeVis.svelte";
-    import Links from "./links/Links.svelte";
     import Modal from "svelte-simple-modal";
     import ModalController from "./modals/ModalController.svelte";
     import colorLookup from "./colors";
@@ -57,7 +56,6 @@
         <div style={`grid-column: 3; grid-row: 1 / span 3; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}`}>
             <GenerationOptions/>
             <PersistenceOptions/>
-            <Links/>
         </div>
     </div>
 </Modal>
