@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,9,0],
         date: new Date(2020, 5, 25),
-        commitHash: "TODO",
+        commitHash: "9efd1d6b3491b965df075ea71bf8c53a9ea806fe",
         changes: [
             "Added labels to the import modal",
             "Coloured text inputs to be light background colour instead of dark",
