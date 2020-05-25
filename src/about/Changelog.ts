@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,7,1],
+        date: new Date(2020, 5, 25),
+        commitHash: "TODO",
+        changes: [
+            "Fix favicon on live site using relative path"
+        ]
+    },
+    {
         version: [2,7,0],
         date: new Date(2020, 5, 25),
         commitHash: "8f2e17a397d20a444b698746a2c6daf26227d146",
