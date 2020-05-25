@@ -94,7 +94,7 @@
         </div>
         <div class="spread row">
             <label for="example" style="margin-right: 12px;">Examples:</label>
-            <select id="example" bind:value={encoding} style={`margin: 0; width: 200px; background-color: ${colorLookup.buttonBg}; border-color: ${colorLookup.border}; color: ${colorLookup.textDark}`}>
+            <select id="example" bind:value={encoding} style={`margin: 0; width: 200px; background-color: ${colorLookup.bgLight}; border-color: ${colorLookup.border}; color: ${colorLookup.text}`}>
                 <option selected></option>
                 {#each Object.entries(examples) as [name, exampleEncoding]}
                     <option value={exampleEncoding}>{name}</option>
@@ -105,7 +105,7 @@
 
 
     <label for="encoding" style="display: none">Encoding</label>
-    <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark}></textarea>
+    <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}></textarea>
 
     <div class="row">
         <span>Where to put it:</span>

@@ -82,14 +82,6 @@
             Load More{pendingLoad ? ` (${pendingLoad} pending)` : ''}
         </Button>
         <Button on:click={openImportModal}>Import</Button>
-        <Button
-                on:click="{() => {{
-      console.log(nodeState.section.endsAt);
-      console.log(JSON.stringify(nodeState.section.notes));
-      console.log(decode(nodeState.encoding));
-    }}}">
-            Log
-        </Button>
         <Button disabled={disallowExport} on:click={openExportModal}>Export</Button>
     </div>
 </div>

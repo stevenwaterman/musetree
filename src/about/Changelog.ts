@@ -14,8 +14,10 @@ const changelog: Changelog = [
         commitHash: "TODO",
         changes: [
             "Added labels to the import modal",
+            "Coloured text inputs to be light background colour instead of dark",
             "Add export modal",
-            "Prevent error if you don't select anything in file input"
+            "Prevent error if you don't select anything in file input",
+            "Added encoding export option"
         ]
     },
     {
