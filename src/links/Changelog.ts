@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,6,3],
+        date: new Date(2020, 5, 25),
+        commitHash: "TODO",
+        changes: [
+            "Fix the track controls having white bar at bottom in chrome",
+            "Changelog links now open in a new tab"
+        ]
+    },
+    {
         version: [2,6,2],
         date: new Date(2020, 5, 25),
         commitHash: "28c79f3bb3c8f0124c0cd5128fdfcdd59b9e9cba",

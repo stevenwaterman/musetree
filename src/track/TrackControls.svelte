@@ -9,7 +9,9 @@
 
 <style>
     .container {
-        flex-shrink: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
     }
 
     button {
@@ -19,11 +21,6 @@
     .col {
         display: flex;
         flex-direction: column;
-    }
-
-    .row {
-        display: flex;
-        flex-direction: row;
     }
 
     .center {
@@ -65,7 +62,7 @@
     }
 </style>
 
-<div class="container row center" style={"color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgDark}>
+<div class="container center" style={"color: " + colorLookup.textDark + "; border-top: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgDark}>
     {#if $audioStatusStore.type === "on"}
         <div class="playStop" on:click={stop} style={`color: ${colorLookup.text}`}>■</div>
     {:else if $audioStatusStore.type === "loading"}
