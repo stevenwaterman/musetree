@@ -1,7 +1,6 @@
 <script>
     import Track from "./track/Track.svelte";
     import GenerationOptions from "./generationOptions/GenerationOptions.svelte";
-    import PersistenceOptions from "./persistence/PersistenceOptions.svelte";
     import TrackControls from "./track/TrackControls.svelte";
     import TreeVis from "./treeVis/TreeVis.svelte";
     import Modal from "svelte-simple-modal";
@@ -52,10 +51,9 @@
         <div style={"grid-column: 2; grid-row: 1 /span 2; min-height: 0;" + ($splitStore === 100 ? " display: none;" : "")}>
             <TreeVis/>
         </div>
-        <div style="grid-column: 1 / span 2; grid-row: 3; min-height: 0"><TrackControls/></div>
-        <div style={`grid-column: 3; grid-row: 1 / span 3; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}`}>
+        <div style="grid-column: 1 / span 3; grid-row: 3; min-height: 0"><TrackControls/></div>
+        <div style={`grid-column: 3; grid-row: 1 / span 2; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}`}>
             <GenerationOptions/>
-            <PersistenceOptions/>
         </div>
     </div>
 </Modal>

@@ -4,6 +4,22 @@
     import Button from "../buttons/Button.svelte";
     import colorLookup from "../colors";
     import AboutModalButton from "../about/AboutModalButton.svelte";
+    import FileInput from "../buttons/FileInput.svelte";
+    import {root} from "../state/trackTree";
+    import {save, load, isLoadingStore} from "../persistence/persistence";
+
+    const reader = new FileReader();
+    reader.onload = async event => {
+        await load(root, event.target.result);
+        isLoadingStore.set(false);
+    };
+
+    function loadClicked(file) {
+        isLoadingStore.set(true);
+        reader.readAsText(file);
+    }
+
+    $: disallowSave = Object.keys($root.children).length === 0;
 
     const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
@@ -112,6 +128,9 @@
         </label>
         <input class="slider" id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5"/>
     </div>
+
+    <FileInput fileTypes=".mst" handleFile={loadClicked}> Load</FileInput>
+    <Button disabled={disallowSave} on:click={() => save(root)}> Save</Button>
 
     <AboutModalButton/>
 </div>
