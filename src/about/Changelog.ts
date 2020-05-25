@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,7,1],
         date: new Date(2020, 5, 25),
-        commitHash: "TODO",
+        commitHash: "0dcb5d7dc4dffd57a973155acd78bd8e2e2c2890",
         changes: [
             "Fix favicon on live site using relative path"
         ]
