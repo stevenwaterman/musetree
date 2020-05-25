@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,6,3],
         date: new Date(2020, 5, 25),
-        commitHash: "TODO",
+        commitHash: "e1721671c2aa4ef072af60c99d1c1f99d21ad805",
         changes: [
             "Fix the track controls having white bar at bottom in chrome",
             "Changelog links now open in a new tab"
