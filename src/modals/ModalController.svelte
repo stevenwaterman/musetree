@@ -15,6 +15,9 @@
                 styleWindow: {
                     background: "transparent",
                     color: colorLookup.text
+                },
+                styleContent: {
+                    overflow: "hidden"
                 }
             });
         } else {

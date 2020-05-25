@@ -19,15 +19,15 @@
         flex-direction: column;
     }
 
-    ::-webkit-scrollbar {
+    .container::-webkit-scrollbar {
         width: 10px;
     }
 
-    ::-webkit-scrollbar-track {
+    .container::-webkit-scrollbar-track {
         background: #1f292e;
     }
 
-    ::-webkit-scrollbar-thumb {
+    .container::-webkit-scrollbar-thumb {
         background-color: #c3cee3;
     }
 

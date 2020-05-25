@@ -9,6 +9,17 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,6,4],
+        date: new Date(2020, 5, 25),
+        commitHash: "TODO",
+        changes: [
+            "Allow dragging the midi into the encoding box in import modal",
+            "Improve scroll bar in import modal textarea",
+            "Prevent import modal textarea resizing",
+            "Prevent loading spinner having a scroll bar"
+        ]
+    },
+    {
         version: [2,6,3],
         date: new Date(2020, 5, 25),
         commitHash: "e1721671c2aa4ef072af60c99d1c1f99d21ad805",

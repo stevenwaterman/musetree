@@ -64,6 +64,20 @@
         width: 100%;
         height: 300px;
         border: none;
+        scrollbar-color: #c3cee3 #1f292e;
+        resize: none;
+    }
+
+    .encoding::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .encoding::-webkit-scrollbar-track {
+        background: #1f292e;
+    }
+
+    .encoding::-webkit-scrollbar-thumb {
+        background-color: #c3cee3;
     }
 </style>
 <!--TODO provide a guide like MrCheeze's-->
@@ -83,7 +97,7 @@
 
 
     <label for="encoding" style="display: none">Encoding</label>
-    <textarea id="encoding" class="encoding" bind:value={encoding} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark}></textarea>
+    <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark}></textarea>
 
     <div class="row">
         <Button disabled={encoding === ""} on:click={placeUnderRoot}>Under root</Button>
