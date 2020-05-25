@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,6,4],
         date: new Date(2020, 5, 25),
-        commitHash: "TODO",
+        commitHash: "18be619c88ad49064b7b196409a447a8a321ccfe",
         changes: [
             "Allow dragging the midi into the encoding box in import modal",
             "Improve scroll bar in import modal textarea",
