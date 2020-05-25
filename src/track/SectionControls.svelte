@@ -10,8 +10,9 @@
     import Button from "../buttons/Button.svelte";
     import colorLookup, {modalOptions} from "../colors";
     import ImportModal from "../persistence/ImportModal.svelte";
+    import ExportModal from "../persistence/ExportModal.svelte";
     import {getContext} from "svelte";
-    import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../audio/export";
+    import {downloadMidiAudio, downloadMuseNetAudio, downloadMuseTreeAudio} from "../persistence/export";
 
     $: selectedStore_2 = root.selectedStore_2;
     $: selectedStore = $selectedStore_2;
@@ -35,22 +36,8 @@
         open(ImportModal, {}, modalOptions)
     }
 
-    function exportMuseTree() {
-        const track = $selectedSectionsStore;
-        if (track === null) return;
-        downloadMuseTreeAudio(track, "MuseTreeExport");
-    }
-
-    function exportMusenet() {
-        const encoding = $selectedEncodingStore;
-        if (encoding === null) return;
-        downloadMuseNetAudio(encoding, "wav", "MuseNetExport")
-    }
-
-    function exportMidi() {
-        const encoding = $selectedEncodingStore;
-        if (encoding === null) return;
-        downloadMidiAudio(encoding, "MidiExport");
+    function openExportModal() {
+        open(ExportModal, {}, modalOptions);
     }
 
     $: disallowExport = $selectedBranchStore === null;
@@ -103,13 +90,6 @@
     }}}">
             Log
         </Button>
-        <div class="dropdown">
-            <Button disabled={disallowExport}>Export</Button>
-            <div class="dropdown-content">
-                <Button disabled={disallowExport} on:click={exportMuseTree}> MuseTree</Button>
-                <Button disabled={disallowExport} on:click={exportMusenet}> MuseNet</Button>
-                <Button disabled={disallowExport} on:click={exportMidi}> Midi</Button>
-            </div>
-        </div>
+        <Button disabled={disallowExport} on:click={openExportModal}>Export</Button>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import {downloadMuseNetAudio} from "../../src/audio/export";
+import {downloadMuseNetAudio} from "../../src/persistence/export";
 
 export async function pullDrums() {
     const xs = [];

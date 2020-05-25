@@ -1,9 +1,9 @@
 import {MusenetEncoding, encodingToString} from "../state/encoding";
 import download from "downloadjs";
 import {Section} from "../state/section";
-import {combineSections} from "./audioCombiner";
+import {combineSections} from "../audio/audioCombiner";
 import toWav from "audiobuffer-to-wav";
-import {fromMusenetToMidi} from "musenet-midi/lib/toMidi";
+import {toMidi} from "musenet-midi";
 
 export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
 
@@ -36,6 +36,6 @@ export async function downloadMuseTreeAudio(track: Section[], name: string) {
 }
 
 export async function downloadMidiAudio(encoding: MusenetEncoding, name: string) {
-    const blob = fromMusenetToMidi(encoding);
+    const blob = toMidi(encoding);
     download(blob, `${name}.mid`);
 }

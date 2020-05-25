@@ -7,6 +7,15 @@
     export let fileTypes = "";
     export let handleFile = () => { };
 
+    function fileEvent(event) {
+        if(event) {
+            const files = event.target.files;
+            if (files) {
+                handleFile(files[0]);
+            }
+        }
+    }
+
     $: textColor = disabled ? colorLookup.buttonBg : emphasise ? colorLookup.textEmphasis : colorLookup.textDark;
     $: bgColor = disabled ? colorLookup.buttonBgDisabled : emphasise ? colorLookup.text : colorLookup.buttonBg;
 
@@ -57,7 +66,7 @@
                     type="file"
                     accept={fileTypes}
                     multiple={false}
-                    on:change|preventDefault|stopPropagation={event => handleFile(event.target.files[0])}
+                    on:change|preventDefault|stopPropagation={fileEvent}
             />
         </label>
     </div>

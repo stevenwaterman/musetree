@@ -9,9 +9,19 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
-        version: [2,8,0],
+        version: [2,9,0],
         date: new Date(2020, 5, 25),
         commitHash: "TODO",
+        changes: [
+            "Added labels to the import modal",
+            "Add export modal",
+            "Prevent error if you don't select anything in file input"
+        ]
+    },
+    {
+        version: [2,8,0],
+        date: new Date(2020, 5, 25),
+        commitHash: "46ab3ceb9464a42efdc5ae108c5a612ffed92e0a",
         changes: [
             "Made track controls full-width",
             "Moved load + save buttons to track controls",

@@ -63,9 +63,9 @@
     .encoding {
         width: 100%;
         height: 300px;
-        border: none;
         scrollbar-color: #c3cee3 #1f292e;
         resize: none;
+        margin: 0;
     }
 
     .encoding::-webkit-scrollbar {
@@ -79,20 +79,28 @@
     .encoding::-webkit-scrollbar-thumb {
         background-color: #c3cee3;
     }
+
+    .spread {
+        flex-grow: 1;
+    }
 </style>
 <!--TODO provide a guide like MrCheeze's-->
-<div>
     <h1 style={"color: " + colorLookup.text}>Import</h1>
 
     <div class="row">
-        <FileInput fileTypes=".mid" handleFile={midiSelected}>Upload Midi</FileInput>
-            <label for="example" style="margin-left: auto; margin-right: 12px;">Examples:</label>
-            <select id="example" bind:value={encoding} style={`margin: 0; background-color: ${colorLookup.buttonBg}; border-color: ${colorLookup.border}; color: ${colorLookup.textDark}`}>
+        <span class="spread">What to import:</span>
+        <div class="spread">
+            <FileInput fileTypes=".mid" handleFile={midiSelected}>Upload Midi</FileInput>
+        </div>
+        <div class="spread row">
+            <label for="example" style="margin-right: 12px;">Examples:</label>
+            <select id="example" bind:value={encoding} style={`margin: 0; width: 200px; background-color: ${colorLookup.buttonBg}; border-color: ${colorLookup.border}; color: ${colorLookup.textDark}`}>
                 <option selected></option>
                 {#each Object.entries(examples) as [name, exampleEncoding]}
                     <option value={exampleEncoding}>{name}</option>
                 {/each}
             </select>
+        </div>
     </div>
 
 
@@ -100,7 +108,7 @@
     <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgDark + "; color: " + colorLookup.textDark}></textarea>
 
     <div class="row">
+        <span>Where to put it:</span>
         <Button disabled={encoding === ""} on:click={placeUnderRoot}>Under root</Button>
         <Button disabled={selectedState === undefined || encoding === ""} on:click={placeUnderSelected}>Under selected</Button>
     </div>
-</div>
