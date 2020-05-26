@@ -3,8 +3,14 @@
     import {fade} from "svelte/transition";
     import {configStore} from "../state/settings";
     import {request} from "../broker"
-    import colorLookup from "../colors";
+    import colorLookup, {modalOptions} from "../colors";
     import {get_store_value} from "svelte/internal";
+    import ImportModal from "../persistence/ImportModal.svelte";
+    import ExportModal from "../persistence/ExportModal.svelte";
+    import {getContext} from "svelte";
+    import Button from "../buttons/Button.svelte";
+    import {contextModalStore} from "./ContextModalStore";
+
 
     export let parentStore;
     export let branchStore;
@@ -20,20 +26,19 @@
     $: childStores = branchState.children;
     $: children = Object.entries(childStores);
 
-    function leftClick(mouseEvent) {
-        if (mouseEvent.button === 0) {
-            if (mouseEvent.ctrlKey) {
-                if (branchState !== null) {
-                    request($configStore, branchStore, branchState);
-                }
-            } else {
-                root.select(path);
-            }
-        }
+    function leftClick(event) {
+        if (event.button === 0) root.select(path);
     }
 
-    function rightClick() {
-        parentStore.deleteChild(childIndex);
+    function rightClick({clientX, clientY}) {
+        contextModalStore.set({
+            coordinates: [clientX, clientY],
+            stores: {
+                type: "branch",
+                parentStore: parentStore,
+                nodeStore: branchStore
+            }
+        })
     }
 
     $: onSelectedPath = branchState.onSelectedPath;

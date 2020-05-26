@@ -1,5 +1,4 @@
 <script>
-    import SectionRowOptions from "./SectionControls.svelte";
     import SectionCanvas from "./SectionCanvas.svelte";
     import {isScrollingStore} from "../state/settings";
     import {root} from "../state/trackTree";

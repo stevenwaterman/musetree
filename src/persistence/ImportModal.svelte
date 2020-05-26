@@ -12,6 +12,10 @@
 
     const {close} = getContext("simple-modal");
 
+    export let importUnderStore;
+    $: importUnderState = $importUnderStore;
+    $: sectionEndsAt = importUnderStore.type === "root" ? 0 : importUnderState.section.endsAt;
+
     let encoding = "";
 
     async function midiSelected(file) {
@@ -19,28 +23,13 @@
         encoding = encodingToString(encodingArray);
     }
 
-    $: selectedStore_2 = root.selectedStore_2;
-    $: selectedStore = $selectedStore_2;
-    $: selectedState = $selectedStore;
-
-    async function placeUnderSelected() {
+    async function importEncoding() {
         close();
         isLoadingStore.set(true);
         const encodingArray = encodingToArray(encoding);
-        const endsAt = selectedState.section.endsAt;
-        const section = await createSectionFromEncoding(encodingArray, endsAt)
+        const section = await createSectionFromEncoding(encodingArray, sectionEndsAt)
         const sectionStore = createSectionStore(section);
-        await selectedStore.addChild(sectionStore);
-        isLoadingStore.set(false);
-    }
-
-    async function placeUnderRoot() {
-        close();
-        isLoadingStore.set(true);
-        const encodingArray = encodingToArray(encoding);
-        const section = await createSectionFromEncoding(encodingArray, 0);
-        const sectionStore = createSectionStore(section);
-        await root.addChild(sectionStore);
+        await importUnderStore.addChild(sectionStore);
         isLoadingStore.set(false);
     }
 </script>
@@ -107,8 +96,4 @@
     <label for="encoding" style="display: none">Encoding</label>
     <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}></textarea>
 
-    <div class="row">
-        <span>Where to put it:</span>
-        <Button disabled={encoding === ""} on:click={placeUnderRoot}>Under root</Button>
-        <Button disabled={selectedState === undefined || encoding === ""} on:click={placeUnderSelected}>Under selected</Button>
-    </div>
+    <Button disabled={encoding === ""} on:click={importEncoding}>Import</Button>

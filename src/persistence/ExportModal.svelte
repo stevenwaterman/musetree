@@ -6,7 +6,17 @@
     import Button from "../buttons/Button.svelte";
     import {encodingToString} from "../state/encoding";
 
-    $: encoding = encodingToString($selectedEncodingStore);
+    export let store;
+    $: state = $store;
+    $: trackEncoding = state.encoding;
+    $: sectionEncoding = state.section.encoding;
+
+    $: trackEncodingString = encodingToString(trackEncoding);
+    $: sectionEncodingString = encodingToString(sectionEncoding);
+
+    let fullTrack = true;
+
+    $: encoding = fullTrack ? trackEncodingString : sectionEncodingString;
 
     let name = "MuseTreeExport";
     let encodingArea;
@@ -16,6 +26,8 @@
         document.execCommand("copy");
         encodingArea.setSelectionRange(0,0);
     }
+
+    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.textDark;
 </script>
 
 <style>
@@ -59,16 +71,37 @@
         align-items: center;
         grid-gap: 12px;
     }
+
+    .TT_text {
+        visibility: hidden;
+        padding: 5px;
+        font-weight: 400;
+        font-size: 12px;
+        margin-left: 12px;
+
+        position: absolute;
+        z-index: 1;
+    }
+
+    .TT_trigger:hover .TT_text {
+        visibility: visible;
+    }
 </style>
 
 <h1 style={ "color: " + colorLookup.text}>Export</h1>
 
-
 <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px">
-    <label for="exportName">
-        File name:
-    </label>
+    <label for="exportName">File name:</label>
     <input id="exportName" bind:value={name} type="text" style={"margin-left: 12px; margin-bottom: 0; border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}/>
+
+    <label class="TT_trigger" style="margin-left: 12px">
+        Encoding:
+        <span class="TT_text" style={tt_text_style}>
+            Export the whole track up until that point, or just the one section you clicked?
+        </span>
+    </label>
+    <Button on:click="{() => {fullTrack = true}}" emphasise={fullTrack}>Track</Button>
+    <Button on:click="{() => {fullTrack = false}}" emphasise={!fullTrack}>Section</Button>
 </div>
 
 <label for="encoding" style="display: none">Encoding</label>

@@ -9,6 +9,17 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,10,0],
+        date: new Date(2020, 5, 26),
+        commitHash: "TODO",
+        changes: [
+            "Added right-click menu to the tree visualisation",
+            "Removed controls in track view",
+            "Updated import & export modals to work based on which node you right-clicked",
+            "Removed ctrl+left click shortcut to load more in tree view"
+        ]
+    },
+    {
         version: [2,9,0],
         date: new Date(2020, 5, 25),
         commitHash: "9efd1d6b3491b965df075ea71bf8c53a9ea806fe",
