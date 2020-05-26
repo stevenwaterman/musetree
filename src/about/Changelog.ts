@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,10,0],
         date: new Date(2020, 5, 26),
-        commitHash: "TODO",
+        commitHash: "fa911066380c45032e45e9d59fc41d528cab79de",
         changes: [
             "Added right-click menu to the tree visualisation",
             "Removed controls in track view",
