@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,11,2],
         date: new Date(2020, 5, 27),
-        commitHash: "TODO",
+        commitHash: "8c0291d2b7a92bd4e5c70e22543a29e5502cab4c",
         changes: [
             "Fix error when loading but closing modal"
         ]
