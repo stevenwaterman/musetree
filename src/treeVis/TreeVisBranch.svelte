@@ -1,6 +1,5 @@
 <script>
     import {root} from "../state/trackTree";
-    import {fade} from "svelte/transition";
     import {configStore} from "../state/settings";
     import {request} from "../broker"
     import colorLookup, {modalOptions} from "../colors";
@@ -17,6 +16,7 @@
     export let depth;
     export let offset;
     export let parentOffset;
+    export let treeContainer;
 
     $: branchState = $branchStore;
     $: path = branchState.path;
@@ -43,8 +43,9 @@
 
     $: onSelectedPath = branchState.onSelectedPath;
     $: selectedByParent = branchState.selectedByParent;
-    $: nodeColor = onSelectedPath ? colorLookup.nodeActive : selectedByParent ? colorLookup.nodeWarm : colorLookup.nodeInactive;
-    $: edgeColor = onSelectedPath ? colorLookup.edgeActive : selectedByParent ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+    $: wasLastSelected = branchState.wasLastSelectedByParent;
+    $: nodeColor = onSelectedPath ? colorLookup.nodeActive : (selectedByParent || wasLastSelected) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
+    $: edgeColor = onSelectedPath ? colorLookup.edgeActive : (selectedByParent || wasLastSelected) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
@@ -69,6 +70,43 @@
     $: ch = 150 / 2;
     $: lineWidth = (offsetWidth + 1) * 60;
     $: lineLeft = Math.min(offset, parentOffset) * 60 - 30;
+
+    let node;
+    function focusNode() {
+        if(node) node.focus();
+    }
+    function unfocusNode() {
+        if($contextModalStore === null) treeContainer.focus();
+    }
+
+    const {open} = getContext("simple-modal");
+
+    function loadMore() {
+        request($configStore, branchStore, branchState);
+    }
+
+    function deleteBranch() {
+        parentStore.deleteChild(path[path.length - 1]);
+    }
+
+    function openImportModal() {
+        open(ImportModal, {
+            importUnderStore: branchStore
+        }, modalOptions);
+    }
+
+    function openExportModal() {
+        open(ExportModal, {
+            store: branchStore
+        }, modalOptions);
+    }
+
+    function keyPressed(event) {
+        if(event.key === "r") return loadMore();
+        if(event.key === "a") return openImportModal();
+        if(event.key === "s") return openExportModal();
+        if(event.key === "d") return deleteBranch();
+    }
 </script>
 
 <style>
@@ -82,6 +120,13 @@
         border-radius: 50%;
 
         cursor: pointer;
+        outline: none;
+        transition: transform .2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+
+    .node:hover {
+        transform: scale(1.1, 1.1);
+        transform-origin: center;
     }
 
     .label {
@@ -104,6 +149,10 @@
         position: absolute;
         z-index: 1;
     }
+
+    path {
+        transition: stroke 0.2s ease-in-out;
+    }
 </style>
 
 
@@ -111,23 +160,27 @@
     <div
             on:mousedown={leftClick}
             on:contextmenu|preventDefault={rightClick}
+            on:mouseenter={focusNode}
+            on:mouseleave={unfocusNode}
+            on:keypress={keyPressed}
+            bind:this={node}
             class="node"
             style={"background-color: " + nodeColor}
+            tabindex={0}
     >
         <span class="label">
             {childIndex}
         </span>
     </div>
     {#if pendingLoad > 0}
-        <p class="pendingLoad" style={"color: " + colorLookup.textDark + "; background-color: " + colorLookup.bgDark + "; border: 2px solid " + colorLookup.border} transition:fade>
+        <p class="pendingLoad" style={"color: " + colorLookup.textDark + "; background-color: " + colorLookup.bgDark + "; border: 2px solid " + colorLookup.border}>
             +{pendingLoad}
         </p>
     {/if}
 </div>
 {#if childPlacements.length > 0}
     {#each childPlacements as [index, child, childOffset] (index)}
-        <svelte:self parentStore={branchStore} branchStore={child} depth={depth + 1} offset={childOffset}
-                     parentOffset={offset}/>
+        <svelte:self parentStore={branchStore} branchStore={child} depth={depth + 1} offset={childOffset} parentOffset={offset} treeContainer={treeContainer}/>
     {/each}
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2}

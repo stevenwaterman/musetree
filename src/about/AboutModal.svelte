@@ -33,7 +33,7 @@
     If you want to chat with me in real time, I <a href="https://twitch.tv/stevenwaterman" target="_blank">live-code on twitch.tv</a> Mon-Fri 2-6pm BST.
     At the minute, those streams are mostly my work on MuseTree, so come along and say hi!
 </p>
-<div style="display: flex; flex-direction: row">
+<div style="display: flex; flex-direction: row; justify-content: space-around">
     <Button on:click={() => window.open("https://github.com/stevenwaterman/musetree")}>Source Code</Button>
     <Button on:click={() => window.open("http://www.stevenwaterman.uk")}>Steven Waterman</Button>
     <Button on:click={openChangelog}>Changelog - v{Changelog[0].version.join(".")}</Button>

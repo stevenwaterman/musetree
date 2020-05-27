@@ -1,6 +1,6 @@
 <script>
     import {contextModalStore} from "./ContextModalStore";
-    import {getContext} from "svelte";
+    import {getContext, afterUpdate} from "svelte";
     import ImportModal from "../persistence/ImportModal.svelte";
     import ExportModal from "../persistence/ExportModal.svelte";
     import Button from "../buttons/Button.svelte";
@@ -35,7 +35,7 @@
         request($configStore, nodeStore, nodeState);
     }
 
-    function deleteAll() {
+    function deleteRoot() {
         hide();
         Object.entries(children).map(pair => pair[0]).forEach(idx => nodeStore.deleteChild(idx));
     }
@@ -58,6 +58,22 @@
             store: nodeStore
         }, modalOptions);
     }
+
+    function keyPressed(event) {
+        if(event.key === "r") return loadMore();
+        if(event.key === "a") return openImportModal();
+        if(event.key === "s" && showBranch) return openExportModal();
+        if(event.key === "d" && showRoot) return deleteRoot();
+        if(event.key === "d" && showBranch) return deleteBranch();
+    }
+
+    let rootContainer;
+    let branchContainer;
+
+    afterUpdate(() => {
+        if(rootContainer) rootContainer.focus();
+        if(branchContainer) branchContainer.focus();
+    })
 </script>
 
 <style>
@@ -76,6 +92,7 @@
         width: 150px;
         pointer-events: all;
         padding: 4px;
+        outline: none;
     }
 </style>
 
@@ -84,13 +101,16 @@
             <div
                     class="contextModal"
                     style={"background-color: " + colorLookup.bgDark + "; border: 1px solid " + colorLookup.border + "; color: " + colorLookup.textDark + "; left: " + left + "px; top: " + top + "px"}
+                    bind:this={rootContainer}
                     on:mouseleave={hide}
-                    on:mousedown|preventDefault|stopPropagation
+                    on:mousedown
                     on:contextmenu|preventDefault|stopPropagation
+                    on:keydown={keyPressed}
+                    tabindex={0}
             >
-                <Button on:click={loadMore}>Load More</Button>
-                <Button on:click={openImportModal}>Import</Button>
-                <Button on:click={deleteAll}>Delete All</Button>
+                <Button on:click={loadMore}><u>R</u>equest More</Button>
+                <Button on:click={openImportModal}><u>A</u>dd Midi</Button>
+                <Button on:click={deleteRoot}><u>D</u>elete All</Button>
             </div>
     {/if}
 
@@ -100,13 +120,16 @@
             <div
                     class="contextModal"
                     style={"background-color: " + colorLookup.bgDark + "; border: 1px solid " + colorLookup.border + "; color: " + colorLookup.textDark + "; left: " + left + "px; top: " + top + "px"}
+                    bind:this={branchContainer}
                     on:mousedown|preventDefault|stopPropagation
                     on:contextmenu|preventDefault|stopPropagation
+                    on:keydown={keyPressed}
+                    tabindex={0}
             >
-                <Button on:click={loadMore}>Load More</Button>
-                <Button on:click={openImportModal}>Import</Button>
-                <Button on:click={openExportModal}>Export</Button>
-                <Button on:click={deleteBranch}>Delete Branch</Button>
+                <Button on:click={loadMore}><u>R</u>equest More</Button>
+                <Button on:click={openImportModal}><u>A</u>dd Midi</Button>
+                <Button on:click={openExportModal}><u>S</u>ave Audio</Button>
+                <Button on:click={deleteBranch}><u>D</u>elete Branch</Button>
                 <!--         TODO   <Button>Edit</Button>-->
             </div>
         </div>

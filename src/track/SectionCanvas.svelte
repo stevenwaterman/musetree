@@ -8,7 +8,6 @@
 
   export let branchStore;
   export let index;
-  export let deselect;
 
   let canvas;
   let clientWidth;
@@ -110,7 +109,6 @@
     class="sectionCanvas"
     style={"background-color: " + colorLookup.bgLight}
     on:click="{play}"
-    on:contextmenu|preventDefault={deselect()}
     bind:this={canvas}
     width={clientWidth}
     {height}>
@@ -119,5 +117,5 @@
 {/if}
 
 {#if selectedChildStore !== null}
-  <svelte:self branchStore={selectedChildStore} index={index + 1} deselect="{() => root.select(path)}"/>
+  <svelte:self branchStore={selectedChildStore} index={index + 1}/>
 {/if}

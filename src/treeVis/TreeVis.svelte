@@ -21,6 +21,8 @@
     pan.on("zoom", () => contextModalStore.set(null));
     pan.on("transform", () => contextModalStore.set(null));
   })
+
+  let treeContainer;
 </script>
 
 <style>
@@ -29,6 +31,7 @@
     width: 100%;
     flex-shrink: 0;
     overflow: hidden;
+    outline: none;
   }
 
   .pan-container {
@@ -45,11 +48,11 @@
 </style>
 
 {#if root != null}
-  <div class="tree-container" style={"color: " + colorLookup.textEmphasis + ";background-color: " + colorLookup.bgLight + "; border-left: 1px solid " + colorLookup.border}>
+  <div class="tree-container" style={"color: " + colorLookup.textEmphasis + ";background-color: " + colorLookup.bgLight + "; border-left: 1px solid " + colorLookup.border}  bind:this={treeContainer} on:mouseenter={() => treeContainer.focus()}>
     <ContextModal/>
     <div class="pan-container" bind:this={container}>
       <div class="tree-position">
-        <TreeVisRoot/>
+        <TreeVisRoot treeContainer={treeContainer}/>
       </div>
     </div>
   </div>

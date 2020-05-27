@@ -9,6 +9,21 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,10,1],
+        date: new Date(2020, 5, 26),
+        commitHash: "TODO",
+        changes: [
+            "Added keyboard shortcuts to context menu",
+            "Added keyboard shortcuts when hovering a node",
+            "Remove fade from pending load in tree view",
+            "Remove right-click to deselect from section canvas",
+            "Buttons in about modal are spread rather than left-aligned",
+            "Made nodes in tree vis grow when hovered",
+            "Transitioned stroke colour in lines between nodes",
+            "Fixed orange node colour so it works in all cases"
+        ]
+    },
+    {
         version: [2,10,0],
         date: new Date(2020, 5, 26),
         commitHash: "fa911066380c45032e45e9d59fc41d528cab79de",
