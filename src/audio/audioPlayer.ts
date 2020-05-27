@@ -92,3 +92,11 @@ export function stop() {
     source = null;
     audioStatusStoreInternal.set({type: "off"})
 }
+
+export function togglePlayback() {
+    if(audioStatus.type === "off") {
+        play(0);
+    } else if(audioStatus.type === "on") {
+        stop();
+    }
+}

@@ -7,6 +7,13 @@
     import ModalController from "./modals/ModalController.svelte";
     import colorLookup from "./colors";
     import {splitStore} from "./state/settings";
+    import {togglePlayback} from "./audio/audioPlayer";
+
+    function keyPressed(event) {
+        if(event.key === " ") {
+            togglePlayback();
+        }
+    }
 </script>
 
 <style>
@@ -40,7 +47,7 @@
 
 <Modal>
     <ModalController/>
-    <div class="grid" style={"color: " + colorLookup.text + "; grid-template-columns: " + $splitStore + "fr " + (100-$splitStore) + "fr " + " 300px"}>
+    <div class="grid" style={"color: " + colorLookup.text + "; grid-template-columns: " + $splitStore + "fr " + (100-$splitStore) + "fr " + " 300px"} on:keypress={keyPressed}>
         <div style={"grid-column: 1; grid-row: 1; min-height: 0;" + ($splitStore === 0 ? " display: none;" : "")}>
             <Track/>
         </div>

@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,10,2],
+        date: new Date(2020, 5, 26),
+        commitHash: "TODO",
+        changes: [
+            "Made space bar start/stop audio playback, the same as clicking the play button at the bottom"
+        ]
+    },
+    {
         version: [2,10,1],
         date: new Date(2020, 5, 26),
         commitHash: "7817d4281d38502482e3a83f8d6ce416c0c3e318",
