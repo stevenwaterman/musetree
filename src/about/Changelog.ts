@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,10,2],
         date: new Date(2020, 5, 26),
-        commitHash: "TODO",
+        commitHash: "4b707931d33bd19ce0b75b4426ee2ed754b6e60d",
         changes: [
             "Made space bar start/stop audio playback, the same as clicking the play button at the bottom"
         ]
