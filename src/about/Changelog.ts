@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,11,1],
         date: new Date(2020, 5, 27),
-        commitHash: "TODO",
+        commitHash: "9fb73015044a2348a86e96a350390865eb06b998",
         changes: [
             "Cancelling load is now *much* faster",
             "Can now cancel Midi loading",
