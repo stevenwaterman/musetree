@@ -10,7 +10,7 @@
     function fileEvent(event) {
         if(event) {
             const files = event.target.files;
-            if (files) {
+            if (files && files.length) {
                 handleFile(files[0]);
             }
         }

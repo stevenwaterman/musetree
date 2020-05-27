@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,11,2],
+        date: new Date(2020, 5, 27),
+        commitHash: "TODO",
+        changes: [
+            "Fix error when loading but closing modal"
+        ]
+    },
+    {
         version: [2,11,1],
         date: new Date(2020, 5, 27),
         commitHash: "9fb73015044a2348a86e96a350390865eb06b998",
