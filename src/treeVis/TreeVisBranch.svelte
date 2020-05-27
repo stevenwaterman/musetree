@@ -44,8 +44,8 @@
     $: onSelectedPath = branchState.onSelectedPath;
     $: selectedByParent = branchState.selectedByParent;
     $: wasLastSelected = branchState.wasLastSelectedByParent;
-    $: nodeColor = onSelectedPath ? colorLookup.nodeActive : (selectedByParent || wasLastSelected) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
-    $: edgeColor = onSelectedPath ? colorLookup.edgeActive : (selectedByParent || wasLastSelected) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+    $: nodeColor = onSelectedPath ? colorLookup.nodeActive : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
+    $: edgeColor = onSelectedPath ? colorLookup.edgeActive : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;

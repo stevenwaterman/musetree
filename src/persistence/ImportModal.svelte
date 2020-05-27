@@ -5,8 +5,7 @@
     import {fromMidi} from "musenet-midi";
     import {encodingToArray, encodingToString} from "../state/encoding";
     import {root} from "../state/trackTree";
-    import {createSectionStore} from "../state/section";
-    import {createSectionFromEncoding, isLoadingStore} from "./persistence";
+    import {loadMidi} from "./persistence";
     import colorLookup from "../colors";
     import examples from "./examples";
 
@@ -25,12 +24,7 @@
 
     async function importEncoding() {
         close();
-        isLoadingStore.set(true);
-        const encodingArray = encodingToArray(encoding);
-        const section = await createSectionFromEncoding(encodingArray, sectionEndsAt)
-        const sectionStore = createSectionStore(section);
-        await importUnderStore.addChild(sectionStore);
-        isLoadingStore.set(false);
+        await loadMidi(encoding, sectionEndsAt, importUnderStore);
     }
 </script>
 

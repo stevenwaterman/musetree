@@ -1,13 +1,13 @@
 <script>
-    import {isLoadingStore} from "../persistence/persistence";
+    import {loadingProgressStore} from "../persistence/persistence";
     import LoadingSpinner from "../persistence/LoadingSpinner.svelte";
     import {getContext} from "svelte";
     import colorLookup from "../colors";
 
     const {open, close} = getContext("simple-modal");
 
-    isLoadingStore.subscribe(isLoading => {
-        if(isLoading) {
+    loadingProgressStore.subscribe(state => {
+        if(state) {
             open(LoadingSpinner, {}, {
                 closeButton: false,
                 closeOnEsc: false,

@@ -6,16 +6,14 @@
     import AboutModalButton from "../about/AboutModalButton.svelte";
     import FileInput from "../buttons/FileInput.svelte";
     import {root} from "../state/trackTree";
-    import {save, load, isLoadingStore} from "../persistence/persistence";
+    import {save, load} from "../persistence/persistence";
 
     const reader = new FileReader();
     reader.onload = async event => {
         await load(root, event.target.result);
-        isLoadingStore.set(false);
     };
 
     function loadClicked(file) {
-        isLoadingStore.set(true);
         reader.readAsText(file);
     }
 
@@ -73,6 +71,7 @@
     }
 
     .playStop {
+        width: 25px;
         font-size: 24pt;
         cursor: pointer;
         margin-right: 12px;

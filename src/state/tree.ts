@@ -253,7 +253,6 @@ async function addChild<RD, BD, RM, BM,
             }
         })
     })
-
 }
 
 function rootDeleteChild<RD, BD, RM, BM>(
@@ -424,8 +423,8 @@ function deriveNumberOfLeavesStore(decoratedStateStore: StoreSafePlain_Decorated
         const internalStores: StoreSafeDecorated_DecoratedState_Branch<any, any, any, any>[] = Object.values(state.children).map((child: StoreSafeDecorated_DecoratedState_Branch<any, any, any, any>) => child.numberOfLeavesStore)
         if (internalStores.length === 0) return writable(1);
         return derived(internalStores as [Readable<number>, ...Readable<number>[]], (numbers: number[]) => {
-            if(numbers.length === 0) return 1;
-            return numbers.reduce((a,b) => a+b, 0);
+            if (numbers.length === 0) return 1;
+            return numbers.reduce((a, b) => a + b, 0);
         })
     });
     return unwrapStoreNonNull<number, Readable<number>>(summed, 1);

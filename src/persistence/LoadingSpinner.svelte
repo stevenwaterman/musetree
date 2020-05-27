@@ -1,5 +1,15 @@
 <script>
     import colorLookup from "../colors";
+    import {cancelLoading} from "./persistence";
+    import Button from "../buttons/Button.svelte";
+    import LoadingProgressBar from "./LoadingProgressBar.svelte";
+
+    let cancelled = false;
+
+    function cancel() {
+        cancelLoading();
+        cancelled = true;
+    }
 </script>
 
 <style>
@@ -13,10 +23,12 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
     }
 
     .loadingText {
         text-align: center;
+        margin: 4px;
     }
 
     .lds-spinner {
@@ -103,6 +115,10 @@
         animation-delay: 0s;
     }
 
+    .flip {
+        transform: scaleX(-1);
+    }
+
     @keyframes lds-spinner {
         0% {
             opacity: 1;
@@ -115,7 +131,7 @@
 
 <div class="center">
     <div class="column">
-        <div class="lds-spinner">
+        <div class="lds-spinner" class:flip={cancelled}>
             <div></div>
             <div></div>
             <div></div>
@@ -129,6 +145,12 @@
             <div></div>
             <div></div>
         </div>
-        <p class="loadingText">Loading</p>
+        {#if cancelled}
+            <p class="loadingText">Reverting</p>
+        {:else}
+            <p class="loadingText">Loading</p>
+            <Button on:click={cancel}>Cancel</Button>
+            <LoadingProgressBar/>
+        {/if}
     </div>
 </div>

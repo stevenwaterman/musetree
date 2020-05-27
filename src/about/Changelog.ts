@@ -9,8 +9,28 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,11,1],
+        date: new Date(2020, 5, 27),
+        commitHash: "TODO",
+        changes: [
+            "Cancelling load is now *much* faster",
+            "Can now cancel Midi loading",
+            "Fixed orange colour sometimes appearing twice",
+            "Fixed node colours note updating after loading mst file"
+        ]
+    },
+    {
+        version: [2,11,0],
+        date: new Date(2020, 5, 27),
+        commitHash: "6f5bb9bfa717b48961f718117d973d354b4f14bb",
+        changes: [
+            "Loading spinner shows approx progress",
+            "Loading can be cancelled"
+        ]
+    },
+    {
         version: [2,10,2],
-        date: new Date(2020, 5, 26),
+        date: new Date(2020, 5, 27),
         commitHash: "4b707931d33bd19ce0b75b4426ee2ed754b6e60d",
         changes: [
             "Made space bar start/stop audio playback, the same as clicking the play button at the bottom"
@@ -18,7 +38,7 @@ const changelog: Changelog = [
     },
     {
         version: [2,10,1],
-        date: new Date(2020, 5, 26),
+        date: new Date(2020, 5, 27),
         commitHash: "7817d4281d38502482e3a83f8d6ce416c0c3e318",
         changes: [
             "Added keyboard shortcuts to context menu",

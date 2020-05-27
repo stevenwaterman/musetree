@@ -46,7 +46,10 @@ export type NodeState = StateFor<NodeStore>;
 const rootStateDecorationStore: Writable<RootStateDecoration> = writable({
     pendingLoad: 0
 });
-export const root: TreeStore = createTree(rootStateDecorationStore, createRootStoreDecorationSupplier(rootStateDecorationStore));
+export function createTrackTree(): TreeStore {
+    return createTree(rootStateDecorationStore, createRootStoreDecorationSupplier(rootStateDecorationStore));
+}
+export const root: TreeStore = createTrackTree();
 
 function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0] & Parameters<typeof createNotesStore>[0], sectionStore: SectionStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
     const encodingStore = createEncodingStore(parentStore, sectionStore);
