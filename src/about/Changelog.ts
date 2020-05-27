@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,10,1],
         date: new Date(2020, 5, 26),
-        commitHash: "TODO",
+        commitHash: "7817d4281d38502482e3a83f8d6ce416c0c3e318",
         changes: [
             "Added keyboard shortcuts to context menu",
             "Added keyboard shortcuts when hovering a node",
