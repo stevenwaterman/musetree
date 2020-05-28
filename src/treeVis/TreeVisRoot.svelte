@@ -8,6 +8,7 @@
     import {configStore} from "../state/settings";
     import {getContext} from "svelte";
     import {request} from "../broker";
+    import {undoStore} from "../state/undo";
 
     export let treeContainer;
 
@@ -65,6 +66,7 @@
 
     function deleteRoot() {
         children.map(pair => pair[0]).forEach(root.deleteChild);
+        undoStore.clear();
     }
 
     const {open} = getContext("simple-modal");

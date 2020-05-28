@@ -7,6 +7,7 @@
     import {configStore} from "../state/settings";
     import colorLookup, {modalOptions} from "../colors";
     import {request} from "../broker";
+    import {undoStore} from "../state/undo";
 
     $: contextModalState = $contextModalStore;
 
@@ -38,6 +39,7 @@
     function deleteRoot() {
         hide();
         Object.entries(children).map(pair => pair[0]).forEach(nodeStore.deleteChild);
+        undoStore.clear();
     }
 
     function deleteBranch() {

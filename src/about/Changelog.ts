@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,13,1],
+        date: new Date(2020, 5, 28),
+        commitHash: "TODO",
+        changes: [
+            "Clear the undo buffer when deleting from root"
+        ]
+    },
+    {
         version: [2,13,0],
         date: new Date(2020, 5, 28),
         commitHash: "02b45deda57ae4868728615e6f99b6bf36cffffe",

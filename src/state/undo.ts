@@ -5,7 +5,7 @@ type State = {
     parentStore: Pick<NodeStore, "showChild">,
     childIdx: number
 }[];
-const {subscribe, update}: Writable<State> = writable([]);
+const {subscribe, set, update}: Writable<State> = writable([]);
 export const undoStore = {
     subscribe,
     onDelete: (parentStore: Pick<NodeStore, "showChild">, childIdx: number) => {
@@ -18,6 +18,7 @@ export const undoStore = {
         console.log(parentStore, childIdx);
         parentStore.showChild(childIdx);
         return state.slice(0, -1)
-    })
+    }),
+    clear: () => set([])
 }
 
