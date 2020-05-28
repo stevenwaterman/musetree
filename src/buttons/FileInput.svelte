@@ -8,11 +8,13 @@
     export let handleFile = () => { };
 
     function fileEvent(event) {
+        console.log(event);
         if(event) {
             const files = event.target.files;
             if (files && files.length) {
                 handleFile(files[0]);
             }
+            event.target.value = null;
         }
     }
 
@@ -66,7 +68,7 @@
                     type="file"
                     accept={fileTypes}
                     multiple={false}
-                    on:change|preventDefault|stopPropagation={fileEvent}
+                    on:input|preventDefault|stopPropagation={fileEvent}
             />
         </label>
     </div>

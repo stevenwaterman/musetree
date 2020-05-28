@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,13,2],
+        date: new Date(2020, 5, 28),
+        commitHash: "TODO",
+        changes: [
+            "Removed accidental logging of undo buffer",
+            "Fixed bug where you could not load the same file twice in a row"
+        ]
+    },
+    {
         version: [2,13,1],
         date: new Date(2020, 5, 28),
         commitHash: "ac7857241e1dd7eb11fffbd261cbcf1f46dea9cd",
