@@ -4,11 +4,16 @@
     import ChangeLogModal from "./ChangeLogModal.svelte";
     import Changelog from "./Changelog";
     import colorLookup, {modalOptions} from "../colors";
+    import HelpModal from "./HelpModal.svelte";
 
     const {open} = getContext("simple-modal");
 
     function openChangelog() {
         open(ChangeLogModal, {}, modalOptions);
+    }
+
+    function openHelp() {
+        open(HelpModal, {}, modalOptions);
     }
 </script>
 
@@ -37,5 +42,6 @@
     <Button on:click={() => window.open("https://github.com/stevenwaterman/musetree")}>Source Code</Button>
     <Button on:click={() => window.open("http://www.stevenwaterman.uk")}>Steven Waterman</Button>
     <Button on:click={openChangelog}>Changelog - v{Changelog[0].version.join(".")}</Button>
+    <Button on:click={openHelp}>Help</Button>
 </div>
 

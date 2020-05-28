@@ -5,12 +5,11 @@
     import TreeVis from "./treeVis/TreeVis.svelte";
     import Modal from "svelte-simple-modal";
     import ModalController from "./modals/ModalController.svelte";
-    import colorLookup from "./colors";
+    import colorLookup, {modalOptions} from "./colors";
     import {splitStore} from "./state/settings";
     import {togglePlayback} from "./audio/audioPlayer";
     import {undoStore} from "./state/undo";
-    import {load} from "./persistence/persistence";
-    import {root} from "./state/trackTree";
+    import AutoSaveController from "./persistence/AutoSaveController.svelte";
 
     function keyPressed(event) {
         if(event.key === " ") {
@@ -18,11 +17,6 @@
         } else if(event.key === "z") {
             undoStore.undo();
         }
-    }
-
-    const autoLoad = localStorage.getItem("autosave");
-    if(autoLoad !== null) {
-        load(root, autoLoad);
     }
 </script>
 
@@ -56,6 +50,7 @@
 </style>
 
 <Modal>
+    <AutoSaveController/>
     <ModalController/>
     <div class="grid" style={"color: " + colorLookup.text + "; grid-template-columns: " + $splitStore + "fr " + (100-$splitStore) + "fr " + " 300px"} on:keypress={keyPressed}>
         <div style={"grid-column: 1; grid-row: 1; min-height: 0;" + ($splitStore === 0 ? " display: none;" : "")}>
