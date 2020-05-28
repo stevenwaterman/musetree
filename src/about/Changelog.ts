@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,13,1],
         date: new Date(2020, 5, 28),
-        commitHash: "TODO",
+        commitHash: "ac7857241e1dd7eb11fffbd261cbcf1f46dea9cd",
         changes: [
             "Clear the undo buffer when deleting from root",
             "Add confirmation modal to deleting from root"
