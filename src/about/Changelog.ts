@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,14,0],
         date: new Date(2020, 5, 28),
-        commitHash: "TODO",
+        commitHash: "5f43060b6743f2c3cec0bab172b869f028e6c76c",
         changes: [
             "Added first-time help"
         ]
