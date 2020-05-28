@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,13,0],
         date: new Date(2020, 5, 28),
-        commitHash: "TODO",
+        commitHash: "02b45deda57ae4868728615e6f99b6bf36cffffe",
         changes: [
             "Add autosave functionality",
         ]
