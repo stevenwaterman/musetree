@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,13,0],
+        date: new Date(2020, 5, 28),
+        commitHash: "TODO",
+        changes: [
+            "Add autosave functionality",
+        ]
+    },
+    {
         version: [2,12,1],
         date: new Date(2020, 5, 28),
         commitHash: "497968dabbf38d183c53a86c5f37cde70b41c919",

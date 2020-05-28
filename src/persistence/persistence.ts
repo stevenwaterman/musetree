@@ -7,7 +7,7 @@ import {decode} from "../audio/decoder";
 import {encodingToArray, encodingToString, MusenetEncoding} from "../state/encoding";
 import {writable, Writable} from "svelte/store";
 import {CancellablePromise, makeCancellable} from "./cancelPromise";
-import {Cancel} from "axios";
+import {SerialisedBranch, SerialisedRoot} from "../state/serialisation";
 
 type LoadingProgressState = null | {
     done: number;
@@ -23,15 +23,6 @@ export function cancelLoading() {
     if(loadingMidiPromise) loadingMidiPromise.cancel();
 }
 
-type TrackTreeDtoRoot = {
-    children: TrackTreeDtoBranch[];
-}
-
-type TrackTreeDtoBranch = {
-    encoding: string;
-    children: TrackTreeDtoBranch[];
-}
-
 type TrackTreeDomainRoot = {
     children: TrackTreeDomainBranch[];
 }
@@ -42,48 +33,20 @@ type TrackTreeDomainBranch = {
 }
 
 export function save(tree: TreeStore): void {
-    const serialised = serialise_Root(tree);
-    const json = JSON.stringify(serialised);
+    const json: string = get_store_value(tree.serialisedStore);
     download(json, "Save.mst");
 }
 
-function serialise_Root(tree: TreeStore): TrackTreeDtoRoot {
-    const state: TreeState = get_store_value(tree);
-    const dto: TrackTreeDtoRoot = {
-        children: []
-    };
-    Object.values(state.children).forEach(child => {
-        dto.children.push(serialise_Branch(child))
-    });
-    return dto;
-}
-
-function serialise_Branch(tree: BranchStore): TrackTreeDtoBranch {
-    const state: BranchState = get_store_value(tree);
-    const sectionDto = {
-        ...state.section
-    };
-    delete sectionDto.audio;
-    const dto: TrackTreeDtoBranch = {
-        encoding: encodingToString(state.section.encoding),
-        children: []
-    };
-    Object.values(state.children).forEach(child => {
-        dto.children.push(serialise_Branch(child))
-    });
-    return dto;
-}
-
-function totalEncodingLength_Root(tree: TrackTreeDtoRoot): number {
+function totalEncodingLength_Root(tree: SerialisedRoot): number {
     return tree.children.map(totalEncodingLength_Branch).reduce((a, b) => a + b, 0);
 }
 
-function totalEncodingLength_Branch(tree: TrackTreeDtoBranch): number {
+function totalEncodingLength_Branch(tree: SerialisedBranch): number {
     return encodingToArray(tree.encoding).length + tree.children.map(totalEncodingLength_Branch).reduce((a, b) => a + b, 0);
 }
 
 export async function load(tree: TreeStore, json: string) {
-    const deserialised: TrackTreeDtoRoot = JSON.parse(json);
+    const deserialised: SerialisedRoot = JSON.parse(json);
 
     loadingProgressStore.set({
         done: 0,
@@ -127,12 +90,12 @@ async function loadMidi_inner(encodingArray: MusenetEncoding, sectionEndsAt: num
     return createSectionStore(section);
 }
 
-async function load_inner_root(serialised: TrackTreeDtoRoot): Promise<TrackTreeDomainRoot> {
+async function load_inner_root(serialised: SerialisedRoot): Promise<TrackTreeDomainRoot> {
     const children: TrackTreeDomainBranch[] = await Promise.all(serialised.children.map(child => load_inner_branch(0, child)));
     return { children };
 }
 
-async function load_inner_branch(startsAt: number, {encoding, children}: TrackTreeDtoBranch): Promise<TrackTreeDomainBranch> {
+async function load_inner_branch(startsAt: number, {encoding, children}: SerialisedBranch): Promise<TrackTreeDomainBranch> {
     const encodingArray = encodingToArray(encoding);
     const section = await createSectionFromEncoding(encodingArray, startsAt);
     const sectionStore = createSectionStore(section);

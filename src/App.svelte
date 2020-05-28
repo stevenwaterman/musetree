@@ -9,6 +9,8 @@
     import {splitStore} from "./state/settings";
     import {togglePlayback} from "./audio/audioPlayer";
     import {undoStore} from "./state/undo";
+    import {load} from "./persistence/persistence";
+    import {root} from "./state/trackTree";
 
     function keyPressed(event) {
         if(event.key === " ") {
@@ -16,6 +18,11 @@
         } else if(event.key === "z") {
             undoStore.undo();
         }
+    }
+
+    const autoLoad = localStorage.getItem("autosave");
+    if(autoLoad !== null) {
+        load(root, autoLoad);
     }
 </script>
 

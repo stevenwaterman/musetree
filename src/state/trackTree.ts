@@ -17,6 +17,7 @@ import {request} from "../broker";
 import {autoRequestStore, Config, configStore} from "./settings";
 import {get_store_value} from "svelte/internal";
 import {undoStore} from "./undo";
+import {SerialisedBranch, SerialisedRoot, deriveSerialisedBranchStore, deriveSerialisedRootStore} from "./serialisation";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -32,9 +33,12 @@ type BaseStoreDecoration = {
     addChild: (sectionStore: SectionStore) => Promise<BranchStore>;
     deleteChildWithUndo: (childIndex: number) => Promise<BranchStore | null>;
     updatePendingLoad: (updater: (current: number) => number) => void;
+    serialisedStore: Readable<string>
 }
-type RootStoreDecoration = BaseStoreDecoration & {}
-type BranchStoreDecoration = BaseStoreDecoration & {}
+type RootStoreDecoration = BaseStoreDecoration & {
+}
+type BranchStoreDecoration = BaseStoreDecoration & {
+}
 
 type PendingLoadStore = Writable<{ pendingLoad: number }>;
 
@@ -83,7 +87,8 @@ function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): 
                 ...state,
                 pendingLoad: updater(state.pendingLoad)
             }))
-        }
+        },
+        serialisedStore: deriveSerialisedRootStore(partDecoratedStore)
     });
 }
 
@@ -104,7 +109,8 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
                 ...state,
                 pendingLoad: updater(state.pendingLoad)
             }))
-        }
+        },
+        serialisedStore: deriveSerialisedBranchStore(partDecoratedStore)
     })
 }
 
@@ -148,4 +154,10 @@ export const selectedSectionsStore: Readable<Section[] | null> = derived(selecte
         node = childState;
     });
     return track;
+})
+
+root.serialisedStore.subscribe((serialised: string) => {
+    if(serialised !== `{"children":[]}`){
+        localStorage.setItem("autosave", serialised);
+    }
 })
