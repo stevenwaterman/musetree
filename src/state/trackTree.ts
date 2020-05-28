@@ -1,6 +1,6 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
-import {Section, SectionStore} from "./section";
+import {createSectionStore, Section, SectionStore} from "./section";
 import {unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
@@ -16,6 +16,7 @@ import {createNotesStore, Notes} from "./notes";
 import {request} from "../broker";
 import {autoRequestStore, Config, configStore} from "./settings";
 import {get_store_value} from "svelte/internal";
+import {undoStore} from "./undo";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -29,6 +30,7 @@ export type BranchStateDecoration = BaseStateDecoration & {
 
 type BaseStoreDecoration = {
     addChild: (sectionStore: SectionStore) => Promise<BranchStore>;
+    deleteChildWithUndo: (childIndex: number) => Promise<BranchStore | null>;
     updatePendingLoad: (updater: (current: number) => number) => void;
 }
 type RootStoreDecoration = BaseStoreDecoration & {}
@@ -70,6 +72,12 @@ function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): 
             const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
             return await partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
         },
+        deleteChildWithUndo: async (childIndex: number) => {
+            const removedChild: BranchStore | null = await partDecoratedStore.hideChild(childIndex);
+            if(removedChild === null) return null;
+            undoStore.onDelete(partDecoratedStore, childIndex);
+            return removedChild;
+        },
         updatePendingLoad: (updater: (current: number) => number) => {
             pendingLoadStore.update(state => ({
                 ...state,
@@ -84,6 +92,12 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
         addChild: async (sectionStore: SectionStore) => {
             const pendingLoadStore: PendingLoadStore = writable({pendingLoad: 0});
             return await partDecoratedStore.addChild(deriveBranchStateDecorationStore(partDecoratedStore, sectionStore, pendingLoadStore), createBranchStoreDecorationSupplier(pendingLoadStore))
+        },
+        deleteChildWithUndo: async (childIndex: number) => {
+            const removedChild: BranchStore | null = await partDecoratedStore.hideChild(childIndex);
+            if(removedChild === null) return null;
+            undoStore.onDelete(partDecoratedStore, childIndex);
+            return removedChild;
         },
         updatePendingLoad: (updater: (current: number) => number) => {
             pendingLoadStore.update(state => ({

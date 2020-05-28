@@ -8,10 +8,13 @@
     import colorLookup from "./colors";
     import {splitStore} from "./state/settings";
     import {togglePlayback} from "./audio/audioPlayer";
+    import {undoStore} from "./state/undo";
 
     function keyPressed(event) {
         if(event.key === " ") {
             togglePlayback();
+        } else if(event.key === "z") {
+            undoStore.undo();
         }
     }
 </script>

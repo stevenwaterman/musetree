@@ -7,6 +7,7 @@
     import FileInput from "../buttons/FileInput.svelte";
     import {root} from "../state/trackTree";
     import {save, load} from "../persistence/persistence";
+    import {undoStore} from "../state/undo";
 
     const reader = new FileReader();
     reader.onload = async event => {
@@ -127,6 +128,8 @@
         </label>
         <input class="slider" id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5"/>
     </div>
+
+    <Button disabled={$undoStore.length === 0} on:click={undoStore.undo}>Undo (z)</Button>
 
     <FileInput fileTypes=".mst" handleFile={loadClicked}> Load</FileInput>
     <Button disabled={disallowSave} on:click={() => save(root)}> Save</Button>

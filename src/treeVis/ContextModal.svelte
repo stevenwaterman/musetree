@@ -37,12 +37,12 @@
 
     function deleteRoot() {
         hide();
-        Object.entries(children).map(pair => pair[0]).forEach(idx => nodeStore.deleteChild(idx));
+        Object.entries(children).map(pair => pair[0]).forEach(nodeStore.deleteChild);
     }
 
     function deleteBranch() {
         hide();
-        parentStore.deleteChild(childIndex);
+        parentStore.deleteChildWithUndo(childIndex);
     }
 
     function openImportModal() {

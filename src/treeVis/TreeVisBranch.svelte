@@ -86,7 +86,7 @@
     }
 
     function deleteBranch() {
-        parentStore.deleteChild(path[path.length - 1]);
+        parentStore.deleteChildWithUndo(path[path.length - 1]);
     }
 
     function openImportModal() {

@@ -1,5 +1,6 @@
 import {derived, Readable, writable, Writable} from "svelte/store";
 import {unwrapStoreNonNull} from "../utils";
+import {BranchStore} from "./trackTree";
 
 /*
    _____ _______    _______ ______   _________     _______  ______  _____
@@ -21,6 +22,7 @@ type State_Base<DISCRIMINATOR extends Discriminator<any>,
     RD, BD, RM, BM,
     > = DISCRIMINATOR & {
     children: Record<number, StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>>;
+    hiddenChildren: Record<number, StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>>;
     selectedChild: number | null;
     lastSelected: number | null;
     nextChildIndex: number;
@@ -66,7 +68,11 @@ type DefaultStoreDecoration_Base<RD, BD, RM, BM, TYPE extends "root" | "branch">
      * Deletes the child a the given index.
      * The selected/last selected child becomes null if it is deleted
      */
-    deleteChild: (childIdx: number) => void;
+    deleteChild: (childIdx: number) => Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null>;
+
+    hideChild: (childIdx: number) => Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null>;
+    showChild: (childIdx: number) => Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null>;
+
     selectedChildStore_2: StoreSafe_SelectedStore<RD, BD, RM, BM>;
     numberOfLeavesStore: Readable<number>;
     resetNextChildIndex: () => void;
@@ -255,64 +261,218 @@ async function addChild<RD, BD, RM, BM,
     })
 }
 
-function rootDeleteChild<RD, BD, RM, BM>(
+async function rootDeleteChild<RD, BD, RM, BM>(
     internalStore: StoreUnsafePlain_State_Root<RD, BD, RM, BM>,
     selectedStore: StoreUnsafe_SelectedStore<RD, BD, RM, BM>,
     childIdx: number
-): void {
-    internalStore.update((state: State_Root<RD, BD, RM, BM>) => {
-        const removedChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.children[childIdx];
-        if (removedChild === undefined) return state;
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null> {
+    return await new Promise(resolve =>
+        internalStore.update((state: State_Root<RD, BD, RM, BM>) => {
+            const removedChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.children[childIdx];
+            if (removedChild === undefined) {
+                resolve(null);
+                return state;
+            }
 
-        const newChildren = {...state.children};
-        delete newChildren[childIdx];
+            const newChildren = {...state.children};
+            delete newChildren[childIdx];
 
-        const newState = {
-            ...state,
-            children: newChildren
-        };
+            const newState = {
+                ...state,
+                children: newChildren
+            };
 
-        if (state.selectedChild === childIdx) {
-            newState.selectedChild = null;
-            selectedStore.set(null);
-        }
+            if (state.selectedChild === childIdx) {
+                newState.selectedChild = null;
+                selectedStore.set(null);
+            }
 
-        if (state.lastSelected === childIdx) {
-            newState.lastSelected = null;
-        }
+            if (state.lastSelected === childIdx) {
+                newState.lastSelected = null;
+            }
 
-        return newState;
-    })
+            resolve(removedChild);
+
+            return newState;
+        })
+    )
 }
 
-function branchDeleteChild<RD, BD, RM, BM>(
+async function rootShowChild<RD, BD, RM, BM>(
+    internalStore: StoreUnsafePlain_State_Root<RD, BD, RM, BM>,
+    childIdx: number
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null> {
+    return await new Promise(resolve =>
+        internalStore.update((state: State_Root<RD, BD, RM, BM>) => {
+            const child: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.hiddenChildren[childIdx];
+            if (child === undefined) {
+                resolve(null);
+                return state;
+            }
+
+            const newChildren = {...state.children};
+            const newHiddenChildren = {...state.hiddenChildren};
+            newChildren[childIdx] = child;
+            delete newHiddenChildren[childIdx];
+
+            const newState = {
+                ...state,
+                children: newChildren,
+                hiddenChildren: newHiddenChildren
+            };
+
+            resolve(child);
+
+            return newState;
+        })
+    )
+}
+
+async function rootHideChild<RD, BD, RM, BM>(
+    internalStore: StoreUnsafePlain_State_Root<RD, BD, RM, BM>,
+    selectedStore: StoreUnsafe_SelectedStore<RD, BD, RM, BM>,
+    childIdx: number
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null> {
+    return await new Promise(resolve =>
+        internalStore.update((state: State_Root<RD, BD, RM, BM>) => {
+            const child: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.children[childIdx];
+            if (child === undefined) {
+                resolve(null);
+                return state;
+            }
+
+            const newChildren = {...state.children};
+            const newHiddenChildren = {...state.hiddenChildren};
+            newHiddenChildren[childIdx] = child;
+            delete newChildren[childIdx];
+
+            const newState = {
+                ...state,
+                children: newChildren,
+                hiddenChildren: newHiddenChildren
+            };
+
+            if (state.selectedChild === childIdx) {
+                newState.selectedChild = null;
+                selectedStore.set(null);
+            }
+
+            if (state.lastSelected === childIdx) {
+                newState.lastSelected = null;
+            }
+
+            resolve(child);
+
+            return newState;
+        })
+    )
+}
+
+async function branchDeleteChild<RD, BD, RM, BM>(
     internalStore: StoreUnsafePlain_State_Branch<RD, BD, RM, BM>,
     select: () => void,
     childIdx: number
-): void {
-    internalStore.update((state: State_Branch<RD, BD, RM, BM>) => {
-        const removedChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.children[childIdx];
-        if (removedChild === undefined) return state;
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null> {
+    return await new Promise(resolve =>
+        internalStore.update((state: State_Branch<RD, BD, RM, BM>) => {
+            const removedChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.children[childIdx];
+            if (removedChild === undefined) {
+                resolve(null);
+                return state;
+            }
 
-        const newChildren = {...state.children};
-        delete newChildren[childIdx];
+            const newChildren = {...state.children};
+            delete newChildren[childIdx];
 
-        const newState = {
-            ...state,
-            children: newChildren
-        };
+            const newState = {
+                ...state,
+                children: newChildren
+            };
 
-        if (state.selectedChild === childIdx) {
-            newState.selectedChild = null;
-            select();
-        }
+            if (state.selectedChild === childIdx) {
+                newState.selectedChild = null;
+                select();
+            }
 
-        if (state.lastSelected === childIdx) {
-            newState.lastSelected = null;
-        }
+            if (state.lastSelected === childIdx) {
+                newState.lastSelected = null;
+            }
 
-        return newState;
-    })
+            resolve(removedChild);
+
+            return newState;
+        })
+    )
+}
+
+async function branchShowChild<RD, BD, RM, BM>(
+    internalStore: StoreUnsafePlain_State_Branch<RD, BD, RM, BM>,
+    childIdx: number
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null> {
+    return await new Promise(resolve =>
+        internalStore.update((state: State_Branch<RD, BD, RM, BM>) => {
+            const child: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.hiddenChildren[childIdx];
+            if (child === undefined) {
+                resolve(null);
+                return state;
+            }
+
+            const newChildren = {...state.children};
+            const newHiddenChildren = {...state.hiddenChildren};
+            newChildren[childIdx] = child;
+            delete newHiddenChildren[childIdx];
+
+            const newState = {
+                ...state,
+                children: newChildren,
+                hiddenChildren: newHiddenChildren
+            };
+
+            resolve(child);
+
+            return newState;
+        })
+    )
+}
+
+async function branchHideChild<RD, BD, RM, BM>(
+    internalStore: StoreUnsafePlain_State_Branch<RD, BD, RM, BM>,
+    select: () => void,
+    childIdx: number
+): Promise<StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | null> {
+    return await new Promise(resolve =>
+        internalStore.update((state: State_Branch<RD, BD, RM, BM>) => {
+            const child: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = state.children[childIdx];
+            if (child === undefined) {
+                resolve(null);
+                return state;
+            }
+
+            const newChildren = {...state.children};
+            const newHiddenChildren = {...state.hiddenChildren};
+            newHiddenChildren[childIdx] = child;
+            delete newChildren[childIdx];
+
+            const newState = {
+                ...state,
+                children: newChildren,
+                hiddenChildren: newHiddenChildren
+            };
+
+            if (state.selectedChild === childIdx) {
+                newState.selectedChild = null;
+                select();
+            }
+
+            if (state.lastSelected === childIdx) {
+                newState.lastSelected = null;
+            }
+
+            resolve(child);
+
+            return newState;
+        })
+    )
 }
 
 function nodeResetNextChildIdx<RD, BD, RM, BM>(store: StoreUnsafePlain_State_Either<RD, BD, RM, BM>): void {
@@ -327,6 +487,7 @@ function createRootStore<RD, BD, RM, BM>(stateDecorationStore: Readable<RD>, sto
     const initialState: State_Root<RD, BD, RM, BM> = {
         type: "root",
         children: {},
+        hiddenChildren: {},
         nextChildIndex: 1,
         selectedChild: null,
         lastSelected: null,
@@ -357,6 +518,8 @@ function createRootStore<RD, BD, RM, BM>(stateDecorationStore: Readable<RD>, sto
         addChild: (stateDecorationStore: Readable<BD>, storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>) => addChild(internalStore, decoratedStateStore, mutableSelectedStore, stateDecorationStore, storeDecorationSupplier),
         select: (path: number[]) => rootSelect(internalStore, mutableSelectedStore, path),
         deleteChild: (childIdx: number) => rootDeleteChild(internalStore, mutableSelectedStore, childIdx),
+        showChild: (childIdx: number) => rootShowChild(internalStore, childIdx),
+        hideChild: (childIdx: number) => rootHideChild(internalStore, mutableSelectedStore, childIdx),
         resetNextChildIndex: () => nodeResetNextChildIdx(internalStore),
         selectedStore_2: mutableSelectedStore
     };
@@ -372,6 +535,7 @@ function createBranchStore<RD, BD, RM, BM>(path: number[], decorationStore: Read
         type: "branch",
         nextChildIndex: 1,
         children: {},
+        hiddenChildren: {},
         selectedChild: null,
         lastSelected: null,
         path
@@ -399,6 +563,8 @@ function createBranchStore<RD, BD, RM, BM>(path: number[], decorationStore: Read
         internalSelect: (path: number[]) => branchSelect(internalStore, select, path),
         addChild: (stateDecorationStore: Readable<BD>, storeDecorationSupplier: StoreDecorationSupplier_Branch<RD, BD, RM, BM>) => addChild(internalStore, decoratedStateStore, selectedStore, stateDecorationStore, storeDecorationSupplier),
         deleteChild: (childIdx: number) => branchDeleteChild(internalStore, select, childIdx),
+        showChild: (childIdx: number) => branchShowChild(internalStore, childIdx),
+        hideChild: (childIdx: number) => branchHideChild(internalStore, select, childIdx),
         resetNextChildIndex: () => nodeResetNextChildIdx(internalStore)
     };
     fullyDecorated = {

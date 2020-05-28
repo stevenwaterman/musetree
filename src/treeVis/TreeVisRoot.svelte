@@ -64,7 +64,7 @@
     }
 
     function deleteRoot() {
-        children.map(pair => pair[0]).forEach(idx => root.deleteChild(idx));
+        children.map(pair => pair[0]).forEach(root.deleteChild);
     }
 
     const {open} = getContext("simple-modal");
