@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,13,2],
         date: new Date(2020, 5, 28),
-        commitHash: "TODO",
+        commitHash: "db889e7098ea0ee298a65d23960b83ed7936df4c",
         changes: [
             "Removed accidental logging of undo buffer",
             "Fixed bug where you could not load the same file twice in a row"
