@@ -4,11 +4,11 @@
     import {root} from "../state/trackTree";
     import {load} from "./persistence";
     import HelpModal from "../about/HelpModal.svelte";
-    import {afterUpdate} from "svelte";
+    import {onMount} from "svelte";
 
     const {open} = getContext("simple-modal");
 
-    afterUpdate(() => {
+    onMount(() => {
         const autoLoad = localStorage.getItem("autosave");
         if(autoLoad === null) {
             console.log(open);
