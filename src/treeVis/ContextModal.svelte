@@ -8,6 +8,7 @@
     import colorLookup, {modalOptions} from "../colors";
     import {request} from "../broker";
     import {undoStore} from "../state/undo";
+    import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
 
     $: contextModalState = $contextModalStore;
 
@@ -36,10 +37,9 @@
         request($configStore, nodeStore, nodeState);
     }
 
-    function deleteRoot() {
+    function openDeleteModal() {
         hide();
-        Object.entries(children).map(pair => pair[0]).forEach(nodeStore.deleteChild);
-        undoStore.clear();
+        open(DeleteConfirmationModal, {}, modalOptions);
     }
 
     function deleteBranch() {
@@ -65,7 +65,7 @@
         if(event.key === "r") return loadMore();
         if(event.key === "a") return openImportModal();
         if(event.key === "s" && showBranch) return openExportModal();
-        if(event.key === "d" && showRoot) return deleteRoot();
+        if(event.key === "d" && showRoot) return openDeleteModal();
         if(event.key === "d" && showBranch) return deleteBranch();
     }
 
@@ -112,7 +112,7 @@
             >
                 <Button on:click={loadMore}><u>R</u>equest More</Button>
                 <Button on:click={openImportModal}><u>A</u>dd Midi</Button>
-                <Button on:click={deleteRoot}><u>D</u>elete All</Button>
+                <Button on:click={openDeleteModal}><u>D</u>elete All</Button>
             </div>
     {/if}
 

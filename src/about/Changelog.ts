@@ -13,7 +13,8 @@ const changelog: Changelog = [
         date: new Date(2020, 5, 28),
         commitHash: "TODO",
         changes: [
-            "Clear the undo buffer when deleting from root"
+            "Clear the undo buffer when deleting from root",
+            "Add confirmation modal to deleting from root"
         ]
     },
     {

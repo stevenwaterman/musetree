@@ -9,6 +9,7 @@
     import {getContext} from "svelte";
     import {request} from "../broker";
     import {undoStore} from "../state/undo";
+    import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
 
     export let treeContainer;
 
@@ -64,9 +65,8 @@
         request($configStore, root, $root);
     }
 
-    function deleteRoot() {
-        children.map(pair => pair[0]).forEach(root.deleteChild);
-        undoStore.clear();
+    function openDeleteModal() {
+        open(DeleteConfirmationModal, {}, modalOptions);
     }
 
     const {open} = getContext("simple-modal");
@@ -80,7 +80,7 @@
     function keyPressed(event) {
         if(event.key === "r") return loadMore();
         if(event.key === "a") return openImportModal();
-        if(event.key === "d") return deleteRoot();
+        if(event.key === "d") return openDeleteModal();
     }
 </script>
 
