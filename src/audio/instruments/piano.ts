@@ -7,11 +7,19 @@ import {Note} from "../../state/notes";
 export class Piano extends InstrumentSynth<"piano"> {
     protected instrument: "piano" = "piano";
 
+    private harmonicWave: PeriodicWave = null as any;
+
     async setup(ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+        const real = new Float32Array(15);
+        const imag = new Float32Array(15);
+        real.fill(1);
+        imag.fill(0);
+        real[0] = 0;
+        this.harmonicWave = ctx.createPeriodicWave(real, imag);
     }
 
     async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
-        const node = new PianoNode(ctx);
+        const node = new PianoNode(ctx, this.harmonicWave);
         node.frequencyParam.value = toFrequency(note.pitch);
         node.connect(destination);
         node.schedule(note);
@@ -47,7 +55,7 @@ class PianoNode {
 
     private readonly output: GainNode;
 
-    constructor(ctx: BaseAudioContext) {
+    constructor(ctx: BaseAudioContext, harmonicWave: PeriodicWave) {
         this.idealFrequency = ctx.createConstantSource();
         this.frequencyParam = this.idealFrequency.offset;
 
@@ -63,9 +71,9 @@ class PianoNode {
         this.highFrequency.gain.value = PianoNode.HIGH_FREQ_MULT;
         this.midFrequency.connect(this.highFrequency);
 
-        this.lowTricord = new TricordNode(ctx);
-        this.midTricord = new TricordNode(ctx);
-        this.highTricord = new TricordNode(ctx);
+        this.lowTricord = new TricordNode(ctx, harmonicWave);
+        this.midTricord = new TricordNode(ctx, harmonicWave);
+        this.highTricord = new TricordNode(ctx, harmonicWave);
 
         this.lowFrequency.connect(this.lowTricord.frequencyParam);
         this.midFrequency.connect(this.midTricord.frequencyParam);
@@ -145,7 +153,7 @@ class TricordNode {
     private readonly harmonicEnvelope: AhdsrEnvelope;
 
 
-    constructor(ctx: BaseAudioContext) {
+    constructor(ctx: BaseAudioContext, harmonicWave: PeriodicWave) {
         this.fundamentalFrequency = ctx.createConstantSource();
         this.frequencyParam = this.fundamentalFrequency.offset;
 
@@ -158,12 +166,6 @@ class TricordNode {
         this.harmonicOscillator = ctx.createOscillator();
         this.harmonicOscillator.frequency.value = 0;
         this.fundamentalFrequency.connect(this.harmonicOscillator.frequency)
-        const real = new Float32Array(15);
-        const imag = new Float32Array(15);
-        real.fill(1);
-        imag.fill(0);
-        real[0] = 0;
-        const harmonicWave = ctx.createPeriodicWave(real, imag);
         this.harmonicOscillator.setPeriodicWave(harmonicWave);
         this.harmonicEnvelope = new AhdsrEnvelope(ctx, TricordNode.HARMONIC_VOLUME, TricordNode.HARMONIC_ENVELOPE);
         this.harmonicOscillator.connect(this.harmonicEnvelope.input);
