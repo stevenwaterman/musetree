@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,14,2],
         date: new Date(2020, 5, 29),
-        commitHash: "TODO",
+        commitHash: "d8d46682664a1fe5f6285b2a20944f9a00aaccc1",
         changes: [
             "Improve tree performance",
             "Drastically improved node selection performance",
