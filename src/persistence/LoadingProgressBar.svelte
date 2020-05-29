@@ -14,6 +14,10 @@
         width: 200px;
         height: 40px;
         border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .bar {

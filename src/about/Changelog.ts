@@ -9,6 +9,17 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,14,2],
+        date: new Date(2020, 5, 29),
+        commitHash: "TODO",
+        changes: [
+            "Improve tree performance",
+            "Drastically improved node selection performance",
+            "Fixed type issues",
+            "Made loading bar start centered and grow outwards"
+        ]
+    },
+    {
         version: [2,14,1],
         date: new Date(2020, 5, 29),
         commitHash: "38a9dfda2416a400a974cd4735b4b64e25ce701b",

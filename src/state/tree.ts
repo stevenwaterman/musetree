@@ -1,5 +1,5 @@
 import {derived, Readable, writable, Writable} from "svelte/store";
-import {unwrapStoreNonNull} from "../utils";
+import {maybeDerived, unwrapStoreNonNull} from "../utils";
 import {BranchStore} from "./trackTree";
 
 /*
@@ -243,11 +243,11 @@ async function addChild<RD, BD, RM, BM,
     return await new Promise(resolve => {
         internalStore.update((state: STATE) => {
             const childIndex = state.nextChildIndex;
-            const selectionInfoStore: StoreSafe_DefaultStateDecoration<RD, BD, RM, BM> = derived(decoratedStore, ($parentTotal: DecoratedState_Either<RD, BD, RM, BM>) => ({
+            const selectionInfoStore: StoreSafe_DefaultStateDecoration<RD, BD, RM, BM> = maybeDerived(decoratedStore, ($parentTotal: DecoratedState_Either<RD, BD, RM, BM>) => ({
                 selectedByParent: $parentTotal.selectedChild === childIndex,
                 wasLastSelectedByParent: $parentTotal.lastSelected === childIndex,
                 onSelectedPath: $parentTotal.onSelectedPath && $parentTotal.selectedChild === childIndex
-            }));
+            }), {selectedByParent: false, wasLastSelectedByParent: false, onSelectedPath: false}, (a,b) => a.selectedByParent === b.selectedByParent && a.wasLastSelectedByParent === b.wasLastSelectedByParent && a.onSelectedPath === b.onSelectedPath);
             const newChild: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> = createBranchStore([...state.path, childIndex], stateDecorationStore, storeDecorationSupplier, selectionInfoStore, selectedStore);
             resolve(newChild);
             const children: Record<number, StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM>> = {...state.children};
@@ -575,13 +575,13 @@ function createBranchStore<RD, BD, RM, BM>(path: number[], decorationStore: Read
 }
 
 function deriveSelectedChildStore<RD, BD, RM, BM>(parentStore: StoreSafePlain_DecoratedState_Either<RD, BD, RM, BM>): StoreSafe_SelectedStore<RD, BD, RM, BM> {
-    return derived(parentStore, $parentStore => {
+    return maybeDerived(parentStore, $parentStore => {
         let idx = $parentStore.selectedChild;
         if (idx === null) return null;
 
         const selected: StoreSafeDecorated_DecoratedState_Branch<RD, BD, RM, BM> | undefined = $parentStore.children[idx];
         return selected === undefined ? null : selected;
-    });
+    }, null);
 }
 
 function deriveNumberOfLeavesStore(decoratedStateStore: StoreSafePlain_DecoratedState_Root<any, any, any, any>): Readable<number> {

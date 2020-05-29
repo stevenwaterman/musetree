@@ -1,5 +1,6 @@
 import {derived, Readable, writable} from "svelte/store";
 import {SectionStore} from "./section";
+import {arrayEqual, maybeDerived} from "../utils";
 
 export type MusenetEncoding = number[];
 export type EncodingState = { encoding: MusenetEncoding; }
@@ -9,11 +10,12 @@ export function createRootEncodingStore(): EncodingStore {
     return writable({encoding: []});
 }
 export function createBranchEncodingStore(parent: EncodingStore, sectionStore: SectionStore): EncodingStore {
-    return derived([parent, sectionStore],
+    return maybeDerived<[EncodingStore, SectionStore], EncodingState>([parent, sectionStore],
         ([$parent, $sectionStore]) => ({
             encoding: [...$parent.encoding, ...$sectionStore.section.encoding]
-        }));
+        }), {encoding: []}, (a,b) => arrayEqual(a.encoding, b.encoding));
 }
+
 export function createEncodingStore(parent: null | ({type: "root"}) | (Parameters<typeof createBranchEncodingStore>[0] & {type: "branch"}), sectionStore: SectionStore): EncodingStore {
     if(parent === null) {
         return createRootEncodingStore();

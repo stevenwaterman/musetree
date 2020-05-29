@@ -1,7 +1,7 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
 import {createSectionStore, deriveBranchSectionsStore, deriveRootSectionsStore, Section, SectionStore} from "./section";
-import {unwrapStore} from "../utils";
+import {arrayEqual, arrayEqualNullable, maybeDerived, unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
     createTree,
@@ -34,8 +34,8 @@ type BaseStoreDecoration = {
     deleteChildWithUndo: (childIndex: number) => Promise<BranchStore | null>;
     updatePendingLoad: (updater: (current: number) => number) => void;
     serialisedStore: Readable<string>;
-    selectedSectionsStore: Readable<null | Section[]>;
-    placementStore: Readable<Record<number, number>>;
+    selectedSectionsStore: Readable<Section[]>;
+    placementStore: Readable<Array<[number, number]>>;
 }
 type RootStoreDecoration = BaseStoreDecoration & {
 }
@@ -120,19 +120,8 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
     })
 }
 
-export const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2, (a,b) => arraysEqual(a.path, b.path));
-export const selectedPathStore: Readable<number[] | null> = derived(selectedBranchStore, state => state === null ? null : state.path);
-export const selectedEncodingStore: Readable<number[] | null> = derived(selectedBranchStore, state => state === null ? null : state.encoding);
-
-function arraysEqual(a: any[], b: any[]) {
-    if (a === b) return true;
-    if (a.length != b.length) return false;
-
-    for (let i = 0; i < a.length; ++i) {
-        if (a[i] !== b[i]) return false;
-    }
-    return true;
-}
+export const selectedBranchStore: Readable<BranchState | null> = unwrapStore<BranchState, BranchStore>(root.selectedStore_2, (a,b) => arrayEqual(a.path, b.path));
+export const selectedEncodingStore: Readable<number[] | null> = maybeDerived(selectedBranchStore, state => state === null ? null : state.encoding, null, (a,b) => arrayEqualNullable(a, b));
 
 let autoRequest: boolean = null as any;
 autoRequestStore.subscribe(value => {autoRequest = value});

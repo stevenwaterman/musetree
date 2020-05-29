@@ -54,15 +54,30 @@ export function maybeDerived<S extends Stores, T>(
     stores: S,
     func: (values: StoresValues<S>) => T,
     initial: T,
-    shouldUpdate: (last: T, next: T) => boolean = (a, b) => (a !== b)
+    equality: (last: T, next: T) => boolean = (a, b) => (a === b)
 ): Readable<T> {
     let lastValue: T = initial;
     const actualFunc = (stores: StoresValues<S>, set: (value: T) => void) => {
         const nextValue = func(stores);
-        if(shouldUpdate(lastValue, nextValue)) {
+        if(!equality(lastValue, nextValue)) {
             lastValue = nextValue;
             set(nextValue);
         }
     };
     return derived(stores, actualFunc, initial);
+}
+
+export function arrayEqualNullable<T>(a: T[] | null, b: T[] | null, elementEquality: (a: T, b: T) => boolean = (a: T, b: T) => a === b): boolean {
+    if(a === null && b === null) return true;
+    if(a !== null && b !== null) return arrayEqual(a, b, elementEquality);
+    return false;
+}
+
+export function arrayEqual<T>(a: T[], b: T[], elementEquality: (a: T, b: T) => boolean = (a: T, b: T) => a === b): boolean {
+    if(a === b) return true;
+    if(a.length !== b.length) return false;
+    for(let i = 0; i < a.length; i++){
+        if(!elementEquality(a[i],b[i])) return false;
+    }
+    return true;
 }

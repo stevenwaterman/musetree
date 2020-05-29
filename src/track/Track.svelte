@@ -5,8 +5,8 @@
     import Timeline from "./Timeline.svelte";
     import colorLookup from "../colors";
 
-    $: selectedChildStore_2 = root.selectedChildStore_2;
-    $: selectedChildStore = $selectedChildStore_2;
+    $: selectedSectionsStore = root.selectedSectionsStore;
+    $: selectedSections = $selectedSectionsStore;
 </script>
 
 <style>
@@ -37,9 +37,9 @@
 
 <div class="container" on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
     <Timeline/>
-    {#if selectedChildStore === null}
-        <p class="placeholder">Use the controls below to begin</p>
+    {#each selectedSections as section, idx (idx)}
+        <SectionCanvas section={section} index={idx}/>
     {:else}
-        <SectionCanvas branchStore={selectedChildStore} index={0}/>
-    {/if}
+        <p class="placeholder">Use the controls below to begin</p>
+    {/each}
 </div>

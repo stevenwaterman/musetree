@@ -6,7 +6,7 @@
   import * as Audio from "../audio/audioPlayer";
   import colorLookup from "../colors";
 
-  export let branchStore;
+  export let section;
   export let index;
 
   let canvas;
@@ -14,19 +14,11 @@
   let clientHeight;
   $: xScale = clientWidth / pitchRange;
 
-  $: branchState = $branchStore;
-  $: path = branchState.path;
-  $: childIndex = path[path.length - 1];
-  $: section = branchState === null ? null : branchState.section;
   $: notes = section === null ? null : section.notes;
   $: startsAt = section ? section.startsAt : null;
   $: sectionDuration = section ? section.endsAt - startsAt : 0;
   $: height = sectionDuration * $yScaleStore;
   $: position = startsAt * $yScaleStore;
-
-  $: selectedChildStore_2 = branchStore.selectedChildStore_2;
-  $: selectedChildStore = $selectedChildStore_2;
-
 
   afterUpdate(() => setTimeout(draw, 0));
 
@@ -63,7 +55,7 @@
     ctx.fillStyle = colorLookup.text;
     ctx.textAlign = "right";
     ctx.font = "14px arial";
-    const text = `Section ${index + 1}: ${childIndex}`;
+    const text = `Section ${index + 1}`;
     ctx.fillText(text, canvas.width - 2.5, 12.5);
   }
 
@@ -116,6 +108,3 @@
   </canvas>
 {/if}
 
-{#if selectedChildStore !== null}
-  <svelte:self branchStore={selectedChildStore} index={index + 1}/>
-{/if}
