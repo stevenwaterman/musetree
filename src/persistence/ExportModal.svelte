@@ -1,15 +1,17 @@
 <script>
-    import {selectedSectionsStore, selectedEncodingStore, selectedBranchStore} from "../state/trackTree";
+    import {selectedEncodingStore, selectedBranchStore} from "../state/trackTree";
     import {downloadMuseTreeAudio, downloadMuseNetAudio, downloadMidiAudio} from "./export";
     import colorLookup from "../colors";
     import download from "downloadjs";
     import Button from "../buttons/Button.svelte";
     import {encodingToString} from "../state/encoding";
+    import {root} from "../state/trackTree";
 
     export let store;
     $: state = $store;
     $: trackEncoding = state.encoding;
     $: sectionEncoding = state.section.encoding;
+    $: selectedSectionsStore = root.selectedSectionsStore;
 
     $: trackEncodingString = encodingToString(trackEncoding);
     $: sectionEncodingString = encodingToString(sectionEncoding);
@@ -24,7 +26,7 @@
     function copy() {
         encodingArea.select();
         document.execCommand("copy");
-        encodingArea.setSelectionRange(0,0);
+        encodingArea.setSelectionRange(0, 0);
     }
 
     const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.textDark;
@@ -92,7 +94,8 @@
 
 <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 12px">
     <label for="exportName">File name:</label>
-    <input id="exportName" bind:value={name} type="text" style={"margin-left: 12px; margin-bottom: 0; border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}/>
+    <input id="exportName" bind:value={name} type="text"
+           style={"margin-left: 12px; margin-bottom: 0; border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}/>
 
     <label class="TT_trigger" style="margin-left: 12px">
         Encoding:
@@ -106,15 +109,19 @@
 
 <label for="encoding" style="display: none">Encoding</label>
 <div class="copy_trigger">
-    <textarea bind:this={encodingArea} id="encoding" class="encoding" readonly style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}>{encoding}</textarea>
-    <div class="copy" style={"color: " + colorLookup.text + "; background-color: " + colorLookup.bgDark + "99"} on:click={copy}>Click to copy</div>
+    <textarea bind:this={encodingArea} id="encoding" class="encoding" readonly
+              style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}>{encoding}</textarea>
+    <div class="copy" style={"color: " + colorLookup.text + "; background-color: " + colorLookup.bgDark + "99"}
+         on:click={copy}>Click to copy
+    </div>
 </div>
 
 <h2 style={"color: " + colorLookup.text}>Export as:</h2>
 
 <div class="grid">
     <span><b style={"color: " + colorLookup.text}>Recommended:</b> Audio as it sounds elsewhere in the app</span>
-    <Button on:click={() => downloadMuseTreeAudio($selectedSectionsStore, name)}>MuseTree (.wav)</Button>
+    <Button on:click={() => downloadMuseTreeAudio($selectedSectionsStore, name)}>MuseTree (.wav)
+    </Button>
 
     <span>Request the audio from MuseNet - as it would sound in the official MuseNet tool. Less synth-y than the MuseTree export, but it can take a minute to respond</span>
     <div style="display: flex; flex-direction: column">

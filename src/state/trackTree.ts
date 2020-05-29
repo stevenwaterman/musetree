@@ -1,6 +1,6 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
-import {createSectionStore, Section, SectionStore} from "./section";
+import {createSectionStore, deriveBranchSectionsStore, deriveRootSectionsStore, Section, SectionStore} from "./section";
 import {unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
@@ -15,9 +15,9 @@ import {
 import {createNotesStore, Notes} from "./notes";
 import {request} from "../broker";
 import {autoRequestStore, Config, configStore} from "./settings";
-import {get_store_value} from "svelte/internal";
 import {undoStore} from "./undo";
 import {SerialisedBranch, SerialisedRoot, deriveSerialisedBranchStore, deriveSerialisedRootStore} from "./serialisation";
+import {derivePlacementStore} from "./placement";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -33,7 +33,9 @@ type BaseStoreDecoration = {
     addChild: (sectionStore: SectionStore) => Promise<BranchStore>;
     deleteChildWithUndo: (childIndex: number) => Promise<BranchStore | null>;
     updatePendingLoad: (updater: (current: number) => number) => void;
-    serialisedStore: Readable<string>
+    serialisedStore: Readable<string>;
+    selectedSectionsStore: Readable<null | Section[]>;
+    placementStore: Readable<Record<number, number>>;
 }
 type RootStoreDecoration = BaseStoreDecoration & {
 }
@@ -88,7 +90,9 @@ function createRootStoreDecorationSupplier(pendingLoadStore: PendingLoadStore): 
                 pendingLoad: updater(state.pendingLoad)
             }))
         },
-        serialisedStore: deriveSerialisedRootStore(partDecoratedStore)
+        serialisedStore: deriveSerialisedRootStore(partDecoratedStore),
+        selectedSectionsStore: deriveRootSectionsStore(partDecoratedStore),
+        placementStore: derivePlacementStore(partDecoratedStore)
     });
 }
 
@@ -110,7 +114,9 @@ function createBranchStoreDecorationSupplier(pendingLoadStore: PendingLoadStore)
                 pendingLoad: updater(state.pendingLoad)
             }))
         },
-        serialisedStore: deriveSerialisedBranchStore(partDecoratedStore)
+        serialisedStore: deriveSerialisedBranchStore(partDecoratedStore),
+        selectedSectionsStore: deriveBranchSectionsStore(partDecoratedStore),
+        placementStore: derivePlacementStore(partDecoratedStore)
     })
 }
 
@@ -134,26 +140,16 @@ autoRequestStore.subscribe(value => {autoRequest = value});
 let config: Config = null as any;
 configStore.subscribe(value => {config = value});
 
-selectedBranchStore.subscribe(async state => {
-    if(state === null || !autoRequest) return;
-    if(Object.keys(state.children).length || state.pendingLoad) return;
-
-    const store = get_store_value(root.selectedStore_2);
-    await request(config, store, state);
+const selectedStoreAndState: Readable<null | [BranchStore, BranchState]> = derived([root.selectedStore_2, selectedBranchStore], ([storeValue, stateValue]) => {
+    if(stateValue === null) return null;
+    return [storeValue, stateValue];
 })
 
-export const selectedSectionsStore: Readable<Section[] | null> = derived(selectedPathStore, path => {
-    //TODO do this properly with subscriptions and a util method
-    if(path === null) return null;
-    let node: NodeState = get_store_value(root);
-    const track: Section[] = [];
-    path.forEach((childIdx: number) => {
-        const childStore: BranchStore = node.children[childIdx];
-        const childState: BranchState = get_store_value(childStore);
-        track.push(childState.section);
-        node = childState;
-    });
-    return track;
+selectedStoreAndState.subscribe(async pair => {
+    if(pair === null || !autoRequest) return;
+    const [store, state] = pair;
+    if(Object.keys(state.children).length || state.pendingLoad) return;
+    await request(config, store, state);
 })
 
 root.serialisedStore.subscribe((serialised: string) => {

@@ -3,7 +3,6 @@
     import {configStore} from "../state/settings";
     import {request} from "../broker"
     import colorLookup, {modalOptions} from "../colors";
-    import {get_store_value} from "svelte/internal";
     import ImportModal from "../persistence/ImportModal.svelte";
     import ExportModal from "../persistence/ExportModal.svelte";
     import {getContext} from "svelte";
@@ -49,21 +48,9 @@
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
-
-    function getChildPlacements(children, numberOfLeaves) {
-        const childPlacements = [];
-        let currOffset = offset + (-numberOfLeaves / 2);
-
-        children.forEach(([idx, child]) => {
-            const width = get_store_value(child.numberOfLeavesStore);
-            childPlacements.push([idx, child, currOffset + (width / 2)]);
-            currOffset += width;
-        });
-
-        return childPlacements;
-    }
-
-    $: childPlacements = getChildPlacements(children, numberOfLeaves);
+    $: placementOffset = offset + (-numberOfLeaves / 2);
+    $: placementStore = branchStore.placementStore;
+    $: childPlacements = $placementStore
 
     $: offsetWidth = Math.abs(parentOffset - offset);
     $: cw = offsetWidth * 30;
@@ -179,8 +166,8 @@
     {/if}
 </div>
 {#if childPlacements.length > 0}
-    {#each childPlacements as [index, child, childOffset] (index)}
-        <svelte:self parentStore={branchStore} branchStore={child} depth={depth + 1} offset={childOffset} parentOffset={offset} treeContainer={treeContainer}/>
+    {#each childPlacements as [idx, placement] (idx)}
+        <svelte:self parentStore={branchStore} branchStore={childStores[idx]} depth={depth + 1} offset={placementOffset + placement} parentOffset={offset} treeContainer={treeContainer}/>
     {/each}
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2}

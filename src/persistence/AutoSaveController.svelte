@@ -11,7 +11,6 @@
     onMount(() => {
         const autoLoad = localStorage.getItem("autosave");
         if(autoLoad === null) {
-            console.log(open);
             open(HelpModal, {}, modalOptions)
         }
         else {

@@ -2,7 +2,6 @@
     import {root} from "../state/trackTree";
     import TreeVisBranch from "./TreeVisBranch.svelte";
     import colorLookup, {modalOptions} from "../colors";
-    import {get_store_value} from "svelte/internal";
     import {contextModalStore} from "./ContextModalStore";
     import ImportModal from "../persistence/ImportModal.svelte";
     import {configStore} from "../state/settings";
@@ -17,7 +16,6 @@
     $: pendingLoad = branchState.pendingLoad;
 
     $: childStores = branchState.children;
-    $: children = Object.entries(childStores);
 
     function leftClick(event) {
         if (event.button === 0) root.select([]);
@@ -25,19 +23,9 @@
 
     $: numberOfLeavesStore = root.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
-
-    function getChildPlacements(children, numberOfLeaves) {
-        const childPlacements = [];
-        let currOffset = -(numberOfLeaves) / 2;
-
-        children.forEach(([idx, child]) => {
-            const width = get_store_value(child.numberOfLeavesStore);
-            childPlacements.push([idx, child, currOffset + (width / 2)]);
-            currOffset += width;
-        });
-
-        return childPlacements;
-    }
+    $: placementOffset = -(numberOfLeaves) / 2;
+    $: placementStore = root.placementStore;
+    $: childPlacements = $placementStore
 
     function rightClick({clientX, clientY}) {
         contextModalStore.set({
@@ -48,8 +36,6 @@
             }
         });
     }
-
-    $: childPlacements = getChildPlacements(children, numberOfLeaves);
 
     let node;
 
@@ -120,8 +106,8 @@
 
 </style>
 {#if childPlacements.length > 0}
-    {#each childPlacements as [index, child, offset] (index)}
-        <TreeVisBranch parentStore={root} branchStore={child} depth={1} offset={offset} parentOffset={0}
+    {#each childPlacements as [idx, placement] (idx)}
+        <TreeVisBranch parentStore={root} branchStore={childStores[idx]} depth={1} offset={placementOffset + placement} parentOffset={0}
                        treeContainer={treeContainer}/>
     {/each}
 {/if}

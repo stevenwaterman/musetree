@@ -8,7 +8,6 @@
     export let handleFile = () => { };
 
     function fileEvent(event) {
-        console.log(event);
         if(event) {
             const files = event.target.files;
             if (files && files.length) {

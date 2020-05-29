@@ -5,9 +5,8 @@ import {
     BranchStore,
     NodeState,
     root,
-    selectedPathStore, selectedSectionsStore
+    selectedPathStore
 } from "../state/trackTree";
-import {get_store_value} from "svelte/internal";
 import {autoPlayStore, preplayStore} from "../state/settings";
 import {combineSections} from "./audioCombiner";
 
@@ -47,7 +46,7 @@ type TrackAudio = {
 }
 let trackAudio: TrackAudio | null = null;
 
-selectedSectionsStore.subscribe(load);
+root.selectedSectionsStore.subscribe(load);
 async function load(track: Section[] | null) {
     stop();
 
