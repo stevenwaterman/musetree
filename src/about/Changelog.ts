@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,15,1],
         date: new Date(2020, 5, 1),
-        commitHash: "TODO",
+        commitHash: "1759ff6afaab49577f2f626361888f8b09f20b0a",
         changes: [
             "Dynamic X-Range on Track View"
         ]
