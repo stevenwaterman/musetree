@@ -9,72 +9,11 @@
   export let section;
   export let index;
 
-  let canvas;
   let clientWidth;
-  let clientHeight;
-  $: xScale = clientWidth / pitchRange;
-
-  $: notes = section === null ? null : section.notes;
   $: startsAt = section ? section.startsAt : null;
   $: sectionDuration = section ? section.endsAt - startsAt : 0;
   $: height = sectionDuration * $yScaleStore;
-  $: position = startsAt * $yScaleStore;
-
-  afterUpdate(() => setTimeout(draw, 0));
-
-  function draw() {
-    if (canvas == null || notes == null) return;
-
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const border = colorLookup.border;
-    ctx.strokeStyle = border;
-    ctx.lineWidth = 1;
-    ctx.moveTo(0, canvas.height - 0.5);
-    ctx.lineTo(canvas.width, canvas.height - 0.5);
-    ctx.stroke();
-
-    ctx.moveTo(canvas.width - 0.5, 0);
-    ctx.lineTo(canvas.width - 0.5, canvas.height);
-    ctx.stroke();
-
-    Object.keys(notes).forEach((instrument, idx) => {
-      const instrumentNotes = notes[instrument];
-      const color = colorLookup[instrument];
-
-      drawInstrument(
-              ctx,
-              instrumentNotes,
-              color,
-              idx / Object.keys(instruments).length,
-              colorLookup.border
-      );
-    });
-
-    ctx.fillStyle = colorLookup.text;
-    ctx.textAlign = "right";
-    ctx.font = "14px arial";
-    const text = `Section ${index + 1}`;
-    ctx.fillText(text, canvas.width - 2.5, 12.5);
-  }
-
-  function drawInstrument(ctx, notes, color, xOffset, background) {
-    ctx.fillStyle = color;
-    ctx.strokeStyle = background;
-    ctx.lineWidth = 1;
-
-    notes.forEach(note => {
-      const xStart =
-              Math.round((xOffset + note.pitch - pitchMin) * xScale) + 0.5;
-      const yStart = Math.round(note.startTime * $yScaleStore) + 0.5;
-      const noteWidth = Math.round(xScale);
-      const duration = note.endTime - note.startTime;
-      const noteHeight = Math.round(duration * $yScaleStore);
-      ctx.fillRect(xStart, yStart, noteWidth, noteHeight);
-      if (noteHeight > 2) ctx.strokeRect(xStart, yStart, noteWidth, noteHeight);
-    });
-  }
+  $: notes = section.notes;
 
   function play(event) {
     const rect = event.target.getBoundingClientRect();
@@ -90,21 +29,34 @@
   .sectionCanvas {
     position: relative;
     cursor: pointer;
+  }
+
+  .sectionContainer {
     width: 100%;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .label {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: inline;
+    z-index: 2;
   }
 </style>
 
 {#if notes}
-  <canvas
-    bind:clientWidth
-    bind:clientHeight
-    class="sectionCanvas"
-    style={"background-color: " + colorLookup.bgLight}
-    on:click="{play}"
-    bind:this={canvas}
-    width={clientWidth}
-    {height}>
-    HTML5 Canvas not Supported
-  </canvas>
+  <div bind:clientWidth class="sectionContainer" style={`border-right: 1px solid ${colorLookup.border}; border-bottom: 1px solid ${colorLookup.border}; height: ${height}px`}>
+    <span class="label">Section {index + 1}</span>
+    <svg viewBox={`${pitchMin} 0 ${pitchRange + 1} ${sectionDuration}`} width="100%" height={Math.floor(height-1)} style={`background-color: ${colorLookup.bgLight}`} class="sectionCanvas" preserveAspectRatio="none" on:click={play}>
+      {#each Object.entries(notes) as [instrument, instrumentNotes], idx}
+        {#each instrumentNotes as note}
+          <rect x={note.pitch + idx / instruments.length} width="1" y={note.startTime} height={note.endTime-note.startTime} fill={colorLookup[instrument]} stroke={colorLookup.border} stroke-width="1px" vector-effect="non-scaling-stroke"/>
+        {/each}
+      {/each}
+    </svg>
+  </div>
+
 {/if}
 

@@ -10,17 +10,17 @@ export type Note = {
     pitch: number;
 
     /**
-     * Start time, in seconds
+     * Start time, in seconds, relative to the start of the section
      */
     startTime: number;
 
     /**
-     * Duration, in seconds
+     * Duration, in seconds, relative tot he start of the section
      */
     endTime: number;
 
     /**
-     * Volume on a 0..1 scale
+     * Volume on a 0..1 scale (except piano where it's 0..1.5)
      */
     volume: number;
 };
