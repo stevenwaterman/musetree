@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,15,2],
         date: new Date(2020, 5, 1),
-        commitHash: "TODO",
+        commitHash: "82af479c07f0ea431f72b9c391c2654a50ca6117",
         changes: [
             "Lazy-load the section SVGs",
             "Improve async loading performance of tall narrow trees",
