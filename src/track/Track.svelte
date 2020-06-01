@@ -10,15 +10,16 @@
     $: selectedSections = $selectedSectionsStore;
 
     $: pitchRange = getPitchRange(selectedSections)
+
+    let viewport;
 </script>
 
 <style>
     .container {
+        position: relative;
         overflow-y: scroll;
         scrollbar-color: #c3cee3 #1f292e;
         height: 100%;
-        display:flex;
-        flex-direction: column;
     }
 
     .container::-webkit-scrollbar {
@@ -38,10 +39,10 @@
     }
 </style>
 
-<div class="container" on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
+<div class="container" bind:this={viewport} on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
     <Timeline/>
-    {#each selectedSections as section, idx (idx)}
-        <SectionCanvas section={section} index={idx} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
+    {#each selectedSections as section, idx}
+        <SectionCanvas viewport={viewport} section={section} index={idx} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
     {:else}
         <p class="placeholder">Use the controls below to begin</p>
     {/each}

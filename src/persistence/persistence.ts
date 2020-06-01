@@ -98,12 +98,13 @@ async function load_inner_root(serialised: SerialisedRoot): Promise<TrackTreeDom
 async function load_inner_branch(startsAt: number, {encoding, children}: SerialisedBranch): Promise<TrackTreeDomainBranch> {
     const encodingArray = encodingToArray(encoding);
     const section = await createSectionFromEncoding(encodingArray, startsAt);
+    const domainChildrenPromise = Promise.all(children.map(child => load_inner_branch(section.endsAt, child)));
     const sectionStore = createSectionStore(section);
     loadingProgressStore.update(state => {
         if(state === null) return null;
         return {...state, done: state.done + encodingArray.length};
     });
-    const domainChildren = await Promise.all(children.map(child => load_inner_branch(section.endsAt, child)));
+    const domainChildren = await domainChildrenPromise;
     return {
         sectionStore,
         children: domainChildren
