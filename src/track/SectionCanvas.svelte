@@ -1,6 +1,6 @@
 <script>
   import {yScaleStore} from "../state/settings";
-  import {pitchRange, pitchMin, instruments} from "../constants";
+  import {instruments} from "../constants";
   import {afterUpdate} from "svelte";
   import {root} from "../state/trackTree";
   import * as Audio from "../audio/audioPlayer";
@@ -8,6 +8,9 @@
 
   export let section;
   export let index;
+  export let pitchMin;
+  export let pitchMax;
+  $: pitchRange = pitchMax - pitchMin;
 
   let clientWidth;
   $: startsAt = section ? section.startsAt : null;

@@ -4,9 +4,12 @@
     import {root} from "../state/trackTree";
     import Timeline from "./Timeline.svelte";
     import colorLookup from "../colors";
+    import {getPitchRange} from "./pitches";
 
     $: selectedSectionsStore = root.selectedSectionsStore;
     $: selectedSections = $selectedSectionsStore;
+
+    $: pitchRange = getPitchRange(selectedSections)
 </script>
 
 <style>
@@ -38,7 +41,7 @@
 <div class="container" on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
     <Timeline/>
     {#each selectedSections as section, idx (idx)}
-        <SectionCanvas section={section} index={idx}/>
+        <SectionCanvas section={section} index={idx} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
     {:else}
         <p class="placeholder">Use the controls below to begin</p>
     {/each}
