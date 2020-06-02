@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,16,0],
         date: new Date(2020, 5, 2),
-        commitHash: "TODO",
+        commitHash: "e6834a41cd6ce8c64fbc9f716a43a400bbec1937",
         changes: [
             "Nodes in tree vis highlight green when playing"
         ]
