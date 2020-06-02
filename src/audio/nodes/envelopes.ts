@@ -62,10 +62,29 @@ export class AhdsrEnvelope {
     }
 
     schedule(volume: number, startTime: number, releaseTime: number): AhdsrEnvelope {
-        this.attackNode.gain.setValueAtTime(0, startTime);
-        this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
-        this.decayNode.gain.setTargetAtTime(this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        if(startTime >= 0) {
+            this.attackNode.gain.setValueAtTime(0, startTime);
+            this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
+            this.decayNode.gain.setTargetAtTime(this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        } else if (-startTime < this.envelope.attack) {
+            const attackFraction = (-startTime) / this.envelope.attack;
+            this.attackNode.gain.setValueAtTime(this.gain * volume * attackFraction, 0);
+            this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
+            this.decayNode.gain.setTargetAtTime(this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        } else if (-startTime < this.envelope.attack + this.envelope.hold) {
+            this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
+            this.decayNode.gain.setTargetAtTime(this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        } else {
+            const decayTime = -startTime - this.envelope.attack - this.envelope.hold
+            const decayIntervals = decayTime / this.envelope.decay;
+            const startVolume = 1 - Math.pow(1 - Math.exp(-1), decayIntervals)
+            this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
+            this.decayNode.gain.setValueAtTime(startVolume, 0);
+            this.decayNode.gain.setTargetAtTime(this.envelope.sustain, 0, this.envelope.decay);
+        }
+
         this.releaseNode.gain.setTargetAtTime(0, releaseTime, this.envelope.release);
+
         return this;
     }
 }
@@ -107,9 +126,26 @@ export class AhdEnvelope {
     }
 
     schedule(volume: number, startTime: number): AhdEnvelope {
-        this.attackNode.gain.setValueAtTime(0, startTime);
-        this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
-        this.decayNode.gain.setTargetAtTime(0, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        if(startTime >= 0) {
+            this.attackNode.gain.setValueAtTime(0, startTime);
+            this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
+            this.decayNode.gain.setTargetAtTime(0, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        } else if (-startTime < this.envelope.attack) {
+            const attackFraction = (-startTime) / this.envelope.attack;
+            this.attackNode.gain.setValueAtTime(this.gain * volume * attackFraction, 0);
+            this.attackNode.gain.linearRampToValueAtTime(this.gain * volume, startTime + this.envelope.attack);
+            this.decayNode.gain.setTargetAtTime(0, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        } else if (-startTime < this.envelope.attack + this.envelope.hold) {
+            this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
+            this.decayNode.gain.setTargetAtTime(0, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
+        } else {
+            const decayTime = -startTime - this.envelope.attack - this.envelope.hold
+            const decayIntervals = decayTime / this.envelope.decay;
+            const startVolume = 1 - Math.pow(1 - Math.exp(-1), decayIntervals)
+            this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
+            this.decayNode.gain.setValueAtTime(startVolume, 0);
+            this.decayNode.gain.setTargetAtTime(0, 0, this.envelope.decay);
+        }
         return this;
     }
 }

@@ -92,13 +92,15 @@ export class Drums extends InstrumentSynth<"drums"> {
     };
 
     async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
-        const pitch = note.pitch;
-        const sample = this.samples[pitch];
-        if (sample === undefined) {
-            console.error("Unknown drum sample " + pitch);
-            return;
+        if(note.type === "COMPLETE") {
+            const pitch = note.pitch;
+            const sample = this.samples[pitch];
+            if (sample === undefined) {
+                console.error("Unknown drum sample " + pitch);
+                return;
+            }
+            await sample.loadNote(note, ctx, destination);
         }
-        await sample.loadNote(note, ctx, destination);
     };
 
     durationOf(token: number): number {

@@ -88,11 +88,14 @@ export class Cello extends InstrumentSynth<"cello">{
         highPass.connect(outGain);
         outGain.connect(destination);
 
-        osc.start(note.startTime);
-        osc.stop(note.endTime + 1);
-        vibrato.start(note.startTime);
-        vibrato.stop(note.endTime + 1);
-        vibratoEnvelope.schedule(1, note.startTime, note.endTime);
-        envelope.schedule(note.volume, note.startTime, note.endTime);
+        osc.start(Math.max(0, note.startTime));
+        vibrato.start(Math.max(0, note.startTime));
+        if(note.type === "COMPLETE") {
+            osc.stop(note.endTime + 1);
+            vibrato.stop(note.endTime + 1);
+        }
+        const endTime = note.type === "COMPLETE" ? note.endTime : 1*1000*1000;
+        vibratoEnvelope.schedule(1, note.startTime, endTime);
+        envelope.schedule(note.volume, note.startTime, endTime);
     }
 }

@@ -67,7 +67,7 @@
                     {#each Object.entries(notes) as [instrument, instrumentNotes], idx}
                         {#each instrumentNotes as note}
                             <rect x={note.pitch + idx / instruments.length} width="1" y={note.startTime}
-                                  height={note.endTime-note.startTime} fill={colorLookup[instrument]}
+                                  height={(note.type === "COMPLETE" ? note.endTime : 1*1000*1000)-note.startTime} fill={colorLookup[instrument]}
                                   stroke={colorLookup.border} stroke-width="1px" vector-effect="non-scaling-stroke"/>
                         {/each}
                     {/each}

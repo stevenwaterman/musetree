@@ -3,7 +3,9 @@ import {SectionState, SectionStore} from "./section";
 import {Instrument, instruments} from "../constants";
 import {arrayEqual, maybeDerived} from "../utils";
 
-export type Note = {
+export type CompleteNote = {
+    type: "COMPLETE";
+
     /**
      * Musenet Pitch
      */
@@ -15,7 +17,7 @@ export type Note = {
     startTime: number;
 
     /**
-     * Duration, in seconds, relative tot he start of the section
+     * Duration, in seconds, relative to the start of the section
      */
     endTime: number;
 
@@ -24,6 +26,27 @@ export type Note = {
      */
     volume: number;
 };
+
+export type IncompleteNote = {
+    type: "INCOMPLETE";
+
+    /**
+     * Musenet Pitch
+     */
+    pitch: number;
+
+    /**
+     * Start time, in seconds, relative to the start of the section
+     */
+    startTime: number;
+
+    /**
+     * Volume on a 0..1 scale (except piano where it's 0..1.5)
+     */
+    volume: number;
+}
+
+export type Note = CompleteNote | IncompleteNote;
 export type Notes = Record<Instrument, Note[]>;
 export type NotesState = { notes: Notes; }
 export type NotesStore = Readable<NotesState>;
@@ -62,7 +85,11 @@ function notesEquality(a: Notes, b: Notes) {
 }
 
 function noteEquality(a: Note, b: Note) {
-    return a.pitch === b.pitch && a.endTime === b.endTime && a.startTime === b.startTime && a.volume === b.volume;
+    return a.type === b.type &&
+        a.pitch === b.pitch &&
+        (a.type === "COMPLETE" ? a.endTime : undefined) === (b.type === "COMPLETE" ? b.endTime : undefined) &&
+        a.startTime === b.startTime &&
+        a.volume === b.volume;
 }
 
 export function createNotesStore(parent: null | ({type: "root"}) | (Parameters<typeof createBranchNotesStore>[0] & {type: "branch"}), sectionStore: SectionStore): NotesStore {

@@ -3,12 +3,14 @@ import {MusenetEncoding} from "./encoding";
 import {Notes} from "./notes";
 import {BranchState, BranchStore, TreeState} from "./trackTree";
 import {unwrapStore, unwrapStoreNonNull} from "../utils";
+import {ActiveNotes} from "../audio/decoder";
 
 export type Section = {
     encoding: MusenetEncoding;
     startsAt: number;
     endsAt: number;
     notes: Notes;
+    activeNotesAtEnd: ActiveNotes;
     audio: AudioBuffer;
 }
 export type SectionState = { section: Section; };

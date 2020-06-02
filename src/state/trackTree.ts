@@ -18,6 +18,7 @@ import {autoRequestStore, Config, configStore} from "./settings";
 import {undoStore} from "./undo";
 import {SerialisedBranch, SerialisedRoot, deriveSerialisedBranchStore, deriveSerialisedRootStore} from "./serialisation";
 import {derivePlacementStore} from "./placement";
+import {ActiveNotes} from "../audio/decoder";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -25,7 +26,6 @@ type BaseStateDecoration = {
 type RootStateDecoration = BaseStateDecoration & {};
 export type BranchStateDecoration = BaseStateDecoration & {
     encoding: MusenetEncoding,
-    notes: Notes,
     section: Section
 };
 
@@ -59,14 +59,12 @@ export function createTrackTree(): TreeStore {
 }
 export const root: TreeStore = createTrackTree();
 
-function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0] & Parameters<typeof createNotesStore>[0], sectionStore: SectionStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
+function deriveBranchStateDecorationStore(parentStore: Parameters<typeof createEncodingStore>[0], sectionStore: SectionStore, pendingLoadStore: PendingLoadStore): Readable<BranchStateDecoration> {
     const encodingStore = createEncodingStore(parentStore, sectionStore);
-    const notesStore = createNotesStore(parentStore, sectionStore);
-    return derived([sectionStore, encodingStore, notesStore, pendingLoadStore],
-        ([$sectionStore, $encodingStore, $notesStore, $pendingLoadStore]) => ({
+    return derived([sectionStore, encodingStore, pendingLoadStore],
+        ([$sectionStore, $encodingStore, $pendingLoadStore]) => ({
             ...$sectionStore,
             ...$encodingStore,
-            ...$notesStore,
             ...$pendingLoadStore
         })
     );

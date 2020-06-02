@@ -5,7 +5,6 @@ import {
     BranchStore,
     NodeState,
     root,
-    selectedPathStore
 } from "../state/trackTree";
 import {autoPlayStore, preplayStore} from "../state/settings";
 import {combineSections} from "./audioCombiner";

@@ -2,7 +2,7 @@ import {AhdEnvelope, AhdsrEnvelope, ENVELOPE_AHD, ENVELOPE_AHDSR} from "../nodes
 import {InstrumentSynth} from "../nodes/InstrumentSynth";
 import {toFrequency} from "../utils";
 import {AFTER_RELEASE} from "../audioRender";
-import {Note} from "../../state/notes";
+import {CompleteNote, IncompleteNote, Note} from "../../state/notes";
 
 export class Piano extends InstrumentSynth<"piano"> {
     protected instrument: "piano" = "piano";
@@ -108,7 +108,7 @@ class PianoNode {
     }
 
     schedule(note: Note): void {
-        this.idealFrequency.start(note.startTime);
+        this.idealFrequency.start(Math.max(0, note.startTime));
         this.lowpassEnvelope.schedule(note.volume, note.startTime);
 
         const adjustedNote = {
@@ -120,8 +120,11 @@ class PianoNode {
         const stopTime2 = this.midTricord.schedule(adjustedNote);
         const stopTime3 = this.highTricord.schedule(adjustedNote);
         const stopTime4 = this.hammer.schedule(adjustedNote);
-        const stopTime = Math.max(stopTime1, stopTime2, stopTime3, stopTime4);
-        this.idealFrequency.stop(stopTime);
+
+        if(note.type === "COMPLETE"){
+            const stopTime = Math.max(stopTime1, stopTime2, stopTime3, stopTime4);
+            this.idealFrequency.stop(stopTime);
+        }
     }
 }
 
@@ -182,20 +185,36 @@ class TricordNode {
         return this;
     }
 
-    schedule({startTime, endTime: releaseTime, volume}: Note): number {
+    schedule(note: Note): number {
+        if(note.type === "COMPLETE") return this.scheduleComplete(note);
+        return this.scheduleIncomplete(note);
+    }
+
+    scheduleComplete({startTime, endTime: releaseTime, volume}: CompleteNote): number {
         const fundamentalStopTime = releaseTime + AFTER_RELEASE * TricordNode.FUNDAMENTAL_ENVELOPE.release;
-        this.fundamentalFrequency.start(startTime);
+        this.fundamentalFrequency.start(Math.max(0, startTime));
         this.fundamentalFrequency.stop(fundamentalStopTime);
-        this.fundamentalOscillator.start(startTime);
+        this.fundamentalOscillator.start(Math.max(0, startTime));
         this.fundamentalOscillator.stop(fundamentalStopTime);
         this.fundamentalEnvelope.schedule(volume, startTime, releaseTime);
 
         const harmonicStopTime = releaseTime + AFTER_RELEASE * TricordNode.HARMONIC_ENVELOPE.release;
-        this.harmonicOscillator.start(startTime);
+        this.harmonicOscillator.start(Math.max(0, startTime));
         this.harmonicOscillator.stop(harmonicStopTime);
         this.harmonicEnvelope.schedule(volume,startTime, releaseTime);
 
         return Math.max(fundamentalStopTime, harmonicStopTime);
+    }
+
+    scheduleIncomplete({startTime, volume}: IncompleteNote): number {
+        this.fundamentalFrequency.start(Math.max(0, startTime));
+        this.fundamentalOscillator.start(Math.max(0, startTime));
+        this.fundamentalEnvelope.schedule(volume, startTime, 1*1000*1000);
+
+        this.harmonicOscillator.start(Math.max(0, startTime));
+        this.harmonicEnvelope.schedule(volume,startTime, 1*1000*1000);
+
+        return 0;
     }
 }
 
@@ -242,11 +261,13 @@ class HammerNode {
 
     schedule({startTime, volume}: Note): number {
         const stopTime = startTime + HammerNode.ENVELOPE.hold + AFTER_RELEASE * HammerNode.ENVELOPE.decay;
-        this.frequency.start(startTime);
-        this.frequency.stop(stopTime);
-        this.oscillator.start(startTime);
-        this.oscillator.stop(stopTime);
-        this.envelope.schedule(volume, startTime);
+        if(stopTime > 0) {
+            this.frequency.start(Math.max(0, startTime));
+            this.frequency.stop(stopTime);
+            this.oscillator.start(Math.max(0, startTime));
+            this.oscillator.stop(stopTime);
+            this.envelope.schedule(volume, startTime);
+        }
         return stopTime;
     }
 }

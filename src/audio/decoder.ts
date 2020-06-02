@@ -1,10 +1,26 @@
 import {MusenetEncoding} from "../state/encoding";
-import {Instrument} from "../constants";
-import {Notes} from "../state/notes";
+import {Instrument, maxInstrumentLengths} from "../constants";
+import {CompleteNote, Note, Notes} from "../state/notes";
 import {drumDuration} from "./audioRender";
 
-export function decode(originalEncoding: MusenetEncoding): {
+export function noActiveNotes(): ActiveNotes {
+    return {
+        piano: {},
+        violin: {},
+        cello: {},
+        bass: {},
+        guitar: {},
+        flute: {},
+        clarinet: {},
+        trumpet: {},
+        harp: {},
+        drums: {}
+    }
+}
+export type ActiveNotes = Record<Instrument, Record<number, {startTime: number, volume: number}>>;
+export function decode(originalEncoding: MusenetEncoding, activeNotesAtStart: ActiveNotes): {
     notes: Notes;
+    activeNotesAtEnd: ActiveNotes;
     duration: number;
     encoding: MusenetEncoding;
 } {
@@ -20,18 +36,7 @@ export function decode(originalEncoding: MusenetEncoding): {
         harp: [],
         drums: []
     };
-    const notesStarted: Record<Instrument, Record<number, { startTime: number, volume: number }>> = {
-        piano: {},
-        violin: {},
-        cello: {},
-        bass: {},
-        guitar: {},
-        flute: {},
-        clarinet: {},
-        trumpet: {},
-        harp: {},
-        drums: {}
-    };
+    const notesStarted: ActiveNotes = activeNotesAtStart; //TODO check that this is passed by value or copy it
     let time: number = 0;
 
     const tokens: Token[] = originalEncoding.map(encodingToToken).filter(it => it !== null) as Token[];
@@ -44,6 +49,7 @@ export function decode(originalEncoding: MusenetEncoding): {
             if (instrument === "drums") {
                 outputEncoding.push(tokenToEncoding(token));
                 instrumentNotes.push({
+                    type: "COMPLETE",
                     startTime: time,
                     endTime: time + drumDuration(token.original),
                     pitch: pitch,
@@ -57,6 +63,7 @@ export function decode(originalEncoding: MusenetEncoding): {
                             outputEncoding.push(tokenToEncoding(token));
                             const {startTime, volume} = start;
                             instrumentNotes.push({
+                                type: "COMPLETE",
                                 startTime: startTime,
                                 endTime: time,
                                 pitch: pitch,
@@ -78,6 +85,7 @@ export function decode(originalEncoding: MusenetEncoding): {
                             }));
                             const {startTime, volume} = previous;
                             instrumentNotes.push({
+                                type: "COMPLETE",
                                 startTime: startTime,
                                 endTime: time,
                                 pitch: pitch,
@@ -97,25 +105,62 @@ export function decode(originalEncoding: MusenetEncoding): {
             const delay = token.delay;
             const factor = 0.00923081517;
             const seconds = delay * factor;
-            time += seconds;
-            outputEncoding.push(tokenToEncoding(token));
+            const newTime = time + seconds;
+
+            const truncatedNotes: (CompleteNote & {instrument: Instrument})[] = [];
+            Object.entries(notesStarted).forEach(([instrument, started]) =>
+                Object.entries(started).forEach(([pitch, {startTime, volume}]) => {
+                    const maxAllowedLength = maxInstrumentLengths[instrument as Instrument];
+                    if (newTime - startTime >= maxAllowedLength) {
+                        const pitchNumber = parseInt(pitch);
+                        truncatedNotes.push({
+                            instrument: instrument as Instrument,
+                            type: "COMPLETE",
+                            startTime,
+                            endTime: startTime + maxAllowedLength,
+                            volume: volume / 80,
+                            pitch: pitchNumber
+                        });
+                        delete notesStarted[instrument as Instrument][pitchNumber]
+                    }
+                }));
+            truncatedNotes.sort((a,b) => a.startTime - b.startTime);
+
+            truncatedNotes.forEach(note => {
+                if(time < note.endTime) {
+                    const requiredSeconds = note.endTime - time;
+                    const requiredDelay = requiredSeconds / factor;
+                    const roundedDelay = Math.round(requiredDelay);
+                    const roundedSeconds = roundedDelay * factor;
+                    time += roundedSeconds;
+                    outputEncoding.push(tokenToEncoding({
+                        type: "wait",
+                        delay: roundedDelay
+                    }))
+                }
+                notes[note.instrument].push(note);
+            });
+
+            const requiredSeconds = newTime - time;
+            const requiredDelay = requiredSeconds / factor;
+            const roundedDelay = Math.round(requiredDelay);
+
+            time = newTime;
+            outputEncoding.push(tokenToEncoding({
+                type: "wait",
+                delay: roundedDelay
+            }));
         }
     }
 
     Object.entries(notesStarted).forEach(([instrument, started]) =>
         Object.entries(started).forEach(([pitch, {startTime, volume}]) => {
-            const pitchNumber = parseInt(pitch);
-                outputEncoding.push(tokenToEncoding({
-                    original: null as any,
-                    type: "note",
-                    pitch: pitchNumber,
-                    instrument: instrument as Instrument,
-                    volume: 0
-                }));
+                const pitchNumber = parseInt(pitch);
+                notesStarted[instrument as Instrument][pitchNumber].startTime -= time;
                 notes[instrument as Instrument].push({
+                    type: "INCOMPLETE",
                     pitch: pitchNumber,
                     startTime,
-                    endTime: time,
                     volume: volume / 80
                 })
             }
@@ -126,6 +171,7 @@ export function decode(originalEncoding: MusenetEncoding): {
     return {
         encoding: outputEncoding,
         notes,
+        activeNotesAtEnd: notesStarted,
         duration: time
     };
 }

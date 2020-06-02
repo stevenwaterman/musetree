@@ -1,9 +1,17 @@
 import {createSectionStore, Section, SectionStore} from "../state/section";
-import {BranchState, BranchStore, createTrackTree, NodeStore, TreeState, TreeStore} from "../state/trackTree";
+import {
+    BranchState,
+    BranchStore,
+    createTrackTree,
+    NodeState,
+    NodeStore,
+    TreeState,
+    TreeStore
+} from "../state/trackTree";
 import {get_store_value} from "svelte/internal";
 import {render} from "../audio/audioRender";
 import download from "downloadjs";
-import {decode} from "../audio/decoder";
+import {ActiveNotes, decode, noActiveNotes} from "../audio/decoder";
 import {encodingToArray, encodingToString, MusenetEncoding} from "../state/encoding";
 import {writable, Writable} from "svelte/store";
 import {CancellablePromise, makeCancellable} from "./cancelPromise";
@@ -72,8 +80,10 @@ export async function loadMidi(encoding: string, sectionEndsAt: number, importUn
     const encodingArray = encodingToArray(encoding);
     loadingProgressStore.set({done: 0, total: encodingArray.length});
 
+    const parentState: NodeState = get_store_value(importUnderStore);
+    const parentActiveNotes = parentState.type === "root" ? noActiveNotes() : parentState.section.activeNotesAtEnd;
 
-    const innerLoadingPromise: Promise<SectionStore> = loadMidi_inner(encodingArray, sectionEndsAt);
+    const innerLoadingPromise: Promise<SectionStore> = loadMidi_inner(encodingArray, parentActiveNotes, sectionEndsAt);
     loadingMidiPromise = makeCancellable(innerLoadingPromise);
 
     await loadingMidiPromise.then((sectionStore: SectionStore) => {
@@ -85,20 +95,20 @@ export async function loadMidi(encoding: string, sectionEndsAt: number, importUn
     loadingProgressStore.set(null);
 }
 
-async function loadMidi_inner(encodingArray: MusenetEncoding, sectionEndsAt: number): Promise<SectionStore> {
-    const section = await createSectionFromEncoding(encodingArray, sectionEndsAt)
+async function loadMidi_inner(encodingArray: MusenetEncoding, parentActiveNotes: ActiveNotes, startsAt: number): Promise<SectionStore> {
+    const section = await createSectionFromEncoding(encodingArray, parentActiveNotes, startsAt)
     return createSectionStore(section);
 }
 
 async function load_inner_root(serialised: SerialisedRoot): Promise<TrackTreeDomainRoot> {
-    const children: TrackTreeDomainBranch[] = await Promise.all(serialised.children.map(child => load_inner_branch(0, child)));
+    const children: TrackTreeDomainBranch[] = await Promise.all(serialised.children.map(child => load_inner_branch(0, noActiveNotes(), child)));
     return { children };
 }
 
-async function load_inner_branch(startsAt: number, {encoding, children}: SerialisedBranch): Promise<TrackTreeDomainBranch> {
+async function load_inner_branch(startsAt: number, parentActiveNotes: ActiveNotes, {encoding, children}: SerialisedBranch): Promise<TrackTreeDomainBranch> {
     const encodingArray = encodingToArray(encoding);
-    const section = await createSectionFromEncoding(encodingArray, startsAt);
-    const domainChildrenPromise = Promise.all(children.map(child => load_inner_branch(section.endsAt, child)));
+    const section = await createSectionFromEncoding(encodingArray, parentActiveNotes, startsAt);
+    const domainChildrenPromise = Promise.all(children.map(child => load_inner_branch(section.endsAt, section.activeNotesAtEnd, child)));
     const sectionStore = createSectionStore(section);
     loadingProgressStore.update(state => {
         if(state === null) return null;
@@ -125,13 +135,14 @@ function clearTree(tree: TreeStore) {
     tree.resetNextChildIndex();
 }
 
-export async function createSectionFromEncoding(originalEncoding: MusenetEncoding, startsAt: number): Promise<Section> {
-    const {encoding, notes, duration} = await decode(originalEncoding);
+export async function createSectionFromEncoding(originalEncoding: MusenetEncoding, activeNotesAtStart: ActiveNotes, startsAt: number): Promise<Section> {
+    const {encoding, notes, duration, activeNotesAtEnd} = await decode(originalEncoding, activeNotesAtStart);
     const audio = await render(notes, duration);
     const endsAt = startsAt + duration;
     return {
         encoding: encoding,
         notes,
+        activeNotesAtEnd,
         startsAt,
         endsAt,
         audio

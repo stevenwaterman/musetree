@@ -31,8 +31,8 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
         const ampOsc = ctx.createOscillator();
         ampOsc.type = this.amplitudeWave;
         ampOsc.frequency.value = freq ;
-        ampOsc.start(note.startTime);
-        ampOsc.stop(note.endTime + AFTER_RELEASE * this.amplitudeEnvelope.release);
+        ampOsc.start(Math.max(0, note.startTime));
+        if(note.type === "COMPLETE") ampOsc.stop(note.endTime + AFTER_RELEASE * this.amplitudeEnvelope.release);
 
         const ampGain = new AhdsrEnvelope(
             ctx,
@@ -41,7 +41,7 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
         );
         ampOsc.connect(ampGain.input);
         ampGain.connect(destination);
-        ampGain.schedule(note.volume, note.startTime, note.endTime);
+        ampGain.schedule(note.volume, note.startTime, (note.type === "COMPLETE" ? note.endTime : 1*1000*1000));
 
         const adjustedFrequencyEnvelope: ENVELOPE_AHDSR = {
             attack: this.frequencyEnvelope.attack,
@@ -54,8 +54,8 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
         const freqOsc = ctx.createOscillator();
         freqOsc.type = this.frequencyWave;
         freqOsc.frequency.value = freq * this.frequencyFrequencyMultiplier;
-        freqOsc.start(note.startTime);
-        freqOsc.stop(note.endTime + AFTER_RELEASE * this.frequencyEnvelope.release);
+        freqOsc.start(Math.max(0, note.startTime));
+        if(note.type === "COMPLETE") freqOsc.stop(note.endTime + AFTER_RELEASE * this.frequencyEnvelope.release);
 
         const freqGain = new AhdsrEnvelope(
             ctx,
@@ -64,8 +64,6 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
         );
         freqOsc.connect(freqGain.input);
         freqGain.connect(ampOsc.frequency);
-        freqGain.schedule(1, note.startTime, note.endTime);
-
-
+        freqGain.schedule(1, note.startTime, (note.type === "COMPLETE" ? note.endTime : 1*1000*1000));
     }
 }
