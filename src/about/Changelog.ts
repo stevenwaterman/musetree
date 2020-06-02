@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,16,1],
         date: new Date(2020, 5, 2),
-        commitHash: "TODO",
+        commitHash: "bec44310d5198ebbc8453dd16119f12285bc8273",
         changes: [
             "Improve green node logic",
             "Edges also highlight green when playign"
