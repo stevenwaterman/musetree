@@ -49,8 +49,9 @@
     $: onSelectedPath = branchState.onSelectedPath;
     $: selectedByParent = branchState.selectedByParent;
     $: wasLastSelected = branchState.wasLastSelectedByParent;
-    $: nodeColor = onSelectedPath ? colorLookup.nodeActive : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
-    $: edgeColor = onSelectedPath ? colorLookup.edgeActive : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+    let isPlaying = false;
+    $: nodeColor = onSelectedPath ? (isPlaying? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
+    $: edgeColor = onSelectedPath ? (isPlaying ? colorLookup.edgePlaying : colorLookup.edgeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
@@ -107,9 +108,9 @@
             duration: 0,
             tick: t => {
                 if(t === 0){
-                    node.style = "background-color: " + colorLookup.nodeActive;
+                    isPlaying = false;
                 } else {
-                    node.style = "background-color: " + colorLookup.nodePlaying;
+                    isPlaying = true;
                 }
             }
         };
@@ -121,7 +122,7 @@
         audioStatusStore.subscribe(status => {
             if (nodeTransition) {
                 nodeTransition.end();
-                node.style = "background-color: " + nodeColor
+                isPlaying = false;
             }
             if (onSelectedPath && status.type === "on") {
                 nodeTransition = create_in_transition(node, startedPlaying, status);

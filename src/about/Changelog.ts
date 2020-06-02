@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,16,1],
+        date: new Date(2020, 5, 2),
+        commitHash: "TODO",
+        changes: [
+            "Improve green node logic",
+            "Edges also highlight green when playign"
+        ]
+    },
+    {
         version: [2,16,0],
         date: new Date(2020, 5, 2),
         commitHash: "e6834a41cd6ce8c64fbc9f716a43a400bbec1937",

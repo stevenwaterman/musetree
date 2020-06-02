@@ -1,6 +1,6 @@
 import {Instrument} from "./constants";
 
-type ColorKeys = Instrument | "strings" | "winds" | "bgLight" | "bgDark" | "text" | "textDark" | "textEmphasis" | "border" | "buttonBg" | "buttonBgDisabled" | "nodePlaying" | "nodeActive" | "nodeWarm" | "nodeInactive" | "edgeActive" | "edgeWarm" | "edgeInactive" | "pendingLoadText" | "loadingBarBG" | "loadingBarFG" | "loadingBarText";
+type ColorKeys = Instrument | "strings" | "winds" | "bgLight" | "bgDark" | "text" | "textDark" | "textEmphasis" | "border" | "buttonBg" | "buttonBgDisabled" | "nodePlaying" | "nodeActive" | "nodeWarm" | "nodeInactive" | "edgePlaying" | "edgeActive" | "edgeWarm" | "edgeInactive" | "pendingLoadText" | "loadingBarBG" | "loadingBarFG" | "loadingBarText";
 const colorLookup: Record<ColorKeys, string> = {
     bass: "#f07178",
     drums: "#c3e88d",
@@ -26,6 +26,7 @@ const colorLookup: Record<ColorKeys, string> = {
     nodeActive: "#f07178",
     nodeWarm: "#f78c6c",
     nodeInactive: "#c3cee3",
+    edgePlaying: "#c3e88d",
     edgeActive: "#f07178",
     edgeWarm: "#f78c6c",
     edgeInactive: "#c3cee3",
