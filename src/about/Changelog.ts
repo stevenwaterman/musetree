@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,15,4],
         date: new Date(2020, 5, 2),
-        commitHash: "TODO",
+        commitHash: "b58309bfff89b980a0e4a2f0dbfa12342dd4c014",
         changes: [
             "Changed from ending all notes at end of section to truncating notes after a specified max length"
         ]
