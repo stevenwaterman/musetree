@@ -9,7 +9,7 @@
     import Button from "../buttons/Button.svelte";
     import {contextModalStore} from "./ContextModalStore";
     import {audioStatusStore} from "../audio/audioPlayer";
-    import {create_in_transition, create_out_transition} from "svelte/internal";
+    import {create_in_transition, create_out_transition, get_store_value} from "svelte/internal";
 
 
     export let parentStore;
@@ -49,9 +49,12 @@
     $: onSelectedPath = branchState.onSelectedPath;
     $: selectedByParent = branchState.selectedByParent;
     $: wasLastSelected = branchState.wasLastSelectedByParent;
-    let isPlaying = false;
-    $: nodeColor = onSelectedPath ? (isPlaying? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
-    $: edgeColor = onSelectedPath ? (isPlaying ? colorLookup.edgePlaying : colorLookup.edgeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+    let trackPlaying = false;
+    let sectionPlaying = false;
+    let edgeProgress = 0;
+    $: nodeColor = onSelectedPath ? (sectionPlaying? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
+    $: edgeColor = onSelectedPath ? (sectionPlaying ? colorLookup.edgePlaying : colorLookup.edgeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+    $: edgePercentage = sectionPlaying ? 100 : trackPlaying ? edgeProgress : 0;
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
@@ -102,31 +105,62 @@
         if(event.key === "d") return deleteBranch();
     }
 
-    function startedPlaying(node, {offset}) {
+    function createNodeTransition(node, {offset}) {
         return {
             delay: Math.max(0, (startsAt - offset) * 1000),
             duration: 0,
             tick: t => {
                 if(t === 0){
-                    isPlaying = false;
+                    sectionPlaying = false;
                 } else {
-                    isPlaying = true;
+                    sectionPlaying = true;
                 }
             }
         };
     }
 
+    function createEdgeTransition(node, {offset}) {
+        const parentState = get_store_value(parentStore);
+        const startsAt = parentState.section.startsAt;
+        const endsAt = parentState.section.endsAt;
+        const delay = Math.max(0, (startsAt - offset) * 1000);
+        const duration = (endsAt - Math.max(startsAt, offset)) * 1000;
+        const startProgress = Math.max(0, offset - startsAt);
+        const progressToGo = 1 - startProgress;
+
+        return {
+            delay: delay,
+            duration: duration,
+            tick: t => {
+                const progress = startProgress + (progressToGo * t);
+                edgeProgress = progress * 100;
+            }
+        };
+    }
+
+    let edgeGradient;
+
     let nodeTransition;
+    let edgeTransition;
 
     onMount(() => {
         audioStatusStore.subscribe(status => {
-            if (nodeTransition) {
-                nodeTransition.end();
-                isPlaying = false;
-            }
+            if (nodeTransition) nodeTransition.end();
+            if(edgeTransition) edgeTransition.end();
+            trackPlaying = false;
+            sectionPlaying = false;
+
             if (onSelectedPath && status.type === "on") {
-                nodeTransition = create_in_transition(node, startedPlaying, status);
+                trackPlaying = true;
+                edgeProgress = 0;
+
+                nodeTransition = create_in_transition(node, createNodeTransition, status);
                 nodeTransition.start();
+
+                if(parentStore.type === "branch"){
+                    edgeTransition = create_in_transition(edgeGradient, createEdgeTransition, status);
+                    edgeTransition.start();
+                }
             }
         });
     })
@@ -208,7 +242,12 @@
     {/each}
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2}
-     style={"left: " + lineLeft + "px; top: " + ((depth-1) * ch * 2 + 25) + "px;" + (offset < parentOffset ? "transform: scaleX(-1)" : "")}>
+     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 25}px;${offset < parentOffset ? "transform: scaleX(-1)" : ""}`}>
+    <linearGradient bind:this={edgeGradient} id={`linear${depth},${offset}`} gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"   stop-color={colorLookup.edgePlaying}/>
+        <stop offset={edgePercentage+"%"}   stop-color={colorLookup.edgePlaying}/>
+        <stop offset={edgePercentage+"%"} stop-color={edgeColor}/>
+    </linearGradient>
     <path d={`m 30 0 c 0 ${ch} ${cw*2} ${ch} ${cw*2} ${ch*2}`}
-          stroke={edgeColor} stroke-width="2px" fill="none"/>
+          stroke={`url(#linear${depth},${offset})`} stroke-width="2px" fill="none"/>
 </svg>

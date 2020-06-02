@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,16,2],
+        date: new Date(2020, 5, 2),
+        commitHash: "TODO",
+        changes: [
+            "Animate edge colour change with color wipe to show progress"
+        ]
+    },
+    {
         version: [2,16,1],
         date: new Date(2020, 5, 2),
         commitHash: "bec44310d5198ebbc8453dd16119f12285bc8273",
