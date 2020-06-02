@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,16,2],
         date: new Date(2020, 5, 2),
-        commitHash: "TODO",
+        commitHash: "5bf2fa2e513d46d450f22f508335ae709c42a69e",
         changes: [
             "Animate edge colour change with color wipe to show progress"
         ]
