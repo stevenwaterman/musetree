@@ -128,6 +128,7 @@
                 we reduce the number of tokens that we send to MuseNet.
                 Higher values produce songs with more long-term structure
                 but increase the failure rates of MuseNet.
+                Values below 3000 are known to work.
             </span>
         </label>
         <input
@@ -136,7 +137,7 @@
                 bind:value={$maxResponseLengthStore}
                 type="range"
                 min="500"
-                max="3000"
+                max="5000"
                 step="100"/>
         <span>{$maxResponseLengthStore}</span>
     </div>

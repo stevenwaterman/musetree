@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,15,3],
+        date: new Date(2020, 5, 2),
+        commitHash: "TODO",
+        changes: [
+            "Increase max length to 5000"
+        ]
+    },
+    {
         version: [2,15,2],
         date: new Date(2020, 5, 1),
         commitHash: "82af479c07f0ea431f72b9c391c2654a50ca6117",
