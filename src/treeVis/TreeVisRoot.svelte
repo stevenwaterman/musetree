@@ -9,6 +9,7 @@
     import {request} from "../broker";
     import {undoStore} from "../state/undo";
     import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
+    import {audioStatusStore} from "../audio/audioPlayer";
 
     export let treeContainer;
 
@@ -68,6 +69,9 @@
         if(event.key === "a") return openImportModal();
         if(event.key === "d") return openDeleteModal();
     }
+
+    $: audioPlaying = $audioStatusStore.type === "on";
+    $: nodeColor = audioPlaying ? colorLookup.nodePlaying : colorLookup.nodeActive;
 </script>
 
 <style>
@@ -82,7 +86,7 @@
         outline: none;
 
         cursor: pointer;
-        transition: transform .2s ease-in-out;
+        transition: transform .2s ease-in-out, background-color 0.2s ease-in-out;
     }
 
     .node:hover {
@@ -118,7 +122,7 @@
          on:mouseleave={unfocusNode} bind:this={node}
          on:keypress={keyPressed}
          class="node"
-         style={"background-color: " + colorLookup.nodeActive}
+         style={"background-color: " + nodeColor}
          tabindex={0}
 
     >

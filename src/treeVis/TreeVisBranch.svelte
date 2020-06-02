@@ -5,9 +5,11 @@
     import colorLookup, {modalOptions} from "../colors";
     import ImportModal from "../persistence/ImportModal.svelte";
     import ExportModal from "../persistence/ExportModal.svelte";
-    import {getContext} from "svelte";
+    import {getContext, onMount} from "svelte";
     import Button from "../buttons/Button.svelte";
     import {contextModalStore} from "./ContextModalStore";
+    import {audioStatusStore} from "../audio/audioPlayer";
+    import {create_in_transition, create_out_transition} from "svelte/internal";
 
 
     export let parentStore;
@@ -21,6 +23,10 @@
     $: path = branchState.path;
     $: childIndex = path[path.length - 1];
     $: pendingLoad = branchState.pendingLoad;
+    $: section = branchState.section;
+    $: startsAt = section.startsAt;
+    $: endsAt = section.endsAt;
+    $: duration = endsAt - startsAt;
 
     $: childStores = branchState.children;
     $: children = Object.entries(childStores);
@@ -94,6 +100,36 @@
         if(event.key === "s") return openExportModal();
         if(event.key === "d") return deleteBranch();
     }
+
+    function startedPlaying(node, {offset}) {
+        return {
+            delay: Math.max(0, (startsAt - offset) * 1000),
+            duration: 0,
+            tick: t => {
+                if(t === 0){
+                    node.style = "background-color: " + colorLookup.nodeActive;
+                } else {
+                    node.style = "background-color: " + colorLookup.nodePlaying;
+                }
+            }
+        };
+    }
+
+    let nodeTransition;
+
+    onMount(() => {
+        audioStatusStore.subscribe(status => {
+            if (nodeTransition) {
+                nodeTransition.end();
+                node.style = "background-color: " + nodeColor
+            }
+            if (onSelectedPath && status.type === "on") {
+                nodeTransition = create_in_transition(node, startedPlaying, status);
+                nodeTransition.start();
+            }
+        });
+    })
+
 </script>
 
 <style>
