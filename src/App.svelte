@@ -61,6 +61,7 @@
         </div>
         <div style="grid-column: 1 / span 3; grid-row: 2; min-height: 0"><TrackControls/></div>
         <div style={`grid-column: 3; grid-row: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}`}>
+            <h1 style={`text-align: center; color: ${colorLookup.text}; margin: 0`}>Options</h1>
             <GenerationOptions/>
         </div>
     </div>

@@ -16,11 +16,16 @@
     import GenresModal from "./GenresModal.svelte";
     import Button from "../buttons/Button.svelte";
     import colorLookup, {modalOptions} from "../colors";
+    import GenerationOptionsModal from "./GenerationOptionsModal.svelte";
 
     const {open} = getContext("simple-modal");
 
     function showGenreModal() {
-        open(GenresModal, {}, modalOptions)
+        open(GenresModal, {}, modalOptions);
+    }
+
+    function showAdvancedModal() {
+        open(GenerationOptionsModal, {}, modalOptions);
     }
 
     //TODO have a styled tooltip component that's reusable
@@ -57,6 +62,7 @@
     h1 {
         margin: 0;
         text-align: center;
+        font-size: 20pt;
     }
 
     select {
@@ -120,47 +126,6 @@
         <span>{$generationLengthStore}</span>
     </div>
 
-    <div class="optionElement">
-        <label for="responselength" class="TT_trigger">
-            Max Length:
-            <span class="TT_text" style={tt_text_style}>
-                If the response would have more tokens than this,
-                we reduce the number of tokens that we send to MuseNet.
-                Higher values produce songs with more long-term structure
-                but increase the failure rates of MuseNet.
-                Values below 3000 are known to work.
-            </span>
-        </label>
-        <input
-                class="slider"
-                id="responselength"
-                bind:value={$maxResponseLengthStore}
-                type="range"
-                min="500"
-                max="5000"
-                step="100"/>
-        <span>{$maxResponseLengthStore}</span>
-    </div>
-
-    <div class="optionElement">
-        <label for="temperature" class="TT_trigger">
-            Temperature:
-            <span class="TT_text" style={tt_text_style}>
-                How adventurous the AI is allowed to be.
-                Try increasing temperature if you are stuck in a repeating pattern or if MuseNet starts generating a real song.
-            </span>
-        </label>
-        <input
-                class="slider"
-                id="temperature"
-                bind:value={$temperatureStore}
-                type="range"
-                min="0.8"
-                max="1.2"
-                step="0.01"/>
-        <span>{$temperatureStore}</span>
-    </div>
-
     <div style="align-self: flex-start">
         <label class="TT_trigger">
             Instruments:
@@ -171,17 +136,11 @@
             </span>
         </label>
     </div>
-    {#each instrumentCategories as instrument}
-        <InstrumentCheckbox {instrument}/>
-    {/each}
-
-    <div class="optionElement">
-        <label for="autoRequest" class="TT_trigger">
-            Auto Request
-            <span class="TT_text" style={tt_text_style}>
-                Immediately request more as soon as you select a node for the first time
-            </span>
-        </label>
-        <input id="autoRequest" type="checkbox" bind:checked={$autoRequestStore}/>
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+        {#each instrumentCategories as instrument}
+            <InstrumentCheckbox {instrument}/>
+        {/each}
     </div>
+
+    <Button on:click={showAdvancedModal}>Advanced</Button>
 </div>
