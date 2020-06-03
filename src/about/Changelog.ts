@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,16,3],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "6f23613e8f9764cebf678b112c053dcf07f71f4e",
         changes: [
             "Cancelling load actually cancels it instead of just hiding it"
         ]
