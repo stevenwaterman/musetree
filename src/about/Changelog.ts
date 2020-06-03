@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,17,1],
         date: new Date(2020, 5, 4),
-        commitHash: "TODO",
+        commitHash: "497bc1efd60271453a2c883594a8fe514b56c185",
         changes: [
             "Changed 'Generation Length' to just 'length'",
             "Made tree vis edge's green progress indicator straight when no x-offset between parent and child",
