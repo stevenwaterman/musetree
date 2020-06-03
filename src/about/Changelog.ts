@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,17,0],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "9e790f098e2c4a66b9f17af9cd15766fad61da9d",
         changes: [
             "Made instrument selection easier to use and more compact",
             "Made edges between nodes much thicker",
