@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,18,0],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "5cd30b2551e2e0ae96a1655606351915825605ec",
         changes: [
             "Added track info section"
         ]
