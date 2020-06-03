@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,16,4],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "67df9b020be286bcd184fb7535acb7de1aab81a3",
         changes: [
             "Added validation to import modal"
         ]
