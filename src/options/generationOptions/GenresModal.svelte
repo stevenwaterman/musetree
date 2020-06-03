@@ -1,8 +1,8 @@
 <script>
     import {getContext} from "svelte";
     import GenreOption from "./GenreOption.svelte";
-    import {genres} from "../constants";
-    import colorLookup from "../colors";
+    import {genres} from "../../constants";
+    import colorLookup from "../../colors";
 
     const {close} = getContext("simple-modal");
 

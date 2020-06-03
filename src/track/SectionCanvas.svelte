@@ -4,7 +4,7 @@
     import {afterUpdate} from "svelte";
     import {root} from "../state/trackTree";
     import * as Audio from "../audio/audioPlayer";
-    import colorLookup from "../colors";
+    import colorLookup, {allInstrumentsVisibility} from "../colors";
     import VisibilityGuard from "./VisibilityGuard.svelte";
 
     export let viewport;
@@ -54,7 +54,6 @@
         z-index: 2;
     }
 </style>
-
 {#if notes}
     <div class="sectionContainer" style={`border-right: 1px solid ${colorLookup.border}; border-bottom: 1px solid ${colorLookup.border}; height: ${height}px; top: ${top}px`}>
         <VisibilityGuard root={viewport} let:loaded>
@@ -64,11 +63,13 @@
                      height={Math.floor(height-1)} style={`background-color: ${colorLookup.bgLight}`}
                      class="sectionCanvas" preserveAspectRatio="none" on:click={play}>
                     {#each Object.entries(notes) as [instrument, instrumentNotes], idx}
-                        {#each instrumentNotes as note}
-                            <rect x={note.pitch + idx / instruments.length} width="1" y={note.startTime}
-                                  height={(note.type === "COMPLETE" ? note.endTime : 1*1000*1000)-note.startTime} fill={colorLookup[instrument]}
-                                  stroke={colorLookup.border} stroke-width="1px" vector-effect="non-scaling-stroke"/>
-                        {/each}
+                        {#if ($allInstrumentsVisibility)[instrument]}
+                            {#each instrumentNotes as note}
+                                <rect x={note.pitch + idx / instruments.length} width="1" y={note.startTime}
+                                      height={(note.type === "COMPLETE" ? note.endTime : 1*1000*1000)-note.startTime} fill={colorLookup[instrument]}
+                                      stroke={colorLookup.border} stroke-width="1px" vector-effect="non-scaling-stroke"/>
+                            {/each}
+                        {/if}
                     {/each}
                 </svg>
             {/if}

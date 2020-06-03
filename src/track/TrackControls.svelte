@@ -99,16 +99,6 @@
         <input id="autoScroll" type="checkbox" bind:checked={$autoScrollStore}/>
     </div>
 
-    <div class="col margin">
-        <label for="yScale">Zoom: {$yScaleStore}%</label>
-        <input class="slider" id="yScale" bind:value={$yScaleStore} type="range" min="10" max="500" step="10"/>
-    </div>
-
-    <div class="col margin">
-        <label for="split">Split: {$splitStore}%</label>
-        <input class="slider" id="split" bind:value={$splitStore} type="range" min="0" max="100" step="5"/>
-    </div>
-
     <div class="col center margin">
         <label for="autoPlay" class="TT_trigger">
             Auto Play

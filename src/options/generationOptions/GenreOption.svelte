@@ -1,7 +1,7 @@
 <script>
-    import {genreStore} from "../state/settings";
+    import {genreStore} from "../../state/settings";
     import {getContext} from "svelte";
-    import Button from "../buttons/Button.svelte";
+    import Button from "../../buttons/Button.svelte";
 
     export let text;
     export let genre;

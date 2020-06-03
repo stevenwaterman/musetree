@@ -1,6 +1,6 @@
 <script>
     import Track from "./track/Track.svelte";
-    import GenerationOptions from "./generationOptions/GenerationOptions.svelte";
+    import GenerationOptions from "./options/generationOptions/GenerationOptions.svelte";
     import TrackControls from "./track/TrackControls.svelte";
     import TreeVis from "./treeVis/TreeVis.svelte";
     import Modal from "svelte-simple-modal";
@@ -10,11 +10,12 @@
     import {togglePlayback} from "./audio/audioPlayer";
     import {undoStore} from "./state/undo";
     import AutoSaveController from "./persistence/AutoSaveController.svelte";
+    import DisplayOptions from "./options/displayOptions/DisplayOptions.svelte";
 
     function keyPressed(event) {
-        if(event.key === " ") {
+        if (event.key === " ") {
             togglePlayback();
-        } else if(event.key === "z") {
+        } else if (event.key === "z") {
             undoStore.undo();
         }
     }
@@ -60,9 +61,10 @@
             <TreeVis/>
         </div>
         <div style="grid-column: 1 / span 3; grid-row: 2; min-height: 0"><TrackControls/></div>
-        <div style={`grid-column: 3; grid-row: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}`}>
+        <div style={`grid-column: 3; grid-row: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}; padding: 12px`}>
             <h1 style={`text-align: center; color: ${colorLookup.text}; margin: 0`}>Options</h1>
             <GenerationOptions/>
+            <DisplayOptions/>
         </div>
     </div>
 </Modal>

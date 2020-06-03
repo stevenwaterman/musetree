@@ -18,6 +18,7 @@
 
     $: childStores = branchState.children;
 
+
     function leftClick(event) {
         if (event.button === 0) root.select([]);
     }
@@ -105,6 +106,7 @@
     .placement {
         position: absolute;
         left: -25px;
+        z-index: 2;
     }
 
 

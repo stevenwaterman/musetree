@@ -9,13 +9,13 @@
         autoRequestStore,
         autoScrollStore,
         yScaleStore
-    } from "../state/settings";
-    import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
-    import {genres, instrumentCategories} from "../constants";
+    } from "../../state/settings";
+    import InstrumentCheckbox from "../InstrumentCheckbox.svelte";
+    import {genres, instrumentCategories} from "../../constants";
     import {getContext} from "svelte";
     import GenresModal from "./GenresModal.svelte";
-    import Button from "../buttons/Button.svelte";
-    import colorLookup, {modalOptions} from "../colors";
+    import Button from "../../buttons/Button.svelte";
+    import colorLookup, {modalOptions} from "../../colors";
 
     const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>

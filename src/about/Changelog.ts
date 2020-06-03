@@ -13,7 +13,14 @@ const changelog: Changelog = [
         date: new Date(2020, 5, 3),
         commitHash: "TODO",
         changes: [
-            "Made instrument selection easier to use and more compact"
+            "Made instrument selection easier to use and more compact",
+            "Made edges between nodes much thicker",
+            "Showed play progress on edge above node rather than below",
+            "Nodes on selected path become translucent when track is playing",
+            "Edges on selected path show on top of non-selected edges",
+            "Moved display options into the sidebar",
+            "Added advanced options modal for generation and display options",
+            "Added ability to hide instruments in track view"
         ]
     },
     {

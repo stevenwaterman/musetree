@@ -1,12 +1,13 @@
 <script>
-  import { instrumentStores } from "../state/settings";
   import colorLookup from "../colors";
   export let instrument;
-  $: enabledStore = instrumentStores[instrument];
+  export let storeMap;
+
+  $: store = storeMap[instrument];
   $: id = "instrument-" + instrument;
 
   function toggle() {
-    enabledStore.update(state => !state);
+    store.update(state => !state);
   }
 </script>
 
@@ -32,6 +33,6 @@
 </style>
 
 <div class="row" style={`border: 1px solid ${colorLookup.border}`} on:click={toggle}>
-  <input {id} type="checkbox" bind:checked={$enabledStore} />
+  <input {id} type="checkbox" bind:checked={$store} />
   <label for={id} style={"color: " + colorLookup[instrument]}>{instrument}</label>
 </div>

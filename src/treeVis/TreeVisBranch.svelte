@@ -52,9 +52,11 @@
     let trackPlaying = false;
     let sectionPlaying = false;
     let edgeProgress = 0;
-    $: nodeColor = onSelectedPath ? (sectionPlaying? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
+    $: nodeColor = onSelectedPath ? (sectionPlaying ? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
     $: edgeColor = onSelectedPath ? (sectionPlaying ? colorLookup.edgePlaying : colorLookup.edgeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
     $: edgePercentage = sectionPlaying ? 100 : trackPlaying ? edgeProgress : 0;
+    $: opacity = (onSelectedPath && trackPlaying) ? 25 : 100;
+    $: edgeZ = (onSelectedPath) ? 1 : 0;
 
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
     $: numberOfLeaves = $numberOfLeavesStore;
@@ -107,7 +109,7 @@
 
     function createNodeTransition(node, {offset}) {
         return {
-            delay: Math.max(0, (startsAt - offset) * 1000),
+            delay: Math.max(0, (endsAt - offset) * 1000),
             duration: 0,
             tick: t => {
                 if(t === 0){
@@ -120,12 +122,10 @@
     }
 
     function createEdgeTransition(node, {offset}) {
-        const parentState = get_store_value(parentStore);
-        const startsAt = parentState.section.startsAt;
-        const endsAt = parentState.section.endsAt;
         const delay = Math.max(0, (startsAt - offset) * 1000);
         const duration = (endsAt - Math.max(startsAt, offset)) * 1000;
-        const startProgress = Math.max(0, offset - startsAt);
+        const startProgressSeconds = Math.max(0, offset - startsAt);
+        const startProgress = startProgressSeconds / (endsAt - startsAt);
         const progressToGo = 1 - startProgress;
 
         return {
@@ -157,10 +157,8 @@
                 nodeTransition = create_in_transition(node, createNodeTransition, status);
                 nodeTransition.start();
 
-                if(parentStore.type === "branch"){
-                    edgeTransition = create_in_transition(edgeGradient, createEdgeTransition, status);
-                    edgeTransition.start();
-                }
+                edgeTransition = create_in_transition(edgeGradient, createEdgeTransition, status);
+                edgeTransition.start();
             }
         });
     })
@@ -179,7 +177,7 @@
 
         cursor: pointer;
         outline: none;
-        transition: transform .2s ease-in-out, background-color 0.2s ease-in-out;
+        transition: transform .2s ease-in-out, background-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
     }
 
     .node:hover {
@@ -205,7 +203,7 @@
 
     .placement {
         position: absolute;
-        z-index: 1;
+        z-index: 2;
     }
 
     path {
@@ -223,7 +221,7 @@
             on:keypress={keyPressed}
             bind:this={node}
             class="node"
-            style={"background-color: " + nodeColor}
+            style={`background-color: ${nodeColor}; opacity: ${opacity}%`}
             tabindex={0}
     >
         <span class="label">
@@ -242,12 +240,12 @@
     {/each}
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2}
-     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 25}px;${offset < parentOffset ? "transform: scaleX(-1)" : ""}`}>
+     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 25}px; ${offset < parentOffset ? "transform: scaleX(-1); " : ""}z-index: ${edgeZ}`}>
     <linearGradient bind:this={edgeGradient} id={`linear${depth},${offset}`} gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%"   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"}   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"} stop-color={edgeColor}/>
     </linearGradient>
     <path d={`m 30 0 c 0 ${ch} ${cw*2} ${ch} ${cw*2} ${ch*2}`}
-          stroke={`url(#linear${depth},${offset})`} stroke-width="2px" fill="none"/>
+          stroke={`url(#linear${depth},${offset})`} stroke-width="6px" fill="none"/>
 </svg>

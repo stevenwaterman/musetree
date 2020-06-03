@@ -9,13 +9,13 @@
         autoRequestStore,
         autoScrollStore,
         yScaleStore
-    } from "../state/settings";
-    import InstrumentCheckbox from "./InstrumentCheckbox.svelte";
-    import {genres, instrumentCategories} from "../constants";
+    } from "../../state/settings";
+    import InstrumentCheckbox from "../InstrumentCheckbox.svelte";
+    import {genres, instrumentCategories} from "../../constants";
     import {getContext} from "svelte";
     import GenresModal from "./GenresModal.svelte";
-    import Button from "../buttons/Button.svelte";
-    import colorLookup, {modalOptions} from "../colors";
+    import Button from "../../buttons/Button.svelte";
+    import colorLookup, {modalOptions} from "../../colors";
     import GenerationOptionsModal from "./GenerationOptionsModal.svelte";
 
     const {open} = getContext("simple-modal");
@@ -34,10 +34,10 @@
 
 <style>
     .options {
-        padding: 12px;
         display: flex;
         flex-direction: column;
         width: 100%;
+        margin-top: 12px;
     }
 
     .slider {
@@ -93,7 +93,10 @@
 </style>
 
 <div class="options" style={"color: " + colorLookup.textDark}>
-    <h1 style={"color: " + colorLookup.text}>Generator</h1>
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between">
+        <h1 style={"color: " + colorLookup.text}>Generator</h1>
+        <Button on:click={showAdvancedModal} style="font-size: 10pt">Advanced</Button>
+    </div>
 
     <div class="optionElement">
         <label for="genre" class="TT_trigger">
@@ -138,9 +141,7 @@
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
         {#each instrumentCategories as instrument}
-            <InstrumentCheckbox {instrument}/>
+            <InstrumentCheckbox storeMap={instrumentStores} {instrument}/>
         {/each}
     </div>
-
-    <Button on:click={showAdvancedModal}>Advanced</Button>
 </div>
