@@ -16,8 +16,8 @@ export function getPitchRange(sections: Section[]): {minPitch: number, maxPitch:
         }
     } else {
         return {
-            minPitch: 1,
-            maxPitch: 2
+            minPitch: -1,
+            maxPitch: -1
         }
     }
 }

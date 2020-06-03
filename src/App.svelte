@@ -11,6 +11,7 @@
     import {undoStore} from "./state/undo";
     import AutoSaveController from "./persistence/AutoSaveController.svelte";
     import DisplayOptions from "./options/displayOptions/DisplayOptions.svelte";
+    import TrackInfo from "./trackInfo/TrackInfo.svelte";
 
     function keyPressed(event) {
         if (event.key === " ") {
@@ -65,6 +66,7 @@
             <h1 style={`text-align: center; color: ${colorLookup.text}; margin: 0`}>Options</h1>
             <GenerationOptions/>
             <DisplayOptions/>
+            <TrackInfo/>
         </div>
     </div>
 </Modal>
