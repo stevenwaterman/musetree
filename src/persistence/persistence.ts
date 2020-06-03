@@ -80,15 +80,14 @@ export async function load(tree: TreeStore, json: string) {
     loadingProgressStore.set(null);
 }
 
-export async function loadMidi(encoding: string, sectionEndsAt: number, importUnderStore: NodeStore) {
+export async function loadMidi(encoding: MusenetEncoding, sectionEndsAt: number, importUnderStore: NodeStore) {
     cancelled = false;
-    const encodingArray = encodingToArray(encoding);
-    loadingProgressStore.set({done: 0, total: encodingArray.length});
+    loadingProgressStore.set({done: 0, total: encoding.length});
 
     const parentState: NodeState = get_store_value(importUnderStore);
     const parentActiveNotes = parentState.type === "root" ? noActiveNotes() : parentState.section.activeNotesAtEnd;
 
-    const innerLoadingPromise: Promise<SectionStore> = loadMidi_inner(encodingArray, parentActiveNotes, sectionEndsAt);
+    const innerLoadingPromise: Promise<SectionStore> = loadMidi_inner(encoding, parentActiveNotes, sectionEndsAt);
     loadingMidiPromise = makeCancellable(innerLoadingPromise);
 
     await loadingMidiPromise.then((sectionStore: SectionStore) => {

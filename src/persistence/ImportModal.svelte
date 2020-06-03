@@ -16,6 +16,8 @@
     $: sectionEndsAt = importUnderStore.type === "root" ? 0 : importUnderState.section.endsAt;
 
     let encoding = "";
+    $: encodingArray = encodingToArray(encoding.trim());
+    $: encodingInvalid = encodingArray.some(isNaN);
 
     async function midiSelected(file) {
         const encodingArray = await fromMidi(file)
@@ -90,4 +92,4 @@
     <label for="encoding" style="display: none">Encoding</label>
     <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}></textarea>
 
-    <Button disabled={encoding === ""} on:click={importEncoding}>Import</Button>
+    <Button disabled={encodingInvalid} on:click={importEncoding}>Import</Button>

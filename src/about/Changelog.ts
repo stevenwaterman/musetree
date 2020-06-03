@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,16,4],
+        date: new Date(2020, 5, 3),
+        commitHash: "TODO",
+        changes: [
+            "Added validation to import modal"
+        ]
+    },
+    {
         version: [2,16,3],
         date: new Date(2020, 5, 3),
         commitHash: "6f23613e8f9764cebf678b112c053dcf07f71f4e",
