@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,16,6],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "0cd5de7587e08f3e2a5f1ebf4e3b8573c82d61ee",
         changes: [
             "Fix loading bar errors after cancelling load",
             "Scroll to selected section in track view",
