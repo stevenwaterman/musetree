@@ -107,7 +107,7 @@
         if(event.key === "d") return deleteBranch();
     }
 
-    function createNodeGreenTransition(node, {offset}) {
+    function createNodeTransition(node, {offset}) {
         return {
             delay: Math.max(0, (endsAt - offset) * 1000),
             duration: 0,
