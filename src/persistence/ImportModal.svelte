@@ -26,7 +26,7 @@
 
     async function importEncoding() {
         close();
-        await loadMidi(encoding, sectionEndsAt, importUnderStore);
+        await loadMidi(encodingArray, sectionEndsAt, importUnderStore);
     }
 </script>
 
