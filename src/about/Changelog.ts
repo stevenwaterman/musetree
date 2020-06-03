@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,16,3],
+        date: new Date(2020, 5, 3),
+        commitHash: "TODO",
+        changes: [
+            "Cancelling load actually cancels it instead of just hiding it"
+        ]
+    },
+    {
         version: [2,16,2],
         date: new Date(2020, 5, 2),
         commitHash: "5bf2fa2e513d46d450f22f508335ae709c42a69e",

@@ -53,7 +53,10 @@ function totalEncodingLength_Branch(tree: SerialisedBranch): number {
     return encodingToArray(tree.encoding).length + tree.children.map(totalEncodingLength_Branch).reduce((a, b) => a + b, 0);
 }
 
+let cancelled = false;
+
 export async function load(tree: TreeStore, json: string) {
+    cancelled = false;
     const deserialised: SerialisedRoot = JSON.parse(json);
 
     loadingProgressStore.set({
@@ -71,12 +74,14 @@ export async function load(tree: TreeStore, json: string) {
         }
     }).catch(reason => {
         if(!reason?.cancelled) console.log(`promise rejected, reason: ${reason}`);
+        else cancelled = true;
     })
 
     loadingProgressStore.set(null);
 }
 
 export async function loadMidi(encoding: string, sectionEndsAt: number, importUnderStore: NodeStore) {
+    cancelled = false;
     const encodingArray = encodingToArray(encoding);
     loadingProgressStore.set({done: 0, total: encodingArray.length});
 
@@ -90,6 +95,7 @@ export async function loadMidi(encoding: string, sectionEndsAt: number, importUn
         importUnderStore.addChild(sectionStore)
     }).catch(reason => {
         if(!reason?.cancelled) console.log(`promise rejected, reason: ${reason}`);
+        else cancelled = true;
     })
 
     loadingProgressStore.set(null);
@@ -106,8 +112,13 @@ async function load_inner_root(serialised: SerialisedRoot): Promise<TrackTreeDom
 }
 
 async function load_inner_branch(startsAt: number, parentActiveNotes: ActiveNotes, {encoding, children}: SerialisedBranch): Promise<TrackTreeDomainBranch> {
+    if(cancelled) throw new Error("Cancelled");
+
     const encodingArray = encodingToArray(encoding);
     const section = await createSectionFromEncoding(encodingArray, parentActiveNotes, startsAt);
+
+    if(cancelled) throw new Error("Cancelled");
+
     const domainChildrenPromise = Promise.all(children.map(child => load_inner_branch(section.endsAt, section.activeNotesAtEnd, child)));
     const sectionStore = createSectionStore(section);
     loadingProgressStore.update(state => {
