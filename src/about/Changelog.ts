@@ -9,6 +9,16 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,17,1],
+        date: new Date(2020, 5, 4),
+        commitHash: "TODO",
+        changes: [
+            "Changed 'Generation Length' to just 'length'",
+            "Made tree vis edge's green progress indicator straight when no x-offset between parent and child",
+            "Made green progress smoother on transition between sections"
+        ]
+    },
+    {
         version: [2,17,0],
         date: new Date(2020, 5, 3),
         commitHash: "9e790f098e2c4a66b9f17af9cd15766fad61da9d",

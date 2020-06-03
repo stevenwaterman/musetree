@@ -112,7 +112,7 @@
 
     <div class="optionElement">
         <label for="generationlength" class="TT_trigger">
-            Generation Length:
+            Length:
             <span class="TT_text" style={tt_text_style}>
                 How many tokens to generate.
                 One note is usually two tokens

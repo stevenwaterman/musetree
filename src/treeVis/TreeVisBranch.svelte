@@ -67,8 +67,8 @@
     $: offsetWidth = Math.abs(parentOffset - offset);
     $: cw = offsetWidth * 30;
     $: ch = 150 / 2;
-    $: lineWidth = (offsetWidth + 1) * 60;
-    $: lineLeft = Math.min(offset, parentOffset) * 60 - 30;
+    $: lineWidth = (offsetWidth) * 60 + 10;
+    $: lineLeft = Math.min(offset, parentOffset) * 60 - 5;
 
     let node;
     function focusNode() {
@@ -107,7 +107,7 @@
         if(event.key === "d") return deleteBranch();
     }
 
-    function createNodeTransition(node, {offset}) {
+    function createNodeGreenTransition(node, {offset}) {
         return {
             delay: Math.max(0, (endsAt - offset) * 1000),
             duration: 0,
@@ -239,13 +239,13 @@
         <svelte:self parentStore={branchStore} branchStore={childStores[idx]} depth={depth + 1} offset={placementOffset + placement} parentOffset={offset} treeContainer={treeContainer}/>
     {/each}
 {/if}
-<svg class="line" width={lineWidth} height={ch * 2}
-     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 25}px; ${offset < parentOffset ? "transform: scaleX(-1); " : ""}z-index: ${edgeZ}`}>
-    <linearGradient bind:this={edgeGradient} id={`linear${depth},${offset}`} gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="100%">
+<svg class="line" width={lineWidth} height={ch * 2 + 2}
+     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 24}px; ${offset < parentOffset ? "transform: scaleX(-1); " : ""}z-index: ${edgeZ}`}>
+    <linearGradient bind:this={edgeGradient} id={`linear${depth},${offset}`} gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2={offset === parentOffset ? "0%" : "100%"} y2="100%">
         <stop offset="0%"   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"}   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"} stop-color={edgeColor}/>
     </linearGradient>
-    <path d={`m 30 0 c 0 ${ch} ${cw*2} ${ch} ${cw*2} ${ch*2}`}
+    <path d={`m 5 0 c 0 ${ch + 0.5} ${cw*2} ${ch + 0.5} ${cw*2} ${ch*2 + 1}`}
           stroke={`url(#linear${depth},${offset})`} stroke-width="6px" fill="none"/>
 </svg>
