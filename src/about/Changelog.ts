@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,17,2],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "664ff5e23ff91edfe02372211a8ac80b07df3867",
         changes: [
             "Fixed critical bug with transitions"
         ]
