@@ -5,7 +5,7 @@ The official app is a toy designed to show off the research.
 In contrast, MuseTree is designed for real music production, and has been built from the ground-up with that in mind.
 
 MuseTree is still in active development. I'm very happy to take suggestions, so please open a GitHub issue or comment on an existing one with your ideas!
-If you want to chat with me in real time, I [live-code on twitch.tv](twitch.tv/stevenwaterman) Mon-Fri 10:30am-3pm BST.
+If you want to chat with me in real time, I [live-code on twitch.tv](http://twitch.tv/stevenwaterman) Mon-Fri 10:30am-3pm BST.
 At the minute, those streams are mostly my work on MuseTree, so come along and say hi!
 
 The latest version of MuseTree is always available online at http://musetree.stevenwaterman.uk
