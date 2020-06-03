@@ -120,6 +120,9 @@ async function load_inner_branch(startsAt: number, parentActiveNotes: ActiveNote
 
     const domainChildrenPromise = Promise.all(children.map(child => load_inner_branch(section.endsAt, section.activeNotesAtEnd, child)));
     const sectionStore = createSectionStore(section);
+
+    if(cancelled) throw new Error("Cancelled");
+
     loadingProgressStore.update(state => {
         if(state === null) return null;
         return {...state, done: state.done + encodingArray.length};

@@ -56,8 +56,7 @@
 </style>
 
 {#if notes}
-    <div class="sectionContainer"
-         style={`border-right: 1px solid ${colorLookup.border}; border-bottom: 1px solid ${colorLookup.border}; height: ${height}px; top: ${top}px`}>
+    <div class="sectionContainer" style={`border-right: 1px solid ${colorLookup.border}; border-bottom: 1px solid ${colorLookup.border}; height: ${height}px; top: ${top}px`}>
         <VisibilityGuard root={viewport} let:loaded>
             {#if loaded}
                 <span class="label" style={"color: " + colorLookup.text}>Section {index + 1}</span>

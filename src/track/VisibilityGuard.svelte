@@ -11,12 +11,13 @@
 
     onMount(() => {
         observer = new IntersectionObserver(
-                ([boundingClientRect]) => {
-                    loaded = loaded || boundingClientRect.isIntersecting;
-                    if(loaded) stop();
+                (entries) => {
+                    loaded = loaded || entries.some(entry => entry.isIntersecting);
+                    if(loaded) stopObserving();
                 }, {
-                    rootMargin: "100px 0px 100px 0px",
-                    root: root
+                    rootMargin: "100px",
+                    root: root,
+                    threshold: 0
                 }
         );
         observer.observe(element);

@@ -1,6 +1,6 @@
 <script>
     import SectionCanvas from "./SectionCanvas.svelte";
-    import {isScrollingStore} from "../state/settings";
+    import {isScrollingStore, yScaleStore} from "../state/settings";
     import {root} from "../state/trackTree";
     import Timeline from "./Timeline.svelte";
     import colorLookup from "../colors";
@@ -12,6 +12,18 @@
     $: pitchRange = getPitchRange(selectedSections)
 
     let viewport;
+
+    function scroll(sections) {
+        if(sections && sections.length) {
+            const lastSection = sections[sections.length - 1];
+            const startsAt = lastSection.startsAt;
+            setTimeout(() => {
+                viewport.scrollTop = startsAt * $yScaleStore;
+            }, 0);
+        }
+    }
+
+    $: scroll(selectedSections);
 </script>
 
 <style>
