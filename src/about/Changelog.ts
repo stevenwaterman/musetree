@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,19,2],
         date: new Date(2020, 5, 4),
-        commitHash: "TODO",
+        commitHash: "ef29e9ecce10577e8c9e0ac6651a0da15850dc41",
         changes: [
             "Fix placeholder text in top left"
         ]
