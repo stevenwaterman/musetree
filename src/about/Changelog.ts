@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,19,1],
         date: new Date(2020, 5, 4),
-        commitHash: "TODO",
+        commitHash: "a8887f3972e8691aef9c30a6e8770cd8ae125751",
         changes: [
             "Can click on red/green edges to start playing",
             "Prevent clicking translucent nodes"
