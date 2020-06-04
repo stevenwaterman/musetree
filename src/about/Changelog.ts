@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,18,2],
         date: new Date(2020, 5, 4),
-        commitHash: "TODO",
+        commitHash: "b0ecb45f1557d4a81a2219112b0713d2db051a08",
         changes: [
             "Changed instrument prevalence bars to stacked bar chart",
             "Removed prevalence bars labels"
