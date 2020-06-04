@@ -67,7 +67,7 @@
             <span class="value">{maxSilenceSeconds} sec</span>
         </div>
 
-        <span class="label">Instrument Use:</span>
+        <span class="label" style="grid-column: 1 / span 2; text-align: center">Instrument Use:</span>
     </div>
 
     <InstrumentPrevalence/>

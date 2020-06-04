@@ -227,6 +227,7 @@ const tokenInfo = [
     ["drums", 80]
 ] as const;
 
+
 export function encodingToToken(encoded: number): Token | null {
     if (encoded >= 0 && encoded < 3968) {
         const [instrument, volume] = tokenInfo[encoded >> 7];
