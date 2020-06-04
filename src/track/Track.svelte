@@ -56,6 +56,6 @@
     {#each selectedSections as section}
         <SectionCanvas viewport={viewport} section={section} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
     {:else}
-        <p class="placeholder">Use the controls below to begin</p>
+        <p class="placeholder">Right click the root to begin</p>
     {/each}
 </div>
