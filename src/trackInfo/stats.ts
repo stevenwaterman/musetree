@@ -10,6 +10,10 @@ function getNumberOfNotesOneSection(section: Section): number {
     return Object.values(section.notes).flat().filter(note => note.type === "COMPLETE").length;
 }
 
+export function getNumberOfTokens(sections: Section[]): number {
+    return sections.map(section => section.encoding.length).reduce((a,b)=>a+b,0);
+}
+
 export function getSilences(sections: Section[]): {
     startTime: number;
     endTime: number;
@@ -17,11 +21,12 @@ export function getSilences(sections: Section[]): {
     if (sections.length === 0) return [];
 
     const notes = getNotes(sections);
+    const startsAt = sections[0].startsAt;
     const endsAt = sections[sections.length - 1].endsAt;
-    return getSilencesInternal(notes, endsAt);
+    return getSilencesInternal(notes, startsAt, endsAt);
 }
 
-export function getSilencesInternal(notes: { startTime: number, endTime: number }[], endsAt: number): {
+export function getSilencesInternal(notes: { startTime: number, endTime: number }[], startsAt: number, endsAt: number): {
     startTime: number;
     endTime: number;
 }[] {
@@ -29,7 +34,7 @@ export function getSilencesInternal(notes: { startTime: number, endTime: number 
         startTime: number;
         endTime: number;
     }[] = [];
-    let nextSilence: number = 0;
+    let nextSilence: number = startsAt;
 
     notes.forEach(note => {
         const startTime = note.startTime;
@@ -111,7 +116,7 @@ function oneInstrumentPrevalence(sections: Section[], instrument: Instrument): {
     const endTime = sections[sections.length - 1].endsAt;
     const totalTime = endTime - startTime;
 
-    const silences = getSilencesInternal(notes, endTime);
+    const silences = getSilencesInternal(notes, startTime, endTime);
     const silenceTime = silences.map(silence => silence.endTime - silence.startTime).reduce((a, b) => a + b, 0);
     const nonSilenceTime = totalTime - silenceTime;
 

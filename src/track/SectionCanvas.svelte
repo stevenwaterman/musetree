@@ -9,7 +9,6 @@
 
     export let viewport;
     export let section;
-    export let index;
     export let pitchMin;
     export let pitchMax;
     $: pitchRange = pitchMax - pitchMin;
@@ -58,7 +57,6 @@
     <div class="sectionContainer" style={`border-right: 1px solid ${colorLookup.border}; border-bottom: 1px solid ${colorLookup.border}; height: ${height}px; top: ${top}px`}>
         <VisibilityGuard root={viewport} let:loaded>
             {#if loaded}
-                <span class="label" style={"color: " + colorLookup.text}>Section {index + 1}</span>
                 <svg viewBox={`${pitchMin} 0 ${pitchRange + 2} ${sectionDuration}`} width="100%"
                      height={Math.floor(height-1)} style={`background-color: ${colorLookup.bgLight}`}
                      class="sectionCanvas" preserveAspectRatio="none" on:click={play}>

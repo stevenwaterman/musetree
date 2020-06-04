@@ -53,8 +53,8 @@
 
 <div class="container" bind:this={viewport} on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
     <Timeline/>
-    {#each selectedSections as section, idx}
-        <SectionCanvas viewport={viewport} section={section} index={idx} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
+    {#each selectedSections as section}
+        <SectionCanvas viewport={viewport} section={section} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
     {:else}
         <p class="placeholder">Use the controls below to begin</p>
     {/each}
