@@ -3,6 +3,8 @@
     import colorLookup from "../colors";
     import {getMaxSilence, getNumberOfNotes, getSilences} from "./stats";
     import {getPitchRange} from "../track/pitches";
+    import Button from "../buttons/Button.svelte";
+    import InstrumentPrevalence from "./InstrumentPrevalence.svelte";
 
     $: selectedSectionsStore = root.selectedSectionsStore;
     $: selectedSections = $selectedSectionsStore;
@@ -64,5 +66,10 @@
         <div style="display: flex; flex-direction: column">
             <span class="value">{maxSilenceSeconds} sec</span>
         </div>
+
+        <span class="label">Instrument Use:</span>
     </div>
+
+    <InstrumentPrevalence/>
+
 {/if}

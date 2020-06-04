@@ -143,8 +143,8 @@
     let nodeTransition;
     let edgeTransition;
 
-    onMount(() => {
-        audioStatusStore.subscribe(status => {
+    audioStatusStore.subscribe(status => {
+        if(node && edgeGradient) {
             if (nodeTransition) nodeTransition.end();
             if(edgeTransition) edgeTransition.end();
             trackPlaying = false;
@@ -160,8 +160,8 @@
                 edgeTransition = create_in_transition(edgeGradient, createEdgeTransition, status);
                 edgeTransition.start();
             }
-        });
-    })
+        }
+    });
 
 </script>
 

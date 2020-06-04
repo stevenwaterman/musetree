@@ -9,6 +9,16 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,18,1],
+        date: new Date(2020, 5, 3),
+        commitHash: "TODO",
+        changes: [
+            "Fixed silence info when longest silence is at the end of the track",
+            "Fixed crash when deleting selected node",
+            "Added bars showing the prevalence of each instrument to track info"
+        ]
+    },
+    {
         version: [2,18,0],
         date: new Date(2020, 5, 3),
         commitHash: "5cd30b2551e2e0ae96a1655606351915825605ec",
