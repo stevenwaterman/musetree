@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,19,0],
+        date: new Date(2020, 5, 4),
+        commitHash: "TODO",
+        changes: [
+            "Allowed hiding the sidebar"
+        ]
+    },
+    {
         version: [2,18,3],
         date: new Date(2020, 5, 4),
         commitHash: "31889933cce14e6dba309077aab327c1cf1f5261",

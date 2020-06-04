@@ -6,7 +6,7 @@
     import Modal from "svelte-simple-modal";
     import ModalController from "./modals/ModalController.svelte";
     import colorLookup, {modalOptions} from "./colors";
-    import {splitStore} from "./state/settings";
+    import {splitStore, showSidebarStore} from "./state/settings";
     import {togglePlayback} from "./audio/audioPlayer";
     import {undoStore} from "./state/undo";
     import AutoSaveController from "./persistence/AutoSaveController.svelte";
@@ -54,19 +54,35 @@
 <Modal>
     <AutoSaveController/>
     <ModalController/>
-    <div class="grid" style={"color: " + colorLookup.text + "; grid-template-columns: " + $splitStore + "fr " + (100-$splitStore) + "fr " + " 300px"} on:keypress={keyPressed}>
+    <div class="grid"
+         style={`color: ${colorLookup.text}; grid-template-columns: ${$splitStore}fr ${100-$splitStore}fr ${$showSidebarStore ? "300px" : ""}`}
+         on:keypress={keyPressed}>
+        {#if !$showSidebarStore}
+            <div style={`position: fixed; top: 0px; right: 8px; color: ${colorLookup.text}; font-size: 20pt; font-weight: 600; opacity: 50%; cursor: pointer; z-index: 999`}
+                 on:click|capture="{() => showSidebarStore.set(true)}">
+                &lt;
+            </div>
+        {/if}
         <div style={"grid-column: 1; grid-row: 1; min-height: 0;" + ($splitStore === 0 ? " display: none;" : "")}>
             <Track/>
         </div>
-        <div style={"grid-column: 2; grid-row: 1; min-height: 0;" + ($splitStore === 100 ? " display: none;" : "")}>
+        <div style={`position: relative; grid-column: 2; grid-row: 1; min-height: 0;${$splitStore === 100 ? " display: none;" : ""}`}>
             <TreeVis/>
         </div>
-        <div style="grid-column: 1 / span 3; grid-row: 2; min-height: 0"><TrackControls/></div>
-        <div style={`grid-column: 3; grid-row: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}; padding: 12px`}>
-            <h1 style={`text-align: center; color: ${colorLookup.text}; margin: 0`}>Options</h1>
-            <GenerationOptions/>
-            <DisplayOptions/>
-            <TrackInfo/>
+        <div style="grid-column: 1 / span 3; grid-row: 2; min-height: 0">
+            <TrackControls/>
         </div>
+        {#if $showSidebarStore}
+            <div style={`position: relative; grid-column: 3; grid-row: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}; padding: 12px`}>
+                <div style={`position: absolute; top: 0px; left: 8px; color: ${colorLookup.text}; font-size: 20pt; font-weight: 600; opacity: 50%; cursor: pointer`}
+                     on:click="{() => showSidebarStore.set(false)}">
+                    &gt;
+                </div>
+                <h1 style={`text-align: center; color: ${colorLookup.text}; margin: 0`}>Options</h1>
+                <GenerationOptions/>
+                <DisplayOptions/>
+                <TrackInfo/>
+            </div>
+        {/if}
     </div>
 </Modal>
