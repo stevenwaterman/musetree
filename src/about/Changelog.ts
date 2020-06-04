@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,18,3],
         date: new Date(2020, 5, 4),
-        commitHash: "TODO",
+        commitHash: "31889933cce14e6dba309077aab327c1cf1f5261",
         changes: [
             "Show all 3 measures of instrument use",
             "Remove 'section x' text from section canvas",
