@@ -10,7 +10,7 @@
     import {contextModalStore} from "./ContextModalStore";
     import {audioStatusStore} from "../audio/audioPlayer";
     import {create_in_transition, create_out_transition, get_store_value} from "svelte/internal";
-
+    import {play} from "../audio/audioPlayer";
 
     export let parentStore;
     export let branchStore;
@@ -163,6 +163,27 @@
         }
     });
 
+    function clickedEdge(event) {
+        if(!onSelectedPath) return;
+
+        const clickX = event.layerX;
+        const clickY = event.layerY;
+        const width = event.target.viewportElement.clientWidth;
+        const height = event.target.viewportElement.clientHeight;
+
+        let progress;
+        if(width === 10){
+            progress = clickY / height;
+        } else {
+            const fullDistance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+            const clickDistance = Math.sqrt(Math.pow(clickX, 2) + Math.pow(clickY, 2));
+            progress = clickDistance / fullDistance;
+        }
+        play(startsAt + progress * duration);
+
+
+    }
+
 </script>
 
 <style>
@@ -212,7 +233,7 @@
 </style>
 
 
-<div class="placement" style={"top: " + (150*depth) + "px; left: " + (60*offset -25) + "px"}>
+<div class="placement" style={`top: ${150*depth}px; left: ${60*offset -25}px; ${opacity < 100 ? "pointer-events: none" : ""}`}>
     <div
             on:mousedown={leftClick}
             on:contextmenu|preventDefault={rightClick}
@@ -240,12 +261,13 @@
     {/each}
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2 + 2}
-     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 24}px; ${offset < parentOffset ? "transform: scaleX(-1); " : ""}z-index: ${edgeZ}`}>
+     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 24}px; ${offset < parentOffset ? "transform: scaleX(-1); " : ""}z-index: ${edgeZ}`}
+    >
     <linearGradient bind:this={edgeGradient} id={`linear${depth},${offset}`} gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2={offset === parentOffset ? "0%" : "100%"} y2="100%">
         <stop offset="0%"   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"}   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"} stop-color={edgeColor}/>
     </linearGradient>
     <path d={`m 5 0 c 0 ${ch + 0.5} ${cw*2} ${ch + 0.5} ${cw*2} ${ch*2 + 1}`}
-          stroke={`url(#linear${depth},${offset})`} stroke-width="6px" fill="none"/>
+          stroke={`url(#linear${depth},${offset})`} stroke-width="6px" fill="none" style={onSelectedPath ? "cursor: pointer" : ""} on:click={clickedEdge}/>
 </svg>

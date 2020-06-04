@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,19,1],
+        date: new Date(2020, 5, 4),
+        commitHash: "TODO",
+        changes: [
+            "Can click on red/green edges to start playing",
+            "Prevent clicking translucent nodes"
+        ]
+    },
+    {
         version: [2,19,0],
         date: new Date(2020, 5, 4),
         commitHash: "ca2a3a61a32e7e5d3ad6ad4857c2ede347058507",
