@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,18,1],
         date: new Date(2020, 5, 3),
-        commitHash: "TODO",
+        commitHash: "a65a699beac80b1f936e202d0f220e37c3d156b7",
         changes: [
             "Fixed silence info when longest silence is at the end of the track",
             "Fixed crash when deleting selected node",
