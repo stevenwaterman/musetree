@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,19,0],
         date: new Date(2020, 5, 4),
-        commitHash: "TODO",
+        commitHash: "ca2a3a61a32e7e5d3ad6ad4857c2ede347058507",
         changes: [
             "Allowed hiding the sidebar"
         ]
