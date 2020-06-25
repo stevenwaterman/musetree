@@ -11,7 +11,7 @@ const changelog: Changelog = [
     {
         version: [2,19,3],
         date: new Date(2020, 5, 25),
-        commitHash: "TODO",
+        commitHash: "9c9d56baa297867b056e16e6d9abde8a94895f1d",
         changes: [
             "Replace tooltip code duplication with a styled component"
         ]
