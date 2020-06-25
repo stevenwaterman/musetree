@@ -17,6 +17,7 @@
     import Button from "../../buttons/Button.svelte";
     import colorLookup, {modalOptions} from "../../colors";
     import GenerationOptionsModal from "./GenerationOptionsModal.svelte";
+    import Tooltip from "../../tooltips/Tooltip.svelte";
 
     const {open} = getContext("simple-modal");
 
@@ -27,9 +28,6 @@
     function showAdvancedModal() {
         open(GenerationOptionsModal, {}, modalOptions);
     }
-
-    //TODO have a styled tooltip component that's reusable
-    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
 
 <style>
@@ -72,24 +70,6 @@
     input {
         margin: 0;
     }
-
-    .TT_trigger {
-    }
-
-    .TT_text {
-        visibility: hidden;
-        padding: 5px;
-        font-weight: 400;
-        font-size: 12px;
-        margin-left: 12px;
-
-        position: absolute;
-        z-index: 1;
-    }
-
-    .TT_trigger:hover .TT_text {
-        visibility: visible;
-    }
 </style>
 
 <div class="options" style={"color: " + colorLookup.textDark}>
@@ -99,25 +79,24 @@
     </div>
 
     <div class="optionElement">
-        <label for="genre" class="TT_trigger">
-            Genre:
-            <span class="TT_text" style={tt_text_style}>
-                The style of music to generate
-            </span>
-        </label>
+        <Tooltip>
+            <label for="genre" slot="trigger">Genre:</label>
+            <span slot="content">The style of music to generate</span>
+        </Tooltip>
         <span id="genre" style={"color: " + colorLookup.text}>{$genreStore[0]}</span>
         <Button on:click={showGenreModal} style="font-size: 24px; padding: 0 4px 0 4px; margin: 0 0 0 8px;">⚙</Button>
     </div>
 
 
     <div class="optionElement">
-        <label for="generationlength" class="TT_trigger">
-            Length:
-            <span class="TT_text" style={tt_text_style}>
+        <Tooltip>
+            <label for="generationlength" slot="trigger">Length:</label>
+            <span slot="content">
                 How many tokens to generate.
                 One note is usually two tokens
             </span>
-        </label>
+        </Tooltip>
+
         <input
                 class="slider"
                 id="generationLength"
@@ -130,14 +109,14 @@
     </div>
 
     <div style="align-self: flex-start">
-        <label class="TT_trigger">
-            Instruments:
-            <span class="TT_text" style={tt_text_style}>
+        <Tooltip>
+            <label slot="trigger">Instruments:</label>
+            <span slot="content">
                 Selecting an instrument gives a strong suggestion to the AI.
                 It might just ignore you, but will try and respect the settings where possible.
                 Results are better if you select instruments that make sense for the selected genre.
             </span>
-        </label>
+        </Tooltip>
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
         {#each instrumentCategories as instrument}

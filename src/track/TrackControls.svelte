@@ -8,6 +8,7 @@
     import {root} from "../state/trackTree";
     import {save, load} from "../persistence/persistence";
     import {undoStore} from "../state/undo";
+    import Tooltip from "../tooltips/Tooltip.svelte";
 
     const reader = new FileReader();
     reader.onload = async event => {
@@ -19,8 +20,6 @@
     }
 
     $: disallowSave = Object.keys($root.children).length === 0;
-
-    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
 
 <style>
@@ -53,24 +52,6 @@
         width: 100px;
     }
 
-    .TT_trigger {
-    }
-
-    .TT_text {
-        visibility: hidden;
-        padding: 5px;
-        font-weight: 400;
-        font-size: 12px;
-        margin-left: 12px;
-
-        position: absolute;
-        z-index: 1;
-    }
-
-    .TT_trigger:hover .TT_text {
-        visibility: visible;
-    }
-
     .playStop {
         width: 25px;
         font-size: 24pt;
@@ -90,32 +71,26 @@
     {/if}
 
     <div class="col center margin">
-        <label for="autoScroll" class="TT_trigger">
-            Auto Scroll
-            <span class="TT_text" style={tt_text_style}>
-                Scroll the track to show the part that is playing
-            </span>
-        </label>
+        <Tooltip>
+            <label for="autoScroll" slot="trigger">Auto Scroll</label>
+            <span slot="content">Scroll the track to show the part that is playing</span>
+        </Tooltip>
         <input id="autoScroll" type="checkbox" bind:checked={$autoScrollStore}/>
     </div>
 
     <div class="col center margin">
-        <label for="autoPlay" class="TT_trigger">
-            Auto Play
-            <span class="TT_text" style={tt_text_style}>
-                Start playing the audio when a new node is selected
-            </span>
-        </label>
+        <Tooltip>
+            <label for="autoPlay" slot="trigger">Auto Play</label>
+            <span slot="content">Start playing the audio when a new node is selected</span>
+        </Tooltip>
         <input id="autoPlay" type="checkbox" bind:checked={$autoPlayStore}/>
     </div>
 
     <div class="col margin">
-        <label for="preplay" class="TT_trigger">
-            Pre-Play: {$preplayStore}s
-            <span class="TT_text" style={tt_text_style}>
-                When a section auto-plays, how many seconds of the previous section should we play first?
-            </span>
-        </label>
+        <Tooltip>
+            <label for="preplay" slot="trigger">Pre-Play: {$preplayStore}s</label>
+            <span slot="content">When a section auto-plays, how many seconds of the previous section should we play first?</span>
+        </Tooltip>
         <input class="slider" id="preplay" bind:value={$preplayStore} type="range" min="0" max="5" step="0.5"/>
     </div>
 

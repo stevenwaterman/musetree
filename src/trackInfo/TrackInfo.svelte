@@ -4,11 +4,13 @@
     import {getInstrumentPrevalences, getMaxSilence, getNumberOfNotes, getNumberOfTokens, getSilences} from "./stats";
     import {getPitchRange} from "../track/pitches";
     import Button from "../buttons/Button.svelte";
+    import Tooltip from "../tooltips/Tooltip.svelte";
 
     $: selectedSectionsStore = root.selectedSectionsStore;
     $: selectedSections = $selectedSectionsStore;
 
     let useTrack = true;
+
     function selectTrack() {
         useTrack = true;
     }
@@ -33,8 +35,6 @@
 
     $: instrumentPrevalences = sections === null ? null : getInstrumentPrevalences(sections);
     $: instrumentBars = instrumentPrevalences === null ? null : Object.entries(instrumentPrevalences);
-
-    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
 </script>
 
 <style>
@@ -79,24 +79,6 @@
 
     .spacer {
         height: 12px;
-    }
-
-    .TT_trigger {
-    }
-
-    .TT_text {
-        visibility: hidden;
-        padding: 5px;
-        font-weight: 400;
-        font-size: 12px;
-        margin-left: 12px;
-
-        position: absolute;
-        z-index: 1;
-    }
-
-    .TT_trigger:hover .TT_text {
-        visibility: visible;
     }
 </style>
 
@@ -143,38 +125,42 @@
         </div>
 
         <div style="display: grid; grid-template-columns: auto 1fr; align-items: center; grid-column-gap: 12px">
-            <span class="label TT_trigger">
-                Note Count:
-                <span class="TT_text" style={tt_text_style}>Based on the number of notes for that instrument</span>
-            </span>
+            <Tooltip>
+                <span class="label" slot="trigger">Note Count:</span>
+                <span slot="content">Based on the number of notes for that instrument</span>
+            </Tooltip>
+
             <div class="instrumentBar">
                 {#each instrumentBars as [instrument, values]}
                     {#if values["noteCount"] > 0}
-                        <div class="bar" style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values["noteCount"]}`}></div>
+                        <div class="bar"
+                             style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values["noteCount"]}`}></div>
                     {/if}
                 {/each}
             </div>
 
-            <span class="label TT_trigger">
-                Note Length:
-                <span class="TT_text"  style={tt_text_style}>Based on the total length of all notes for that instrument</span>
-            </span>
+            <Tooltip>
+                <span class="label" slot="trigger">Note Length:</span>
+                <span slot="content">Based on the total length of all notes for that instrument</span>
+            </Tooltip>
             <div class="instrumentBar">
                 {#each instrumentBars as [instrument, values]}
                     {#if values["totalPlayingTime"] > 0}
-                        <div class="bar" style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values["totalPlayingTime"]*1000}`}></div>
+                        <div class="bar"
+                             style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values["totalPlayingTime"]*1000}`}></div>
                     {/if}
                 {/each}
             </div>
 
-            <span class="label TT_trigger">
-                Active Time:
-                <span class="TT_text" style={tt_text_style}>Based on how much of the time that instrument is making noise</span>
-            </span>
+            <Tooltip>
+                <span class="label" slot="trigger">Active Time:</span>
+                <span slot="content">Based on how much of the time that instrument is making noise</span>
+            </Tooltip>
             <div class="instrumentBar">
                 {#each instrumentBars as [instrument, values]}
                     {#if values["nonSilenceTime"] > 0}
-                        <div class="bar" style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values["nonSilenceTime"]*1000}`}></div>
+                        <div class="bar"
+                             style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values["nonSilenceTime"]*1000}`}></div>
                     {/if}
                 {/each}
             </div>

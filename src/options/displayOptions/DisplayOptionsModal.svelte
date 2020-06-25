@@ -14,14 +14,14 @@
     import colorLookup, {instrumentVisibility} from "../../colors";
     import {instruments} from "../../constants";
     import Button from "../../buttons/Button.svelte";
-
-    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight;
+    import Tooltip from "../../tooltips/Tooltip.svelte";
 
     function selectAll() {
         instruments.forEach(instrument => {
             instrumentVisibility[instrument].set(true);
         })
     }
+
     function selectNone() {
         instruments.forEach(instrument => {
             instrumentVisibility[instrument].set(false);
@@ -32,30 +32,6 @@
 <style>
     h1 {
         margin-top: 0;
-    }
-
-    .optionElement {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .TT_trigger {
-    }
-
-    .TT_text {
-        visibility: hidden;
-        padding: 5px;
-        font-weight: 400;
-        font-size: 12px;
-        margin-left: 12px;
-
-        position: absolute;
-        z-index: 1;
-    }
-
-    .TT_trigger:hover .TT_text {
-        visibility: visible;
     }
 
     input {
@@ -76,13 +52,13 @@
 
 <div style="display: flex; flex-direction: column">
     <div style="align-self: flex-start">
-        <label class="TT_trigger">
-            Show Instruments:
-            <span class="TT_text" style={tt_text_style}>
-            Deselecting an instrument will hide it from the track view.
-            The instrument will still play, but you won't see it.
-        </span>
-        </label>
+        <Tooltip>
+            <label slot="trigger">Show Instruments:</label>
+            <span slot="content">
+                Deselecting an instrument will hide it from the track view.
+                The instrument will still play, but you won't see it.
+            </span>
+        </Tooltip>
     </div>
     <div style="display: flex; flex-direction: row; flex-wrap: wrap">
         {#each instruments as instrument}

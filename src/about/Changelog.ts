@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
     {
+        version: [2,19,3],
+        date: new Date(2020, 5, 25),
+        commitHash: "TODO",
+        changes: [
+            "Replace tooltip code duplication with a styled component"
+        ]
+    },
+    {
         version: [2,19,2],
         date: new Date(2020, 5, 4),
         commitHash: "ef29e9ecce10577e8c9e0ac6651a0da15850dc41",
