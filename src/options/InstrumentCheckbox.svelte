@@ -1,19 +1,18 @@
 <script lang="ts">
   import colorLookup from "../colors";
-  import type {InstrumentCategory} from "../constants"
   import type {Writable} from "svelte/store";
 
-  export let instrument: InstrumentCategory;
-  export let storeMap: Record<InstrumentCategory, Writable<boolean>>;
+  export let instrument: keyof typeof colorLookup;
+  export let storeMap: Partial<Record<keyof typeof colorLookup, Writable<boolean>>>;
 
-  let store: Writable<boolean>;
+  let store: Writable<boolean> | undefined;
   $: store = storeMap[instrument];
   
   let id: string;
   $: id = "instrument-" + instrument;
 
   function toggle() {
-    store.update((state: boolean) => !state);
+    if(store) store.update((state: boolean) => !state);
   }
 </script>
 
@@ -38,7 +37,9 @@
   }
 </style>
 
+{#if store}
 <div class="row" style={`border: 1px solid ${colorLookup.border}`} on:click={toggle}>
   <input {id} type="checkbox" bind:checked={$store} />
   <label for={id} style={"color: " + colorLookup[instrument]}>{instrument}</label>
 </div>
+{/if}

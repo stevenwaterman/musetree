@@ -1,156 +1,155 @@
 <script lang="ts">
-    import colorLookup from "../colors";
-    import {cancelLoading} from "./persistence";
-    import Button from "../buttons/Button.svelte";
-    import LoadingProgressBar from "./LoadingProgressBar.svelte";
+  import { cancelLoading } from "./persistence";
+  import Button from "../buttons/Button.svelte";
+  import LoadingProgressBar from "./LoadingProgressBar.svelte";
 
-    export let cancelled: boolean = false;
+  export let cancelled: boolean = false;
 
-    function cancel() {
-        cancelLoading();
-        cancelled = true;
-    }
+  function cancel() {
+    cancelLoading();
+    cancelled = true;
+  }
 </script>
 
 <style>
-    .center {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-    }
+  .center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
 
-    .column {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
+  .column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
-    .loadingText {
-        text-align: center;
-        margin: 4px;
-    }
+  .loadingText {
+    text-align: center;
+    margin: 4px;
+  }
 
-    .lds-spinner {
-        display: inline-block;
-        position: relative;
-        width: 80px;
-        height: 80px;
-    }
+  .lds-spinner {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
 
-    .lds-spinner div {
-        transform-origin: 40px 40px;
-        animation: lds-spinner 1.2s linear infinite;
-    }
+  .lds-spinner div {
+    transform-origin: 40px 40px;
+    animation: lds-spinner 1.2s linear infinite;
+  }
 
-    .lds-spinner div:after {
-        content: " ";
-        display: block;
-        position: absolute;
-        top: 3px;
-        left: 37px;
-        width: 6px;
-        height: 18px;
-        border-radius: 20%;
-        background: #c3cee3;
-    }
+  .lds-spinner div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 3px;
+    left: 37px;
+    width: 6px;
+    height: 18px;
+    border-radius: 20%;
+    background: #c3cee3;
+  }
 
-    .lds-spinner div:nth-child(1) {
-        transform: rotate(0deg);
-        animation-delay: -1.1s;
-    }
+  .lds-spinner div:nth-child(1) {
+    transform: rotate(0deg);
+    animation-delay: -1.1s;
+  }
 
-    .lds-spinner div:nth-child(2) {
-        transform: rotate(30deg);
-        animation-delay: -1s;
-    }
+  .lds-spinner div:nth-child(2) {
+    transform: rotate(30deg);
+    animation-delay: -1s;
+  }
 
-    .lds-spinner div:nth-child(3) {
-        transform: rotate(60deg);
-        animation-delay: -0.9s;
-    }
+  .lds-spinner div:nth-child(3) {
+    transform: rotate(60deg);
+    animation-delay: -0.9s;
+  }
 
-    .lds-spinner div:nth-child(4) {
-        transform: rotate(90deg);
-        animation-delay: -0.8s;
-    }
+  .lds-spinner div:nth-child(4) {
+    transform: rotate(90deg);
+    animation-delay: -0.8s;
+  }
 
-    .lds-spinner div:nth-child(5) {
-        transform: rotate(120deg);
-        animation-delay: -0.7s;
-    }
+  .lds-spinner div:nth-child(5) {
+    transform: rotate(120deg);
+    animation-delay: -0.7s;
+  }
 
-    .lds-spinner div:nth-child(6) {
-        transform: rotate(150deg);
-        animation-delay: -0.6s;
-    }
+  .lds-spinner div:nth-child(6) {
+    transform: rotate(150deg);
+    animation-delay: -0.6s;
+  }
 
-    .lds-spinner div:nth-child(7) {
-        transform: rotate(180deg);
-        animation-delay: -0.5s;
-    }
+  .lds-spinner div:nth-child(7) {
+    transform: rotate(180deg);
+    animation-delay: -0.5s;
+  }
 
-    .lds-spinner div:nth-child(8) {
-        transform: rotate(210deg);
-        animation-delay: -0.4s;
-    }
+  .lds-spinner div:nth-child(8) {
+    transform: rotate(210deg);
+    animation-delay: -0.4s;
+  }
 
-    .lds-spinner div:nth-child(9) {
-        transform: rotate(240deg);
-        animation-delay: -0.3s;
-    }
+  .lds-spinner div:nth-child(9) {
+    transform: rotate(240deg);
+    animation-delay: -0.3s;
+  }
 
-    .lds-spinner div:nth-child(10) {
-        transform: rotate(270deg);
-        animation-delay: -0.2s;
-    }
+  .lds-spinner div:nth-child(10) {
+    transform: rotate(270deg);
+    animation-delay: -0.2s;
+  }
 
-    .lds-spinner div:nth-child(11) {
-        transform: rotate(300deg);
-        animation-delay: -0.1s;
-    }
+  .lds-spinner div:nth-child(11) {
+    transform: rotate(300deg);
+    animation-delay: -0.1s;
+  }
 
-    .lds-spinner div:nth-child(12) {
-        transform: rotate(330deg);
-        animation-delay: 0s;
-    }
+  .lds-spinner div:nth-child(12) {
+    transform: rotate(330deg);
+    animation-delay: 0s;
+  }
 
-    .flip {
-        transform: scaleX(-1);
-    }
+  .flip {
+    transform: scaleX(-1);
+  }
 
-    @keyframes lds-spinner {
-        0% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 0;
-        }
+  @keyframes lds-spinner {
+    0% {
+      opacity: 1;
     }
+    100% {
+      opacity: 0;
+    }
+  }
 </style>
 
 <div class="center">
-    <div class="column">
-        <div class="lds-spinner" class:flip={cancelled}>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-        {#if cancelled}
-            <p class="loadingText">Reverting</p>
-        {:else}
-            <p class="loadingText">Loading</p>
-            <Button on:click={cancel}>Cancel</Button>
-            <LoadingProgressBar/>
-        {/if}
+  <div class="column">
+    <div class="lds-spinner" class:flip={cancelled}>
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
+      <div />
     </div>
+    {#if cancelled}
+      <p class="loadingText">Reverting</p>
+    {:else}
+      <p class="loadingText">Loading</p>
+      <Button on:click={cancel}>Cancel</Button>
+      <LoadingProgressBar />
+    {/if}
+  </div>
 </div>

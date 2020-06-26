@@ -1,88 +1,97 @@
 <script lang="ts">
-    import {
-        yScaleStore,
-        splitStore
-    } from "../../state/settings";
-    import {getContext} from "svelte";
-    import Button from "../../buttons/Button.svelte";
-    import colorLookup, {modalOptions} from "../../colors";
-    import DisplayOptionsModal from "./DisplayOptionsModal.svelte";
-    import Tooltip from "../../tooltips/Tooltip.svelte";
+  import { yScaleStore, splitStore } from "../../state/settings";
+  import { getContext } from "svelte";
+  import Button from "../../buttons/Button.svelte";
+  import colorLookup, { modalOptions } from "../../colors";
+  import DisplayOptionsModal from "./DisplayOptionsModal.svelte";
+  import Tooltip from "../../tooltips/Tooltip.svelte";
 
-    const {open} = getContext("simple-modal");
+  const { open } = getContext("simple-modal");
 
-    function showGenreModal() {
-        open(DisplayOptionsModal, {}, modalOptions);
-    }
-
-    function showAdvancedModal() {
-        open(DisplayOptionsModal, {}, modalOptions);
-    }
+  function showAdvancedModal() {
+    open(DisplayOptionsModal, {}, modalOptions);
+  }
 </script>
 
 <style>
-    .options {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        margin-top: 12px;
-    }
+  .options {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 12px;
+  }
 
-    .slider {
-        width: 100px;
-    }
+  .slider {
+    width: 100px;
+  }
 
-    .optionElement {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
+  .optionElement {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
 
-    label {
-        font-weight: 600;
-        margin: 0 8px 0 0;
-    }
+  label {
+    font-weight: 600;
+    margin: 0 8px 0 0;
+  }
 
-    span {
-        margin: 4px;
-    }
+  span {
+    margin: 4px;
+  }
 
-    h1 {
-        margin: 0;
-        text-align: center;
-        font-size: 20pt;
-    }
+  h1 {
+    margin: 0;
+    text-align: center;
+    font-size: 20pt;
+  }
 
-    select {
-        margin: 0;
-    }
-
-    input {
-        margin: 0;
-    }
+  input {
+    margin: 0;
+  }
 </style>
 
-<div class="options" style={"color: " + colorLookup.textDark}>
-    <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between">
-        <h1 style={`color: ${colorLookup.text}`}>Display</h1>
-        <Button on:click={showAdvancedModal} style="font-size: 10pt">Advanced</Button>
-    </div>
+<div class="options" style={'color: ' + colorLookup.textDark}>
+  <div
+    style="display: flex; flex-direction: row; align-items: center;
+    justify-content: space-between">
+    <h1 style={`color: ${colorLookup.text}`}>Display</h1>
+    <Button on:click={showAdvancedModal} style="font-size: 10pt">
+      Advanced
+    </Button>
+  </div>
 
-    <div class="optionElement">
-        <Tooltip>
-            <label for="yScale" slot="trigger">Track Zoom</label>
-            <span slot="content">Vertically zoom the track view</span>
-        </Tooltip>
-        <input class="slider" id="yScale" bind:value={$yScaleStore} type="range" min="10" max="500" step="10"/>
-        <span>{$yScaleStore}%</span>
-    </div>
+  <div class="optionElement">
+    <Tooltip>
+      <label for="yScale" slot="trigger">Track Zoom</label>
+      <span slot="content">Vertically zoom the track view</span>
+    </Tooltip>
+    <input
+      class="slider"
+      id="yScale"
+      bind:value={$yScaleStore}
+      type="range"
+      min="10"
+      max="500"
+      step="10" />
+    <span>{$yScaleStore}%</span>
+  </div>
 
-    <div class="optionElement">
-        <Tooltip>
-            <label for="split" slot="trigger">View Split</label>
-            <span slot="content">How much horizontal space to take up with the track view</span>
-        </Tooltip>
-        <input class="slider" id="split" bind:value={$splitStore} type="range" min="0" max="100" step="5"/>
-        <span>{$splitStore}%</span>
-    </div>
+  <div class="optionElement">
+    <Tooltip>
+      <label for="split" slot="trigger">View Split</label>
+      <span slot="content">
+        How much horizontal space to take up with the track view
+      </span>
+    </Tooltip>
+    <input
+      class="slider"
+      id="split"
+      bind:value={$splitStore}
+      type="range"
+      min="0"
+      max="100"
+      step="5" />
+    <span>{$splitStore}%</span>
+  </div>
 </div>

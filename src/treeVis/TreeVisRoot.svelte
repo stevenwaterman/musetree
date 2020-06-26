@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { root} from "../state/trackTree";
+  import { root } from "../state/trackTree";
   import type { TreeState, BranchStore } from "../state/trackTree";
   import TreeVisBranch from "./TreeVisBranch.svelte";
   import colorLookup, { modalOptions } from "../colors";
@@ -8,7 +8,6 @@
   import { configStore } from "../state/settings";
   import { getContext } from "svelte";
   import { request } from "../broker";
-  import { undoStore } from "../state/undo";
   import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
   import { audioStatusStore } from "../audio/audioPlayer";
   import type { Readable } from "svelte/store";

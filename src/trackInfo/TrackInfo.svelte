@@ -1,9 +1,5 @@
 <script lang="ts">
-  import {
-    selectedBranchStore,
-    selectedEncodingStore,
-    root,
-  } from "../state/trackTree";
+  import { root } from "../state/trackTree";
   import colorLookup from "../colors";
   import {
     getInstrumentPrevalences,

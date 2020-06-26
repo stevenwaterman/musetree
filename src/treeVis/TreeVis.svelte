@@ -1,12 +1,11 @@
 <script lang="ts">
-  import {afterUpdate} from "svelte";
-  import {root} from "../state/trackTree";
+  import { afterUpdate } from "svelte";
+  import { root } from "../state/trackTree";
   import panzoom, { PanZoom } from "panzoom";
   import TreeVisRoot from "./TreeVisRoot.svelte";
   import colorLookup from "../colors";
   import ContextModal from "./ContextModal.svelte";
-  import {contextModalStore} from "./ContextModalStore";
-
+  import { contextModalStore } from "./ContextModalStore";
 
   let container: HTMLDivElement;
 
@@ -15,12 +14,12 @@
       minZoom: 0.1,
       maxZoom: 2,
       zoomDoubleClickSpeed: 1,
-      smoothScroll: false
+      smoothScroll: false,
     });
     pan.on("pan", () => contextModalStore.set(null));
     pan.on("zoom", () => contextModalStore.set(null));
     pan.on("transform", () => contextModalStore.set(null));
-  })
+  });
 
   let treeContainer: HTMLDivElement;
 </script>
@@ -48,11 +47,15 @@
 </style>
 
 {#if root != null}
-  <div class="tree-container" style={"color: " + colorLookup.textEmphasis + ";background-color: " + colorLookup.bgLight + "; border-left: 1px solid " + colorLookup.border}  bind:this={treeContainer} on:mouseenter={() => treeContainer.focus()}>
-    <ContextModal/>
+  <div
+    class="tree-container"
+    style={'color: ' + colorLookup.textEmphasis + ';background-color: ' + colorLookup.bgLight + '; border-left: 1px solid ' + colorLookup.border}
+    bind:this={treeContainer}
+    on:mouseenter={() => treeContainer.focus()}>
+    <ContextModal />
     <div class="pan-container" bind:this={container}>
       <div class="tree-position">
-        <TreeVisRoot treeContainer={treeContainer}/>
+        <TreeVisRoot {treeContainer} />
       </div>
     </div>
   </div>

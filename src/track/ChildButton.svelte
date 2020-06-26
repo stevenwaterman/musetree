@@ -1,8 +1,11 @@
 <script lang="ts">
-  import {root, toReadableNodeState} from "../state/trackTree";
-  import type {NodeStore, NodeState, TreeStore, BranchStore} from "../state/trackTree";
+  import { root, toReadableNodeState } from "../state/trackTree";
+  import type {
+    NodeStore,
+    NodeState,
+  } from "../state/trackTree";
   import Button from "../buttons/Button.svelte";
-  import type {Readable} from "svelte/store";
+  import type { Readable } from "svelte/store";
 
   export let nodeStore: NodeStore;
   export let remove: () => void;

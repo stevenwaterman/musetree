@@ -11,10 +11,10 @@
   import colorLookup from "../colors";
   import download from "downloadjs";
   import Button from "../buttons/Button.svelte";
-  import { encodingToString} from "../state/encoding";
+  import { encodingToString } from "../state/encoding";
   import type { MusenetEncoding } from "../state/encoding";
   import type { Section } from "../state/section";
-  import { root} from "../state/trackTree";
+  import { root } from "../state/trackTree";
   import type { BranchStore, BranchState } from "../state/trackTree";
   import Tooltip from "../tooltips/Tooltip.svelte";
   import type { Readable } from "svelte/store";

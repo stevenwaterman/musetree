@@ -1,9 +1,9 @@
 <script lang="ts">
   import colorLookup from "../colors";
 
-  export let disabled: boolean = false;
-  export let emphasise: boolean = false;
-  export let style: string = "";
+  export let disabled: true | undefined;
+  export let emphasise: true | undefined;
+  export let style: string | JSX.CSSProperties | undefined;
   export let fileTypes: string = "";
   export let handleFile: (file: File) => void = () => {};
 

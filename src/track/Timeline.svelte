@@ -4,13 +4,16 @@
   import {
     yScaleStore,
     autoScrollStore,
-    isScrollingStore
+    isScrollingStore,
   } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  function traverse(node: Element, {offset: startTime, duration: endTime}: AudioStatus_On) {
+  function traverse(
+    node: Element,
+    { offset: startTime, duration: endTime }: AudioStatus_On
+  ) {
     const transTime: number = endTime - startTime;
-    const style = (node as unknown as ElementCSSInlineStyle).style;
+    const style = ((node as unknown) as ElementCSSInlineStyle).style;
     return {
       duration: transTime * 1000,
       tick: (t: number) => {
@@ -22,10 +25,10 @@
         if ($isScrollingStore) {
           node.scrollIntoView({
             block: "center",
-            behavior: "smooth"
+            behavior: "smooth",
           });
         }
-      }
+      },
     };
   }
 
@@ -37,7 +40,7 @@
   };
   let hidden: boolean = true;
 
-  audioStatusStore.subscribe(status => {
+  audioStatusStore.subscribe((status) => {
     if (transition) transition.end();
     hidden = status.type !== "on";
     if (!hidden && element) {
@@ -70,8 +73,10 @@
 </style>
 
 <div
-        bind:this={element}
-        on:introend="{() => { hidden = true; }}"
-        class="anchor">
-  <div class="line" hidden={hidden}></div>
+  bind:this={element}
+  on:introend={() => {
+    hidden = true;
+  }}
+  class="anchor">
+  <div class="line" {hidden} />
 </div>

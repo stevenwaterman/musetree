@@ -1,20 +1,20 @@
 <script lang="ts">
-    import type {Genre} from "../../constants";
-    import {genreStore} from "../../state/settings";
-    import {getContext} from "svelte";
-    import Button from "../../buttons/Button.svelte";
+  import type { Genre } from "../../constants";
+  import { genreStore } from "../../state/settings";
+  import { getContext } from "svelte";
+  import Button from "../../buttons/Button.svelte";
 
-    export let text: string;
-    export let genre: Genre;
+  export let text: string;
+  export let genre: Genre;
 
-    const emphasise = $genreStore[1] === genre;
+  const emphasise = $genreStore[1] === genre;
 
-    const {close} = getContext("simple-modal");
+  const { close } = getContext("simple-modal");
 
-    function clicked() {
-        genreStore.set([text, genre]);
-        close()
-    }
+  function clicked() {
+    genreStore.set([text, genre]);
+    close();
+  }
 </script>
 
-<Button emphasise={emphasise} on:click={clicked}>{text}</Button>
+<Button {emphasise} on:click={clicked}>{text}</Button>

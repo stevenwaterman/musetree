@@ -18,7 +18,6 @@
     : emphasise
     ? colorLookup.text
     : colorLookup.buttonBg;
-
 </script>
 
 <style>
@@ -47,17 +46,17 @@
   }
 </style>
 
-  {#if disabled}
-    <div
-      class="button disabled"
-      style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
-      <slot />
-    </div>
-  {:else}
-    <div
-      class="button enabled"
-      on:click
-      style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
-      <slot />
-    </div>
-  {/if}
+{#if disabled}
+  <div
+    class="button disabled"
+    style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
+    <slot />
+  </div>
+{:else}
+  <div
+    class="button enabled"
+    on:click
+    style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
+    <slot />
+  </div>
+{/if}

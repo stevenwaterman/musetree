@@ -2,8 +2,6 @@
   import { yScaleStore } from "../state/settings";
   import { instruments } from "../constants";
   import type { Instrument } from "../constants";
-  import { afterUpdate } from "svelte";
-  import { root } from "../state/trackTree";
   import * as Audio from "../audio/audioPlayer";
   import colorLookup, { allInstrumentsVisibility } from "../colors";
   import VisibilityGuard from "./VisibilityGuard.svelte";
@@ -14,8 +12,6 @@
   export let section: Section;
   export let pitchMin: number;
   export let pitchMax: number;
-
-  //TODO style as cssproperties
 
   let pitchRange: number;
   $: pitchRange = pitchMax - pitchMin;
@@ -35,8 +31,10 @@
   let notes: Notes | null;
   $: notes = section ? section.notes : null;
 
-  let noteEntries: Array<[Instrument, Note[]]>;
-  $: noteEntires = notes ? Object.entries(notes) as Array<[Instrument, Note[]]> : null;
+  let noteEntries: Array<[Instrument, Note[]]> | null;
+  $: noteEntries = notes
+    ? (Object.entries(notes) as Array<[Instrument, Note[]]>)
+    : null;
 
   function play(
     event: MouseEvent & {
@@ -65,14 +63,6 @@
     flex-shrink: 0;
     flex-grow: 0;
     left: 0;
-  }
-
-  .label {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    display: inline;
-    z-index: 2;
   }
 </style>
 

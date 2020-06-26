@@ -10,8 +10,4 @@
     }
 </script>
 
-<style>
-
-</style>
-
 <Button on:click={openAboutModal}>About</Button>
