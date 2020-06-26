@@ -1,12 +1,13 @@
 <script lang="ts">
   import colorLookup from "../colors";
-  const textStyle: string =
-    "border: 1px solid " +
-    colorLookup.border +
-    "; background-color: " +
-    colorLookup.bgLight +
-    "; color: " +
-    colorLookup.textDark;
+  import toCss from "react-style-object-to-css"
+  const textStyle: JSX.CSSProperties = {
+    border: "1px solid",
+    borderColor: colorLookup.border,
+    backgroundColor: colorLookup.bgLight,
+    color: colorLookup.textDark
+  };
+
 </script>
 
 <style>
@@ -30,8 +31,8 @@
 <div>
   <div class="TT_trigger">
     <slot name="trigger" />
-    <div class="TT_text" style={textStyle}>
-      <slot name="content" />
+    <div class="TT_text" style={toCss(textStyle)}>
+      <slot />
     </div>
   </div>
 </div>

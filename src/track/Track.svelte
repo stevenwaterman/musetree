@@ -6,7 +6,8 @@
   import colorLookup from "../colors";
   import { getPitchRange } from "./pitches";
   import type { Section } from "../state/section";
-  import type { Readable } from "svelte/store";
+  import type { Readable } from "svelte/store"
+  import toCss from "react-style-object-to-css"
 
   let selectedSectionsStore: Readable<Section[]>;
   $: selectedSectionsStore = root.selectedSectionsStore;
@@ -64,7 +65,7 @@
   class="container"
   bind:this={viewport}
   on:wheel={() => isScrollingStore.set(false)}
-  style={'background-color: ' + colorLookup.bgDark}>
+  style={toCss({backgroundColor: colorLookup.bgDark})}>
   <Timeline />
   {#each selectedSections as section}
     {#if viewport !== undefined}

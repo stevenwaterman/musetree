@@ -1,9 +1,10 @@
 <script lang="ts">
-  import colorLookup from "../colors";
+  import colorLookup from "../colors"
+  import toCss from "react-style-object-to-css";
 
-  export let disabled: true | undefined;
-  export let emphasise: true | undefined;
-  export let style: string | JSX.CSSProperties | undefined;
+  export let disabled: true | undefined = undefined;
+  export let emphasise: true | undefined = undefined;
+  export let style: JSX.CSSProperties | undefined = undefined;
   export let fileTypes: string = "";
   export let handleFile: (file: File) => void = () => {};
 
@@ -88,7 +89,7 @@
     <label
       for="upload"
       class="button enabled"
-      style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
+      style={toCss({ color: textColor, backgroundColor: bgColor, ...(style || {})})}>
       <slot />
       <input
         id="upload"

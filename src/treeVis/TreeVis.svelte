@@ -5,7 +5,8 @@
   import TreeVisRoot from "./TreeVisRoot.svelte";
   import colorLookup from "../colors";
   import ContextModal from "./ContextModal.svelte";
-  import { contextModalStore } from "./ContextModalStore";
+  import { contextModalStore } from "./ContextModalStore"
+  import toCss from "react-style-object-to-css";
 
   let container: HTMLDivElement;
 
@@ -49,7 +50,7 @@
 {#if root != null}
   <div
     class="tree-container"
-    style={'color: ' + colorLookup.textEmphasis + ';background-color: ' + colorLookup.bgLight + '; border-left: 1px solid ' + colorLookup.border}
+    style={toCss({color: colorLookup.textEmphasis, backgroundColor: colorLookup.bgLight, borderLeft: "1px solid", borderColor: colorLookup.border})}
     bind:this={treeContainer}
     on:mouseenter={() => treeContainer.focus()}>
     <ContextModal />

@@ -18,7 +18,8 @@
   import { create_in_transition } from "svelte/internal";
   import { play } from "../audio/audioPlayer";
   import type { Section } from "../state/section";
-  import type { Readable } from "svelte/store";
+  import type { Readable } from "svelte/store"
+  import toCss from "react-style-object-to-css";
 
   export let parentStore: NodeStore;
   export let branchStore: BranchStore;
@@ -340,7 +341,7 @@
 
 <div
   class="placement"
-  style={`top: ${150 * depth}px; left: ${60 * offset - 25}px; ${opacity < 100 ? 'pointer-events: none' : ''}`}>
+  style={toCss({top: 150 * depth, left: 60 * offset - 25, pointerEvents: opacity === 100 ? "initial": "none"})}>
   <div
     on:mousedown={leftClick}
     on:contextmenu|preventDefault={rightClick}
@@ -349,14 +350,14 @@
     on:keypress={keyPressed}
     bind:this={node}
     class="node"
-    style={`background-color: ${nodeColor}; opacity: ${opacity}%`}
+    style={toCss({backgroundColor: nodeColor, opacity: opacity})}
     tabindex={0}>
     <span class="label">{childIndex}</span>
   </div>
   {#if pendingLoad > 0}
     <p
       class="pendingLoad"
-      style={'color: ' + colorLookup.textDark + '; background-color: ' + colorLookup.bgDark + '; border: 2px solid ' + colorLookup.border}>
+      style={toCss({color: colorLookup.textDark, backgroundColor: colorLookup.bgLight, border: "2px solid", borderColor: colorLookup.border})}>
       +{pendingLoad}
     </p>
   {/if}

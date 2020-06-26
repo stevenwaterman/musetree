@@ -13,6 +13,7 @@
   import { save, load } from "../persistence/persistence";
   import { undoStore } from "../state/undo";
   import Tooltip from "../tooltips/Tooltip.svelte";
+  import toCss from "react-style-object-to-css";
 
   const reader: FileReader = new FileReader();
   reader.onload = () => {
@@ -65,20 +66,20 @@
 
 <div
   class="container center"
-  style={'color: ' + colorLookup.textDark + '; border-top: 1px solid ' + colorLookup.border + '; background-color: ' + colorLookup.bgDark}>
+  style={toCss({ color: colorLookup.textDark, borderTop: '1px solid', borderColor: colorLookup.border, backgroundColor: colorLookup.bgDark })}>
   {#if $audioStatusStore.type === 'on'}
-    <div class="playStop" on:click={stop} style={`color: ${colorLookup.text}`}>
+    <div class="playStop" on:click={stop} style={toCss({color: colorLookup.text})}>
       ■
     </div>
   {:else if $audioStatusStore.type === 'loading'}
-    <div class="playStop" style={`color: ${colorLookup.text}; cursor: default`}>
+    <div class="playStop" style={toCss({color: colorLookup.text, cursor: "default"})}>
       ▶
     </div>
   {:else}
     <div
       class="playStop"
       on:click={() => play(0)}
-      style={`color: ${colorLookup.text}`}>
+      style={toCss({color: colorLookup.text})}>
       ▶
     </div>
   {/if}
@@ -86,7 +87,7 @@
   <div class="col center margin">
     <Tooltip>
       <label for="autoScroll" slot="trigger">Auto Scroll</label>
-      <span slot="content">
+      <span>
         Scroll the track to show the part that is playing
       </span>
     </Tooltip>
@@ -96,7 +97,7 @@
   <div class="col center margin">
     <Tooltip>
       <label for="autoPlay" slot="trigger">Auto Play</label>
-      <span slot="content">
+      <span>
         Start playing the audio when a new node is selected
       </span>
     </Tooltip>
@@ -106,7 +107,7 @@
   <div class="col margin">
     <Tooltip>
       <label for="preplay" slot="trigger">Pre-Play: {$preplayStore}s</label>
-      <span slot="content">
+      <span>
         When a section auto-plays, how many seconds of the previous section
         should we play first?
       </span>

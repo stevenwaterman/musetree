@@ -31,6 +31,7 @@
     "downloadjs": "^1.4.7",
     "musenet-midi": "github:stevenwaterman/musenet-midi#46d228a461b83e70596f4b2ba921c0d45db94bbe",
     "panzoom": "^9.2.1",
+    "react-style-object-to-css": "^1.1.2",
     "sirv-cli": "^0.4.5",
     "svelte-simple-modal": "^0.4.2"
   }

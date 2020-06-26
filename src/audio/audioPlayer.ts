@@ -1,9 +1,6 @@
-import { Readable, Writable, writable } from "svelte/store";
+import { Writable, writable } from "svelte/store";
 import { Section } from "../state/section";
 import {
-  BranchState,
-  BranchStore,
-  NodeState,
   root,
 } from "../state/trackTree";
 import { autoPlayStore, preplayStore } from "../state/settings";
@@ -29,6 +26,8 @@ let audioStatus: AudioStatus = { type: "off" };
 audioStatusStore.subscribe(newStatus => {
   audioStatus = newStatus;
 });
+
+let source: AudioBufferSourceNode | null = null;
 
 const ctx = new AudioContext({
   sampleRate: 44100
@@ -63,7 +62,7 @@ async function load(track: Section[] | null) {
   }
 }
 
-let source: AudioBufferSourceNode | null = null;
+
 export async function play(offset: number) {
   if (trackAudio === null) return;
   if (audioStatus.type === "on") stop();

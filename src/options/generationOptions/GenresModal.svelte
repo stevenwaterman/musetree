@@ -3,7 +3,8 @@
   import { genres } from "../../constants";
   import type { Genre } from "../../constants";
   import colorLookup from "../../colors";
-  import Tooltip from "../../tooltips/Tooltip.svelte";
+  import Tooltip from "../../tooltips/Tooltip.svelte"
+  import toCss from "react-style-object-to-css";
 
   const simpleGenres: Array<[string, Genre]> = [
     ["Chopin", "chopin"],
@@ -52,11 +53,11 @@
 </style>
 
 <div>
-  <h1 style={'color: ' + colorLookup.text}>Genres</h1>
+  <h1 style={toCss({color: colorLookup.text})}>Genres</h1>
 
   <Tooltip>
-    <h2 slot="trigger" style={'color: ' + colorLookup.text}>Simple</h2>
-    <span slot="content">
+    <h2 slot="trigger" style={toCss({color: colorLookup.text})}>Simple</h2>
+    <span>
       These genres are the most reliable
       <br />
       They are available in the official MuseNet tool
@@ -70,8 +71,8 @@
   </div>
 
   <Tooltip>
-    <h2 slot="trigger" style={'color: ' + colorLookup.text}>Advanced</h2>
-    <span slot="content">
+    <h2 slot="trigger" style={toCss({color: colorLookup.text})}>Advanced</h2>
+    <span>
       These genres are reliable
       <br />
       They are available in the official MuseNet tool
@@ -87,8 +88,8 @@
   </div>
 
   <Tooltip>
-    <h2 slot="trigger" style={'color: ' + colorLookup.text}>Experimental</h2>
-    <span slot="content">
+    <h2 slot="trigger" style={toCss({color: colorLookup.text})}>Experimental</h2>
+    <span>
       These genres are not reliable
       <br />
       They are not supported by MuseNet, but usually work

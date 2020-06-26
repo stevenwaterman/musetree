@@ -12,6 +12,7 @@
   import colorLookup, { modalOptions } from "../../colors";
   import GenerationOptionsModal from "./GenerationOptionsModal.svelte";
   import Tooltip from "../../tooltips/Tooltip.svelte";
+  import toCss from "react-style-object-to-css"
 
   const { open } = getContext("simple-modal");
 
@@ -60,13 +61,16 @@
   input {
     margin: 0;
   }
+
+  .row {
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between
+  }
 </style>
 
-<div class="options" style={'color: ' + colorLookup.textDark}>
+<div class="options" style={toCss({color: colorLookup.textDark})}>
   <div
-    style="display: flex; flex-direction: row; align-items: center;
-    justify-content: space-between">
-    <h1 style={'color: ' + colorLookup.text}>Generator</h1>
+    class="row">
+    <h1 style={toCss({color: colorLookup.text})}>Generator</h1>
     <Button on:click={showAdvancedModal} style="font-size: 10pt">
       Advanced
     </Button>
@@ -75,9 +79,9 @@
   <div class="optionElement">
     <Tooltip>
       <label for="genre" slot="trigger">Genre:</label>
-      <span slot="content">The style of music to generate</span>
+      <span>The style of music to generate</span>
     </Tooltip>
-    <span id="genre" style={'color: ' + colorLookup.text}>
+    <span id="genre" style={toCss({color: colorLookup.text})}>
       {$genreStore[0]}
     </span>
     <Button
@@ -90,7 +94,7 @@
   <div class="optionElement">
     <Tooltip>
       <label for="generationlength" slot="trigger">Length:</label>
-      <span slot="content">
+      <span>
         How many tokens to generate. One note is usually two tokens
       </span>
     </Tooltip>
@@ -109,7 +113,7 @@
   <div style="align-self: flex-start">
     <Tooltip>
       <label slot="trigger">Instruments:</label>
-      <span slot="content">
+      <span>
         Selecting an instrument gives a strong suggestion to the AI. It might
         just ignore you, but will try and respect the settings where possible.
         Results are better if you select instruments that make sense for the

@@ -1,9 +1,11 @@
 <script lang="ts">
   import colorLookup from "../colors";
+  import AboutModal from "../about/AboutModal.svelte";
+  import toCss from "react-style-object-to-css"
 
-  export const disabled: boolean = false;
-  export const emphasise: boolean = false;
-  export const style: string = "";
+  export let disabled: boolean | undefined = undefined;
+  export let emphasise: boolean | undefined = undefined;
+  export let style: JSX.CSSProperties | undefined = undefined; 
 
   let textColor: string;
   $: textColor = disabled
@@ -18,6 +20,9 @@
     : emphasise
     ? colorLookup.text
     : colorLookup.buttonBg;
+
+  let actualStyle: JSX.CSSProperties;
+  $: actualStyle = { color: textColor, backgroundColor: bgColor, ...(style || {})};
 </script>
 
 <style>
@@ -47,16 +52,11 @@
 </style>
 
 {#if disabled}
-  <div
-    class="button disabled"
-    style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
+  <div class="button disabled" style={toCss(actualStyle)}>
     <slot />
   </div>
 {:else}
-  <div
-    class="button enabled"
-    on:click
-    style={style + '; color: ' + textColor + '; background-color: ' + bgColor}>
+  <div class="button enabled" on:click style={toCss(actualStyle)}>
     <slot />
   </div>
 {/if}

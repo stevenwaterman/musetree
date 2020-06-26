@@ -11,7 +11,8 @@
   import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
   import { toReadableNodeState } from "../state/trackTree";
   import type { NodeStore, NodeState, BranchStore } from "../state/trackTree";
-  import type { Readable } from "svelte/store";
+  import type { Readable } from "svelte/store"
+  import toCss from "react-style-object-to-css";
 
   let contextModalState: ContextModalState;
   $: contextModalState = $contextModalStore;
@@ -146,7 +147,7 @@
   {#if showRoot}
     <div
       class="contextModal"
-      style={'background-color: ' + colorLookup.bgDark + '; border: 1px solid ' + colorLookup.border + '; color: ' + colorLookup.textDark + '; left: ' + left + 'px; top: ' + top + 'px'}
+      style={toCss({ backgroundColor: colorLookup.bgDark, border: '1px solid', borderColor: colorLookup.border, color: colorLookup.textDark, left, top})}
       bind:this={rootContainer}
       on:mouseleave={hide}
       on:mousedown
@@ -172,10 +173,10 @@
     <div
       class="contextModalContainer"
       on:mouseleave={hide}
-      style={'left: ' + left + 'px; top: ' + top + 'px'}>
+      style={toCss({left, top})}>
       <div
         class="contextModal"
-        style={'background-color: ' + colorLookup.bgDark + '; border: 1px solid ' + colorLookup.border + '; color: ' + colorLookup.textDark + '; left: ' + left + 'px; top: ' + top + 'px'}
+        style={toCss({backgroundColor: colorLookup.bgDark, border: "1px solid", borderColor: colorLookup.border, color: colorLookup.textDark, left, top})}
         bind:this={branchContainer}
         on:mousedown|preventDefault|stopPropagation
         on:contextmenu|preventDefault|stopPropagation

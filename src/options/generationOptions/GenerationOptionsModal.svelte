@@ -6,7 +6,8 @@
     yScaleStore,
   } from "../../state/settings";
   import colorLookup from "../../colors";
-  import Tooltip from "../../tooltips/Tooltip.svelte";
+  import Tooltip from "../../tooltips/Tooltip.svelte"
+  import toCss from "react-style-object-to-css";
 </script>
 
 <style>
@@ -31,12 +32,12 @@
 </style>
 
 <div style="height: 200px">
-  <h1 style={'color: ' + colorLookup.text}>Advanced Generation Options</h1>
+  <h1 style={toCss({color: colorLookup.text})}>Advanced Generation Options</h1>
 
   <div class="optionElement">
     <Tooltip>
       <label for="responselength" slot="trigger">Max Length</label>
-      <span slot="content">
+      <span>
         If the response would have more tokens than this, we reduce the number
         of tokens that we send to MuseNet. Higher values produce songs with more
         long-term structure but increase the failure rates of MuseNet. Values
@@ -58,7 +59,7 @@
   <div class="optionElement">
     <Tooltip>
       <label for="temperature" slot="trigger">Temperature:</label>
-      <span slot="content">
+      <span>
         How adventurous the AI is allowed to be. Try increasing temperature if
         you are stuck in a repeating pattern or if MuseNet starts generating a
         real song.
@@ -79,7 +80,7 @@
   <div class="optionElement">
     <Tooltip>
       <label for="autoRequest" slot="trigger">Auto Request</label>
-      <span slot="content">
+      <span>
         Immediately request more as soon as you select a node for the first time
       </span>
     </Tooltip>

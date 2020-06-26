@@ -1,6 +1,7 @@
 <script lang="ts">
   import colorLookup from "../colors";
-  import type {Writable} from "svelte/store";
+  import type {Writable} from "svelte/store"
+  import toCss from "react-style-object-to-css";
 
   export let instrument: keyof typeof colorLookup;
   export let storeMap: Partial<Record<keyof typeof colorLookup, Writable<boolean>>>;
@@ -38,8 +39,8 @@
 </style>
 
 {#if store}
-<div class="row" style={`border: 1px solid ${colorLookup.border}`} on:click={toggle}>
+<div class="row" style={toCss({border: "1px solid", borderColor: colorLookup.border})} on:click={toggle}>
   <input {id} type="checkbox" bind:checked={$store} />
-  <label for={id} style={"color: " + colorLookup[instrument]}>{instrument}</label>
+  <label for={id} style={toCss({color: colorLookup[instrument]})}>{instrument}</label>
 </div>
 {/if}

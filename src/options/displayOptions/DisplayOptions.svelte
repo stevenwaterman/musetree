@@ -4,7 +4,8 @@
   import Button from "../../buttons/Button.svelte";
   import colorLookup, { modalOptions } from "../../colors";
   import DisplayOptionsModal from "./DisplayOptionsModal.svelte";
-  import Tooltip from "../../tooltips/Tooltip.svelte";
+  import Tooltip from "../../tooltips/Tooltip.svelte"
+  import toCss from "react-style-object-to-css";
 
   const { open } = getContext("simple-modal");
 
@@ -49,14 +50,19 @@
   input {
     margin: 0;
   }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 </style>
 
-<div class="options" style={'color: ' + colorLookup.textDark}>
-  <div
-    style="display: flex; flex-direction: row; align-items: center;
-    justify-content: space-between">
-    <h1 style={`color: ${colorLookup.text}`}>Display</h1>
-    <Button on:click={showAdvancedModal} style="font-size: 10pt">
+<div class="options" style={toCss({color: colorLookup.textDark})}>
+  <div class="row">
+    <h1 style={toCss({ color: colorLookup.text })}>Display</h1>
+    <Button on:click={showAdvancedModal} style={toCss({ fontSize: 10 })}>
       Advanced
     </Button>
   </div>
@@ -64,7 +70,7 @@
   <div class="optionElement">
     <Tooltip>
       <label for="yScale" slot="trigger">Track Zoom</label>
-      <span slot="content">Vertically zoom the track view</span>
+      <span>Vertically zoom the track view</span>
     </Tooltip>
     <input
       class="slider"
@@ -80,7 +86,7 @@
   <div class="optionElement">
     <Tooltip>
       <label for="split" slot="trigger">View Split</label>
-      <span slot="content">
+      <span>
         How much horizontal space to take up with the track view
       </span>
     </Tooltip>

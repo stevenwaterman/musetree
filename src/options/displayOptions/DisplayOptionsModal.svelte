@@ -3,7 +3,8 @@
   import colorLookup, { instrumentVisibility } from "../../colors";
   import { instruments } from "../../constants";
   import Button from "../../buttons/Button.svelte";
-  import Tooltip from "../../tooltips/Tooltip.svelte";
+  import Tooltip from "../../tooltips/Tooltip.svelte"
+  import toCss from "react-style-object-to-css";
 
   function selectAll() {
     instruments.forEach((instrument) => {
@@ -31,26 +32,38 @@
   span {
     margin: 4px;
   }
+
+  .column {
+    display: flex; flex-direction: column
+  }
+
+  .alignStart {
+    align-self: flex-start
+  }
+
+  .row {
+    display: flex; flex-direction: row; flex-wrap: wrap
+  }
 </style>
 
-<h1 style={'color: ' + colorLookup.text}>Advanced Display Options</h1>
+<h1 style={toCss({color: colorLookup.text})}>Advanced Display Options</h1>
 
-<div style="display: flex; flex-direction: column">
-  <div style="align-self: flex-start">
+<div class="column">
+  <div class="alignStart">
     <Tooltip>
       <label slot="trigger">Show Instruments:</label>
-      <span slot="content">
+      <span>
         Deselecting an instrument will hide it from the track view. The
         instrument will still play, but you won't see it.
       </span>
     </Tooltip>
   </div>
-  <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+  <div class="row">
     {#each instruments as instrument}
       <InstrumentCheckbox storeMap={instrumentVisibility} {instrument} />
     {/each}
   </div>
-  <div style="display: flex; flex-direction: row;">
+  <div class="row">
     <Button on:click={selectAll}>Show All</Button>
     <Button on:click={selectNone}>Hide All</Button>
   </div>

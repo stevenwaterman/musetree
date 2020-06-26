@@ -12,6 +12,7 @@
   import AutoSaveController from "./persistence/AutoSaveController.svelte";
   import DisplayOptions from "./options/displayOptions/DisplayOptions.svelte";
   import TrackInfo from "./trackInfo/TrackInfo.svelte";
+  import toCss from "react-style-object-to-css";
 
   function keyPressed(event: KeyboardEvent) {
     if (event.key === " ") {
@@ -56,35 +57,35 @@
   <ModalController />
   <div
     class="grid"
-    style={`color: ${colorLookup.text}; grid-template-columns: ${$splitStore}fr ${100 - $splitStore}fr ${$showSidebarStore ? '300px' : ''}`}
+    style={toCss({ color: colorLookup.text, gridTemplateColumns: `${$splitStore}fr ${100 - $splitStore}fr ${$showSidebarStore ? '300px' : ''}` })}
     on:keypress={keyPressed}>
     {#if !$showSidebarStore}
       <div
-        style={`position: fixed; top: 0px; right: 8px; color: ${colorLookup.text}; font-size: 20pt; font-weight: 600; opacity: 50%; cursor: pointer; z-index: 999`}
+        style={toCss({ position: 'fixed', top: '0px', right: '8px', color: colorLookup.text, fontSize: '20pt', fontWeight: 600, opacity: 50, cursor: 'pointer', zIndex: 999 })}
         on:click|capture={() => showSidebarStore.set(true)}>
         &lt;
       </div>
     {/if}
     <div
-      style={'grid-column: 1; grid-row: 1; min-height: 0;' + ($splitStore === 0 ? ' display: none;' : '')}>
+      style={toCss({ gridColumn: "1", gridRow: "1", minHeight: 0, display: $splitStore === 0 ? 'none' : 'initial' })}>
       <Track />
     </div>
     <div
-      style={`position: relative; grid-column: 2; grid-row: 1; min-height: 0;${$splitStore === 100 ? ' display: none;' : ''}`}>
+      style={toCss({ position: 'relative', gridColumn: "2", gridRow: "1", minHeight: 0, display: $splitStore === 100 ? 'none' : 'initial' })}>
       <TreeVis />
     </div>
-    <div style="grid-column: 1 / span 3; grid-row: 2; min-height: 0">
+    <div style={toCss({ gridColumn: '1 / span 3', gridRow: "2", minHeight: 0 })}>
       <TrackControls />
     </div>
     {#if $showSidebarStore}
       <div
-        style={`position: relative; grid-column: 3; grid-row: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; background-color: ${colorLookup.bgDark}; border-left: 1px solid ${colorLookup.border}; padding: 12px`}>
+        style={toCss({position: "relative", gridColumn: "3", gridRow: "1", overflowY: "auto", overflowX: "hidden", display: "flex", flexDirection: "column", backgroundColor: colorLookup.bgDark, borderLeft: `1px solid ${colorLookup.border}`, padding: 12})}>
         <div
-          style={`position: absolute; top: 0px; left: 8px; color: ${colorLookup.text}; font-size: 20pt; font-weight: 600; opacity: 50%; cursor: pointer`}
+          style={toCss({position: "absolute", top: 0, left: 8, color: colorLookup.text, fontSize: 20, fontWeight: 600, opacity: 50, cursor: "pointer"})}
           on:click={() => showSidebarStore.set(false)}>
           &gt;
         </div>
-        <h1 style={`text-align: center; color: ${colorLookup.text}; margin: 0`}>
+        <h1 style={toCss({textAlign: "center", color: colorLookup.text, margin: 0})}>
           Options
         </h1>
         <GenerationOptions />

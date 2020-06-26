@@ -18,6 +18,8 @@
   import examples from "./examples";
   import type { Readable } from "svelte/store";
   import type { Section } from "../state/section";
+  import AboutModal from "../about/AboutModal.svelte"
+  import toCss from "react-style-object-to-css";
 
   const { close } = getContext("simple-modal");
 
@@ -53,6 +55,12 @@
     close();
     await loadMidi(encodingArray, sectionEndsAt, importUnderStore);
   }
+
+  const lighterStyle: JSX.CSSProperties = {
+    backgroundColor: colorLookup.bgLight,
+    borderColor: colorLookup.border,
+    color: colorLookup.text,
+  };
 </script>
 
 <style>
@@ -92,7 +100,7 @@
 </style>
 
 <!--TODO provide a guide like MrCheeze's-->
-<h1 style={'color: ' + colorLookup.text}>Import</h1>
+<h1 style={toCss({ color: colorLookup.text })}>Import</h1>
 
 <div class="row">
   <span class="spread">What to import:</span>
@@ -106,7 +114,7 @@
     <select
       id="example"
       bind:value={encoding}
-      style={`margin: 0; width: 200px; background-color: ${colorLookup.bgLight}; border-color: ${colorLookup.border}; color: ${colorLookup.text}`}>
+      style={toCss({ margin: 0, width: 200, ...lighterStyle })}>
       <option selected />
       {#each Object.entries(examples) as [name, exampleEncoding]}
         <option value={exampleEncoding}>{name}</option>
@@ -122,6 +130,6 @@
   bind:value={encoding}
   on:drop|preventDefault={(event) => event.dataTransfer && midiSelected(event.dataTransfer.files[0])}
   placeholder="MuseNet Encoding"
-  style={'border: 1px dotted ' + colorLookup.border + '; background-color: ' + colorLookup.bgLight + '; color: ' + colorLookup.text} />
+  style={toCss({ border: '1px dotted', ...lighterStyle })} />
 
 <Button disabled={encodingInvalid} on:click={importEncoding}>Import</Button>

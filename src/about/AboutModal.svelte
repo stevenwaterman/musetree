@@ -4,7 +4,8 @@
   import ChangeLogModal from "./ChangeLogModal.svelte";
   import Changelog from "./Changelog";
   import colorLookup, { modalOptions } from "../colors";
-  import HelpModal from "./HelpModal.svelte";
+  import HelpModal from "./HelpModal.svelte"
+  import toCss from "react-style-object-to-css";
 
   const { open } = getContext("simple-modal");
 
@@ -21,9 +22,15 @@
   h1 {
     margin-top: 0;
   }
+
+  .buttonRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
 </style>
 
-<h1 style={'color: ' + colorLookup.text}>About</h1>
+<h1 style={toCss({ color: colorLookup.text })}>About</h1>
 <p>
   MuseTree is a custom front-end for
   <a href="https://openai.com/blog/musenet/" target="_blank">
@@ -44,7 +51,7 @@
   Mon-Fri 2-6pm BST. At the minute, those streams are mostly my work on
   MuseTree, so come along and say hi!
 </p>
-<div style="display: flex; flex-direction: row; justify-content: space-around">
+<div class="buttonRow">
   <Button
     on:click={() => window.open('https://github.com/stevenwaterman/musetree')}>
     Source Code

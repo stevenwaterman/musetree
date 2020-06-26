@@ -4,7 +4,8 @@
   import type { TreeState, BranchStore } from "../state/trackTree";
   import { undoStore } from "../state/undo";
   import { getContext } from "svelte";
-  import colorLookup from "../colors";
+  import colorLookup from "../colors"
+  import toCss from "react-style-object-to-css";
 
   let rootState: TreeState;
   $: rootState = $root;
@@ -34,7 +35,7 @@
 </style>
 
 <div style="display: flex; flex-direction: column; align-items: center">
-  <h1 style={'color: ' + colorLookup.text}>Warning!</h1>
+  <h1 style={toCss({color: colorLookup.text})}>Warning!</h1>
   <span>You are about to delete everything. This cannot be undone!</span>
   <span style="margin: 8px">Are you sure?</span>
 

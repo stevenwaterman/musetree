@@ -13,7 +13,8 @@
   import Tooltip from "../tooltips/Tooltip.svelte";
   import type { Section } from "../state/section";
   import type { Instrument } from "../constants";
-  import type { Readable } from "svelte/store";
+  import type { Readable } from "svelte/store"
+  import toCss from "react-style-object-to-css";
 
   let selectedSectionsStore: Readable<Section[]>;
   $: selectedSectionsStore = root.selectedSectionsStore;
@@ -160,7 +161,7 @@
 <h1>Stats</h1>
 
 {#if sections === null}
-  <span style={'margin: 12px auto 0 auto; color: ' + colorLookup.textDark}>
+  <span style={toCss({margin: "12px auto 0 auto", color: colorLookup.textDark})}>
     Nothing Selected
   </span>
 {:else}
@@ -176,7 +177,7 @@
     </Button>
   </div>
 
-  <div class="mainCol" style={'color: ' + colorLookup.textDark}>
+  <div class="mainCol" style={toCss({color: colorLookup.textDark})}>
     <div class="row">
       <span class="label">Length:</span>
       <div class="col">
@@ -205,7 +206,7 @@
     <div class="spacer" />
 
     <div class="row" style="justify-content: center">
-      <span class="label" style={`color: ${colorLookup.text}`}>
+      <span class="label" style={toCss({color: colorLookup.text})}>
         Instrument Use
       </span>
     </div>
@@ -215,7 +216,7 @@
       center; grid-column-gap: 12px">
       <Tooltip>
         <span class="label" slot="trigger">Note Count:</span>
-        <span slot="content">
+        <span>
           Based on the number of notes for that instrument
         </span>
       </Tooltip>
@@ -226,7 +227,7 @@
             {#if values['noteCount'] > 0}
               <div
                 class="bar"
-                style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values['noteCount']}`} />
+                style={toCss({backgroundColor: colorLookup[instrument], flexGrow: values['noteCount']})} />
             {/if}
           {/each}
         {/if}
@@ -234,7 +235,7 @@
 
       <Tooltip>
         <span class="label" slot="trigger">Note Length:</span>
-        <span slot="content">
+        <span>
           Based on the total length of all notes for that instrument
         </span>
       </Tooltip>
@@ -244,7 +245,7 @@
             {#if values['totalPlayingTime'] > 0}
               <div
                 class="bar"
-                style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values['totalPlayingTime'] * 1000}`} />
+                style={toCss({backgroundColor: colorLookup[instrument], flexGrow: values['totalPlayingTime'] * 1000})} />
             {/if}
           {/each}
         {/if}
@@ -252,7 +253,7 @@
 
       <Tooltip>
         <span class="label" slot="trigger">Active Time:</span>
-        <span slot="content">
+        <span>
           Based on how much of the time that instrument is making noise
         </span>
       </Tooltip>
@@ -262,7 +263,7 @@
             {#if values['nonSilenceTime'] > 0}
               <div
                 class="bar"
-                style={`background-color: ${colorLookup[instrument]}; flex-grow: ${values['nonSilenceTime'] * 1000}`} />
+                style={toCss({backgroundColor: colorLookup[instrument], flexGrow: values['nonSilenceTime'] * 1000})} />
             {/if}
           {/each}
         {/if}

@@ -10,7 +10,8 @@
   import { request } from "../broker";
   import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
   import { audioStatusStore } from "../audio/audioPlayer";
-  import type { Readable } from "svelte/store";
+  import type { Readable } from "svelte/store"
+  import toCss from "react-style-object-to-css";
 
   export let treeContainer: HTMLDivElement;
 
@@ -152,14 +153,14 @@
     bind:this={node}
     on:keypress={keyPressed}
     class="node"
-    style={'background-color: ' + nodeColor}
+    style={toCss({backgroundColor: nodeColor})}
     tabindex={0}>
     <span class="label">Root</span>
   </div>
   {#if pendingLoad > 0}
     <p
       class="pendingLoad"
-      style={'color: ' + colorLookup.textDark + '; background-color: ' + colorLookup.bgDark + '; border: 2px solid ' + colorLookup.border}>
+      style={toCss({color: colorLookup.textDark, backgroundColor: colorLookup.bgDark, border: "2px solid", borderColor: colorLookup.border})}>
       +{pendingLoad}
     </p>
   {/if}

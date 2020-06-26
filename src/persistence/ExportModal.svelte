@@ -18,6 +18,8 @@
   import type { BranchStore, BranchState } from "../state/trackTree";
   import Tooltip from "../tooltips/Tooltip.svelte";
   import type { Readable } from "svelte/store";
+  import AboutModal from "../about/AboutModal.svelte"
+  import toCss from "react-style-object-to-css"
 
   export let store: BranchStore;
 
@@ -54,6 +56,12 @@
       encodingArea.setSelectionRange(0, 0);
     }
   }
+
+  const lighterStyle: JSX.CSSProperties = {
+    borderColor: colorLookup.border,
+    backgroundColor: colorLookup.bgLight,
+    color: colorLookup.text,
+  };
 </script>
 
 <style>
@@ -97,23 +105,37 @@
     align-items: center;
     grid-gap: 12px;
   }
+
+  .leftMargin {
+    margin-left: 12px;
+  }
+
+  .dottedBorder {
+    border: 1px dotted;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 12px;
+  }
 </style>
 
-<h1 style={'color: ' + colorLookup.text}>Export</h1>
+<h1 style={toCss({ color: colorLookup.text })}>Export</h1>
 
-<div
-  style="display: flex; flex-direction: row; align-items: center; margin-bottom:
-  12px">
+<div class="row">
   <label for="exportName">File name:</label>
   <input
     id="exportName"
     bind:value={name}
     type="text"
-    style={'margin-left: 12px; margin-bottom: 0; border: 1px dotted ' + colorLookup.border + '; background-color: ' + colorLookup.bgLight + '; color: ' + colorLookup.text} />
+    class={['leftMargin', 'dottedBorder']}
+    style={toCss({ marginBottom: 0, ...lighterStyle })} />
 
   <Tooltip>
-    <label slot="trigger" style="margin-left: 12px">Encoding:</label>
-    <span slot="content">
+    <label slot="trigger" class="leftMargin">Encoding:</label>
+    <span>
       Export the whole track up until that point, or just the one section you
       clicked?
     </span>
@@ -139,24 +161,24 @@
   <textarea
     bind:this={encodingArea}
     id="encoding"
-    class="encoding"
+    class={['dottedBorder', 'leftMargin']}
     readonly
-    style={'border: 1px dotted ' + colorLookup.border + '; background-color: ' + colorLookup.bgLight + '; color: ' + colorLookup.text}>
+    style={toCss(lighterStyle)}>
     {encoding}
   </textarea>
   <div
     class="copy"
-    style={'color: ' + colorLookup.text + '; background-color: ' + colorLookup.bgDark + '99'}
+    style={toCss({color: colorLookup.text , backgroundColor: colorLookup.bgDark + '99'})}
     on:click={copy}>
     Click to copy
   </div>
 </div>
 
-<h2 style={'color: ' + colorLookup.text}>Export as:</h2>
+<h2 style={toCss({ color: colorLookup.text })}>Export as:</h2>
 
 <div class="grid">
   <span>
-    <b style={'color: ' + colorLookup.text}>Recommended:</b>
+    <b style={toCss({ color: colorLookup.text })}>Recommended:</b>
     Audio as it sounds elsewhere in the app
   </span>
   <Button on:click={() => downloadMuseTreeAudio($selectedSectionsStore, name)}>

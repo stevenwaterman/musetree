@@ -1,7 +1,8 @@
 <script lang="ts">
   import colorLookup from "../colors";
   import { loadingProgressStore } from "./persistence";
-  import type { LoadingProgressState } from "./persistence";
+  import type { LoadingProgressState } from "./persistence"
+  import toCss from "react-style-object-to-css"
 
   let loadingState: LoadingProgressState;
   $: loadingState = $loadingProgressStore;
@@ -47,14 +48,14 @@
   }
 </style>
 
-<div class="backdrop" style={'background-color: ' + colorLookup.loadingBarBG}>
+<div class="backdrop" style={toCss({backgroundColor: colorLookup.loadingBarBG})}>
   {#if loadingState}
-    <div class="textContainer" style={'color: ' + colorLookup.loadingBarText}>
+    <div class="textContainer" style={toCss({color: colorLookup.loadingBarText})}>
       <span>{done.toLocaleString()} / {total.toLocaleString()}</span>
       <span>({percent.toFixed(0)}%)</span>
     </div>
   {/if}
   <div
     class="bar"
-    style={'background-color: ' + colorLookup.loadingBarFG + '; width: ' + percent + '%'} />
+    style={toCss({backgroundColor: colorLookup.loadingBarFG, width: percent + "%"})} />
 </div>

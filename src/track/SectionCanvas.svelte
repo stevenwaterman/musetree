@@ -7,6 +7,8 @@
   import VisibilityGuard from "./VisibilityGuard.svelte";
   import type { Section } from "../state/section";
   import type { Notes, Note } from "../state/notes";
+import AboutModal from "../about/AboutModal.svelte"
+  import toCss from "react-style-object-to-css";
 
   export let viewport: HTMLDivElement;
   export let section: Section;
@@ -64,12 +66,17 @@
     flex-grow: 0;
     left: 0;
   }
+
+  .borders {
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+  }
 </style>
 
 {#if notes !== null}
   <div
-    class="sectionContainer"
-    style={`border-right: 1px solid ${colorLookup.border}; border-bottom: 1px solid ${colorLookup.border}; height: ${height}px; top: ${top}px`}>
+    class={["sectionContainer", "borders"]}
+    style={toCss({borderColor: colorLookup.border, height, top})}>
     <VisibilityGuard root={viewport} let:loaded>
       {#if loaded}
         <svg
