@@ -60,10 +60,6 @@
     margin-top: 0;
   }
 
-  h2 {
-    display: inline;
-  }
-
   .row {
     display: flex;
     flex-direction: row;
