@@ -1,13 +1,19 @@
-<script>
+<script lang="ts">
   import colorLookup from "../colors";
-  export let instrument;
-  export let storeMap;
+  import type {InstrumentCategory} from "../constants"
+  import type {Writable} from "svelte/store";
 
+  export let instrument: InstrumentCategory;
+  export let storeMap: Record<InstrumentCategory, Writable<boolean>>;
+
+  let store: Writable<boolean>;
   $: store = storeMap[instrument];
+  
+  let id: string;
   $: id = "instrument-" + instrument;
 
   function toggle() {
-    store.update(state => !state);
+    store.update((state: boolean) => !state);
   }
 </script>
 

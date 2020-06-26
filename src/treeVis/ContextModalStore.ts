@@ -12,9 +12,9 @@ type StoreConfig_Branch = {
     nodeStore: BranchStore;
 }
 
-type State = {
+export type ContextModalState = {
     coordinates: [number, number];
     stores: StoreConfig_Root | StoreConfig_Branch
 } | null;
 
-export const contextModalStore: Writable<State> = writable(null);
+export const contextModalStore: Writable<ContextModalState> = writable(null);

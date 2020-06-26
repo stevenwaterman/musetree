@@ -1,17 +1,17 @@
-<script>
+<script lang="ts">
   import {afterUpdate} from "svelte";
   import {root} from "../state/trackTree";
-  import panzoom from "panzoom";
+  import panzoom, { PanZoom } from "panzoom";
   import TreeVisRoot from "./TreeVisRoot.svelte";
   import colorLookup from "../colors";
   import ContextModal from "./ContextModal.svelte";
   import {contextModalStore} from "./ContextModalStore";
 
 
-  let container;
+  let container: HTMLDivElement;
 
   afterUpdate(() => {
-    const pan = panzoom(container, {
+    const pan: PanZoom = panzoom(container, {
       minZoom: 0.1,
       maxZoom: 2,
       zoomDoubleClickSpeed: 1,
@@ -22,7 +22,7 @@
     pan.on("transform", () => contextModalStore.set(null));
   })
 
-  let treeContainer;
+  let treeContainer: HTMLDivElement;
 </script>
 
 <style>

@@ -1,12 +1,9 @@
-<script>
+<script lang="ts">
     import colorLookup from "../colors";
-    const tt_text_style = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.textDark;
+    const textStyle: string = "border: 1px solid " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.textDark;
 </script>
 
 <style>
-    .TT_trigger {
-    }
-
     .TT_text {
         visibility: hidden;
         padding: 5px;
@@ -27,7 +24,7 @@
 <div>
     <div class="TT_trigger">
         <slot name="trigger"/>
-        <div class="TT_text" style={tt_text_style}>
+        <div class="TT_text" style={textStyle}>
             <slot name="content"/>
         </div>
     </div>

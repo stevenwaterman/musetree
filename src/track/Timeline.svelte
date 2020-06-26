@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
   import { audioStatusStore } from "../audio/audioPlayer";
+  import type { AudioStatus_On } from "../audio/audioPlayer";
   import {
     yScaleStore,
     autoScrollStore,
@@ -7,34 +8,39 @@
   } from "../state/settings";
   import { create_in_transition } from "svelte/internal";
 
-  function traverse(node, {offset: startTime, duration: endTime}) {
-    const transTime = endTime - startTime;
+  function traverse(node: Element, {offset: startTime, duration: endTime}: AudioStatus_On) {
+    const transTime: number = endTime - startTime;
+    const style = (node as unknown as ElementCSSInlineStyle).style;
     return {
       duration: transTime * 1000,
-      tick: t => {
-        const startPx = startTime * $yScaleStore;
-        const endPx = endTime * $yScaleStore;
-        const transPx = endPx - startPx;
-        const y = startPx + t * transPx;
-        node.style = `top:${y}px;`;
+      tick: (t: number) => {
+        const startPx: number = startTime * $yScaleStore;
+        const endPx: number = endTime * $yScaleStore;
+        const transPx: number = endPx - startPx;
+        const y: number = startPx + t * transPx;
+        style.top = `${y}px`;
         if ($isScrollingStore) {
           node.scrollIntoView({
             block: "center",
-            behaviour: "smooth"
+            behavior: "smooth"
           });
         }
       }
     };
   }
 
-  let element;
-  let transition;
-  let hidden = true;
+  let element: HTMLDivElement | undefined;
+  let transition: {
+    start: () => void;
+    invalidate: () => void;
+    end: () => void;
+  };
+  let hidden: boolean = true;
 
   audioStatusStore.subscribe(status => {
     if (transition) transition.end();
     hidden = status.type !== "on";
-    if (!hidden) {
+    if (!hidden && element) {
       isScrollingStore.set($autoScrollStore);
       transition = create_in_transition(element, traverse, status);
       transition.start();

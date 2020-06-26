@@ -1,13 +1,14 @@
-<script>
+<script lang="ts">
     import {getContext} from "svelte";
     import GenreOption from "./GenreOption.svelte";
     import {genres} from "../../constants";
+    import type {Genre} from "../../constants";
     import colorLookup from "../../colors";
     import Tooltip from "../../tooltips/Tooltip.svelte";
 
     const {close} = getContext("simple-modal");
 
-    const simpleGenres = [
+    const simpleGenres: Array<[string, Genre]> = [
         ["Chopin", "chopin"],
         ["Mozart", "mozart"],
         ["Rachmaninoff", "rachmaninoff"],
@@ -16,7 +17,7 @@
         ["Disney", "disney"]
     ];
 
-    const advancedGenres = [
+    const advancedGenres: Array<[string, Genre]> = [
         ["Jazz", "jazz"],
         ["Bach", "bach"],
         ["Beethoven", "beethoven"],
@@ -29,8 +30,8 @@
         ["Tchaikovsky", "tchaikovsky"]
     ];
 
-    const experimentalExclude = [...simpleGenres.map(pair => pair[1]), ...advancedGenres.map(pair => pair[1])];
-    const experimentalGenres = genres.filter(genre => !experimentalExclude.includes(genre));
+    const experimentalExclude: Array<Genre> = [...simpleGenres.map(pair => pair[1]), ...advancedGenres.map(pair => pair[1])];
+    const experimentalGenres: Array<Genre> = genres.filter(genre => !experimentalExclude.includes(genre));
 </script>
 
 <style>

@@ -1,5 +1,6 @@
-<script>
+<script lang="ts">
     import {contextModalStore} from "./ContextModalStore";
+    import type {ContextModalState} from "./ContextModalStore";
     import {getContext, afterUpdate} from "svelte";
     import ImportModal from "../persistence/ImportModal.svelte";
     import ExportModal from "../persistence/ExportModal.svelte";
@@ -9,21 +10,47 @@
     import {request} from "../broker";
     import {undoStore} from "../state/undo";
     import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
+    import {toReadableNodeState} from "../state/trackTree";
+    import type {NodeStore, NodeState, BranchStore, TreeStore} from "../state/trackTree";
+    import type {Readable} from "svelte/store";
 
-    $: contextModalState = $contextModalStore;
+let contextModalState: ContextModalState;
+    $: contextModalState= $contextModalStore;
 
+let coordinates: [number, number] | null;
     $: coordinates = contextModalState === null ? null : contextModalState.coordinates;
+
+    let left: number | null;
     $: left = coordinates === null ? null : coordinates[0] - 40;
+
+    let top: number | null;
     $: top = coordinates === null ? null : coordinates[1] - 40;
 
+    let showRoot: boolean;
     $: showRoot = contextModalState !== null && contextModalState.stores.type === "root";
+
+    let showBranch: boolean;
     $: showBranch = contextModalState !== null && contextModalState.stores.type === "branch";
 
-    $: parentStore = showBranch ? contextModalState.stores.parentStore : null;
+    let parentStore: NodeStore | null;
+    $: parentStore = (showBranch && contextModalState && contextModalState.stores.type === "branch") ? contextModalState.stores.parentStore : null;
+
+    let nodeStore: NodeStore | null;
     $: nodeStore = contextModalState === null ? null : contextModalState.stores.nodeStore;
-    $: nodeState = nodeStore === null ? null : $nodeStore;
+
+    let convertedNodeStore: Readable<NodeState> | null;
+    $: convertedNodeStore = nodeStore === null ? null : toReadableNodeState(nodeStore);
+
+    let nodeState: NodeState | null;
+    $: nodeState = convertedNodeStore === null ? null : $convertedNodeStore;
+
+    let children: Record<number, BranchStore> | null;
     $: children = nodeState === null ? null : nodeState.children;
+    
+    let path: number[] | null;
     $: path = nodeState === null ? null : nodeState.path;
+
+    let childIndex: number | null;
     $: childIndex = path === null ? null : path[path.length - 1];
 
     const {open} = getContext("simple-modal");
@@ -34,7 +61,7 @@
 
     function loadMore() {
         hide();
-        request($configStore, nodeStore, nodeState);
+        if(nodeStore && nodeState) request($configStore, nodeStore, nodeState);
     }
 
     function openDeleteModal() {
@@ -44,7 +71,7 @@
 
     function deleteBranch() {
         hide();
-        parentStore.deleteChildWithUndo(childIndex);
+        if(parentStore && childIndex) parentStore.deleteChildWithUndo(childIndex);
     }
 
     function openImportModal() {
@@ -61,7 +88,7 @@
         }, modalOptions);
     }
 
-    function keyPressed(event) {
+    function keyPressed(event: KeyboardEvent) {
         if(event.key === "r") return loadMore();
         if(event.key === "a") return openImportModal();
         if(event.key === "s" && showBranch) return openExportModal();
@@ -69,8 +96,8 @@
         if(event.key === "d" && showBranch) return deleteBranch();
     }
 
-    let rootContainer;
-    let branchContainer;
+    let rootContainer: HTMLDivElement | undefined;
+    let branchContainer: HTMLDivElement | undefined;
 
     afterUpdate(() => {
         if(rootContainer) rootContainer.focus();

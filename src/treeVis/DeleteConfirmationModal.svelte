@@ -1,13 +1,19 @@
-<script>
+<script lang="ts">
     import Button from "../buttons/Button.svelte";
     import {root} from "../state/trackTree";
+    import type {TreeState, BranchStore} from "../state/trackTree";
     import {undoStore} from "../state/undo";
     import {getContext} from "svelte";
     import colorLookup from "../colors";
 
+let rootState: TreeState;
     $: rootState = $root;
+
+    let childrenMap: Record<number, BranchStore>;
     $: childrenMap = rootState.children;
-    $: children = Object.entries(childrenMap);
+
+    let children: Array<[number, BranchStore]>;
+    $: children = Object.entries(childrenMap).map(([idx, store]) => [parseInt(idx), store]);
 
     function deleteEverything() {
         children.map(pair => pair[0]).forEach(root.deleteChild);

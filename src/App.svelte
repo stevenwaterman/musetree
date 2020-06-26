@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Track from "./track/Track.svelte";
     import GenerationOptions from "./options/generationOptions/GenerationOptions.svelte";
     import TrackControls from "./track/TrackControls.svelte";
@@ -13,7 +13,7 @@
     import DisplayOptions from "./options/displayOptions/DisplayOptions.svelte";
     import TrackInfo from "./trackInfo/TrackInfo.svelte";
 
-    function keyPressed(event) {
+    function keyPressed(event: KeyboardEvent) {
         if (event.key === " ") {
             togglePlayback();
         } else if (event.key === "z") {

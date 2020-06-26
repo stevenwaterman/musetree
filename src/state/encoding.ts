@@ -1,4 +1,4 @@
-import {derived, Readable, writable} from "svelte/store";
+import {Readable, writable} from "svelte/store";
 import {SectionStore} from "./section";
 import {arrayEqual, maybeDerived} from "../utils";
 

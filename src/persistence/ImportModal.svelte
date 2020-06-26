@@ -1,26 +1,44 @@
-<script>
+<script lang="ts">
     import {getContext} from "svelte";
     import Button from "../buttons/Button.svelte";
     import FileInput from "../buttons/FileInput.svelte";
     import {fromMidi} from "musenet-midi";
     import {encodingToArray, encodingToString} from "../state/encoding";
-    import {root} from "../state/trackTree";
+    import type {MusenetEncoding} from "../state/encoding";
+    import {root, toReadableNodeState} from "../state/trackTree";
+    import type {NodeStore, NodeState, BranchState, TreeState, BranchStore} from "../state/trackTree";
     import {loadMidi} from "./persistence";
     import colorLookup from "../colors";
     import examples from "./examples";
+    import type {Readable} from "svelte/store";
+    import type { Section } from "../state/section"
 
     const {close} = getContext("simple-modal");
 
-    export let importUnderStore;
-    $: importUnderState = $importUnderStore;
-    $: sectionEndsAt = importUnderStore.type === "root" ? 0 : importUnderState.section.endsAt;
+    export let importUnderStore: NodeStore;
+    
+    let importUnderStoreConverted: Readable<NodeState>;
+    $: importUnderStoreConverted = toReadableNodeState(importUnderStore);
 
-    let encoding = "";
+    let importUnderState: NodeState;
+    $: importUnderState = $importUnderStoreConverted;
+
+    let section: Section | null;
+    $: section = importUnderState.type === "root" ? null : importUnderState.section;
+
+    let sectionEndsAt: number;
+    $: sectionEndsAt = section === null ? 0 : section.endsAt;
+
+    let encoding: string = "";
+
+    let encodingArray: MusenetEncoding;
     $: encodingArray = encodingToArray(encoding.trim());
+
+    let encodingInvalid: boolean;
     $: encodingInvalid = encodingArray.some(isNaN);
 
-    async function midiSelected(file) {
-        const encodingArray = await fromMidi(file)
+    async function midiSelected(file: File) {
+        const encodingArray: MusenetEncoding = await fromMidi(file)
         encoding = encodingToString(encodingArray);
     }
 
@@ -90,6 +108,6 @@
 
 
     <label for="encoding" style="display: none">Encoding</label>
-    <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}></textarea>
+    <textarea id="encoding" class="encoding" bind:value={encoding} on:drop|preventDefault={event => event.dataTransfer && midiSelected(event.dataTransfer.files[0])} placeholder="MuseNet Encoding" style={"border: 1px dotted " + colorLookup.border + "; background-color: " + colorLookup.bgLight + "; color: " + colorLookup.text}></textarea>
 
     <Button disabled={encodingInvalid} on:click={importEncoding}>Import</Button>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import changelog from "./Changelog";
 </script>
 

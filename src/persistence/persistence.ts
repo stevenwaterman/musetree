@@ -17,7 +17,7 @@ import {writable, Writable} from "svelte/store";
 import {CancellablePromise, makeCancellable} from "./cancelPromise";
 import {SerialisedBranch, SerialisedRoot} from "../state/serialisation";
 
-type LoadingProgressState = null | {
+export type LoadingProgressState = null | {
     done: number;
     total: number;
 }
@@ -73,7 +73,7 @@ export async function load(tree: TreeStore, json: string) {
             await addToTree(tree, child);
         }
     }).catch(reason => {
-        if(!reason?.cancelled) console.log(`promise rejected, reason: ${reason}`);
+        if("cancelled" !in reason) console.log(`promise rejected, reason: ${reason}`);
         else cancelled = true;
     })
 
@@ -93,7 +93,7 @@ export async function loadMidi(encoding: MusenetEncoding, sectionEndsAt: number,
     await loadingMidiPromise.then((sectionStore: SectionStore) => {
         importUnderStore.addChild(sectionStore)
     }).catch(reason => {
-        if(!reason?.cancelled) console.log(`promise rejected, reason: ${reason}`);
+        if("cancelled" !in reason) console.log(`promise rejected, reason: ${reason}`);
         else cancelled = true;
     })
 

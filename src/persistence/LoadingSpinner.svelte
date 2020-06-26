@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
     import colorLookup from "../colors";
     import {cancelLoading} from "./persistence";
     import Button from "../buttons/Button.svelte";
     import LoadingProgressBar from "./LoadingProgressBar.svelte";
 
-    let cancelled = false;
+    export let cancelled: boolean = false;
 
     function cancel() {
         cancelLoading();

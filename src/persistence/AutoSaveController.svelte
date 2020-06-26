@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import {getContext} from "svelte";
     import {modalOptions} from "../colors";
     import {root} from "../state/trackTree";
@@ -9,7 +9,7 @@
     const {open} = getContext("simple-modal");
 
     onMount(() => {
-        const autoLoad = localStorage.getItem("autosave");
+        const autoLoad: string | null = localStorage.getItem("autosave");
         if(autoLoad === null) {
             open(HelpModal, {}, modalOptions)
         }

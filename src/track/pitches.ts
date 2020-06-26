@@ -1,5 +1,4 @@
 import {Section} from "../state/section";
-import {act} from "@testing-library/svelte";
 
 export function getPitchRange(sections: Section[]): {minPitch: number, maxPitch: number} {
     const pitches: number[] = sections.flatMap(section => Object.values(section.notes).flat()).map(note => note.pitch);

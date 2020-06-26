@@ -1,5 +1,6 @@
-<script>
-    import {root} from "../state/trackTree";
+<script lang="ts">
+    import {root, toReadableNodeState} from "../state/trackTree";
+    import type {NodeStore, BranchStore, BranchState, NodeState, TreeStore} from "../state/trackTree";
     import {configStore} from "../state/settings";
     import {request} from "../broker"
     import colorLookup, {modalOptions} from "../colors";
@@ -9,33 +10,60 @@
     import Button from "../buttons/Button.svelte";
     import {contextModalStore} from "./ContextModalStore";
     import {audioStatusStore} from "../audio/audioPlayer";
+    import type {AudioStatus_On} from "../audio/audioPlayer";
     import {create_in_transition, create_out_transition, get_store_value} from "svelte/internal";
     import {play} from "../audio/audioPlayer";
+    import type {Section} from "../state/section";
+    import type {Readable} from "svelte/store"
 
-    export let parentStore;
-    export let branchStore;
-    export let depth;
-    export let offset;
-    export let parentOffset;
-    export let treeContainer;
+    export let parentStore: NodeStore;
+    export let branchStore: BranchStore;
+    export let depth: number;
+    export let offset: number;
+    export let parentOffset: number;
+    export let treeContainer: HTMLDivElement;
 
-    $: branchState = $branchStore;
+    let convertedParentStore: Readable<NodeState>;
+    $: convertedParentStore = toReadableNodeState(parentStore);
+
+    let parentState: NodeState;
+    $: parentState = $convertedParentStore;
+
+let branchState: BranchState;
+    $: branchState= $branchStore;
+
+    let path: number[];
     $: path = branchState.path;
+
+    let childIndex: number;
     $: childIndex = path[path.length - 1];
-    $: pendingLoad = branchState.pendingLoad;
-    $: section = branchState.section;
-    $: startsAt = section.startsAt;
+
+    let pendingLoad: number;
+    $: pendingLoad= branchState.pendingLoad;
+
+    let section: Section;
+    $: section= branchState.section;
+
+    let startsAt: number;
+    $: startsAt= section.startsAt;
+
+    let endsAt: number;
     $: endsAt = section.endsAt;
+
+    let duration: number;
     $: duration = endsAt - startsAt;
 
+    let childStores: Record<number, BranchStore>;
     $: childStores = branchState.children;
-    $: children = Object.entries(childStores);
 
-    function leftClick(event) {
+    let children: Array<[number, BranchStore]>;
+    $: children = Object.entries(childStores).map(([idx, store]) => [parseInt(idx), store]);
+
+    function leftClick(event: MouseEvent) {
         if (event.button === 0) root.select(path);
     }
 
-    function rightClick({clientX, clientY}) {
+    function rightClick({clientX, clientY}: MouseEvent) {
         contextModalStore.set({
             coordinates: [clientX, clientY],
             stores: {
@@ -46,31 +74,65 @@
         })
     }
 
+let onSelectedPath: boolean;
     $: onSelectedPath = branchState.onSelectedPath;
+
+    let selectedByParent: boolean;
     $: selectedByParent = branchState.selectedByParent;
+
+    let wasLastSelected: boolean;
     $: wasLastSelected = branchState.wasLastSelectedByParent;
-    let trackPlaying = false;
-    let sectionPlaying = false;
-    let edgeProgress = 0;
-    $: nodeColor = onSelectedPath ? (sectionPlaying ? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
-    $: edgeColor = onSelectedPath ? (sectionPlaying ? colorLookup.edgePlaying : colorLookup.edgeActive) : (selectedByParent || (wasLastSelected && $parentStore.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+
+    let trackPlaying: boolean = false;
+    let sectionPlaying: boolean = false;
+    let edgeProgress: number = 0;
+
+    let nodeColor: string;
+    $: nodeColor = onSelectedPath ? (sectionPlaying ? colorLookup.nodePlaying : colorLookup.nodeActive) : (selectedByParent || (wasLastSelected && parentState.onSelectedPath)) ? colorLookup.nodeWarm : colorLookup.nodeInactive;
+
+let edgeColor: string;
+    $: edgeColor = onSelectedPath ? (sectionPlaying ? colorLookup.edgePlaying : colorLookup.edgeActive) : (selectedByParent || (wasLastSelected && parentState.onSelectedPath)) ? colorLookup.edgeWarm : colorLookup.edgeInactive;
+
+    let edgePercentage: number;
     $: edgePercentage = sectionPlaying ? 100 : trackPlaying ? edgeProgress : 0;
-    $: opacity = (onSelectedPath && trackPlaying) ? 25 : 100;
+
+    let opacity: number;
+    $: opacity= (onSelectedPath && trackPlaying) ? 25 : 100;
+    
+    let edgeZ: number;
     $: edgeZ = (onSelectedPath) ? 1 : 0;
 
+    let numberOfLeavesStore: Readable<number>;
     $: numberOfLeavesStore = branchStore.numberOfLeavesStore;
+
+    let numberOfLeaves: number;
     $: numberOfLeaves = $numberOfLeavesStore;
-    $: placementOffset = offset + (-numberOfLeaves / 2);
+
+let placementOffset: number;
+    $: placementOffset= offset + (-numberOfLeaves / 2);
+
+    let placementStore: Readable<Array<[number, number]>>;
     $: placementStore = branchStore.placementStore;
+
+    let childPlacements: Array<[number, number]>;
     $: childPlacements = $placementStore
 
+    let offsetWidth: number;
     $: offsetWidth = Math.abs(parentOffset - offset);
+
+    let cw: number;
     $: cw = offsetWidth * 30;
-    $: ch = 150 / 2;
+
+    let ch :number;
+    $: ch= 150 / 2;
+
+    let lineWidth: number;
     $: lineWidth = (offsetWidth) * 60 + 10;
+
+    let lineLeft: number;
     $: lineLeft = Math.min(offset, parentOffset) * 60 - 5;
 
-    let node;
+    let node: HTMLDivElement| undefined;
     function focusNode() {
         if(node) node.focus();
     }
@@ -100,18 +162,18 @@
         }, modalOptions);
     }
 
-    function keyPressed(event) {
+    function keyPressed(event: KeyboardEvent) {
         if(event.key === "r") return loadMore();
         if(event.key === "a") return openImportModal();
         if(event.key === "s") return openExportModal();
         if(event.key === "d") return deleteBranch();
     }
 
-    function createNodeTransition(node, {offset}) {
+    function createNodeTransition(node: Element, {offset}: AudioStatus_On) {
         return {
             delay: Math.max(0, (endsAt - offset) * 1000),
             duration: 0,
-            tick: t => {
+            tick: (t: number) => {
                 if(t === 0){
                     sectionPlaying = false;
                 } else {
@@ -121,27 +183,35 @@
         };
     }
 
-    function createEdgeTransition(node, {offset}) {
-        const delay = Math.max(0, (startsAt - offset) * 1000);
-        const duration = (endsAt - Math.max(startsAt, offset)) * 1000;
-        const startProgressSeconds = Math.max(0, offset - startsAt);
-        const startProgress = startProgressSeconds / (endsAt - startsAt);
-        const progressToGo = 1 - startProgress;
+    function createEdgeTransition(node: Element, {offset}: AudioStatus_On) {
+        const delay: number = Math.max(0, (startsAt - offset) * 1000);
+        const duration: number = (endsAt - Math.max(startsAt, offset)) * 1000;
+        const startProgressSeconds: number = Math.max(0, offset - startsAt);
+        const startProgress: number = startProgressSeconds / (endsAt - startsAt);
+        const progressToGo: number = 1 - startProgress;
 
         return {
             delay: delay,
             duration: duration,
-            tick: t => {
-                const progress = startProgress + (progressToGo * t);
+            tick: (t: number) => {
+                const progress: number = startProgress + (progressToGo * t);
                 edgeProgress = progress * 100;
             }
         };
     }
 
-    let edgeGradient;
+    let edgeGradient: SVGLinearGradientElement & HTMLElement | undefined;
 
-    let nodeTransition;
-    let edgeTransition;
+    let nodeTransition: {
+        start: () => void;
+        invalidate: () => void;
+        end: () => void;
+    } | undefined;
+    let edgeTransition: {
+        start: () => void;
+        invalidate: () => void;
+        end: () => void;
+    } | undefined;
 
     audioStatusStore.subscribe(status => {
         if(node && edgeGradient) {
@@ -163,27 +233,27 @@
         }
     });
 
-    function clickedEdge(event) {
+    function clickedEdge(event: any) {
+        //TODO don't use any
         if(!onSelectedPath) return;
 
-        const clickX = event.layerX;
-        const clickY = event.layerY;
-        const width = event.target.viewportElement.clientWidth;
-        const height = event.target.viewportElement.clientHeight;
+        const clickX: number = event.layerX;
+        const clickY: number = event.layerY;
+        const width: number = event.target.viewportElement.clientWidth;
+        const height: number = event.target.viewportElement.clientHeight;
 
-        let progress;
+        let progress: number;
         if(width === 10){
             progress = clickY / height;
         } else {
-            const fullDistance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-            const clickDistance = Math.sqrt(Math.pow(clickX, 2) + Math.pow(clickY, 2));
+            const fullDistance: number = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+            const clickDistance: number = Math.sqrt(Math.pow(clickX, 2) + Math.pow(clickY, 2));
             progress = clickDistance / fullDistance;
         }
         play(startsAt + progress * duration);
 
 
     }
-
 </script>
 
 <style>
@@ -261,13 +331,17 @@
     {/each}
 {/if}
 <svg class="line" width={lineWidth} height={ch * 2 + 2}
-     style={`left: ${lineLeft}px; top: ${(depth-1) * ch * 2 + 24}px; ${offset < parentOffset ? "transform: scaleX(-1); " : ""}z-index: ${edgeZ}`}
-    >
+     style={{
+         left: lineLeft,
+         top: (depth-1) * ch * 2 + 24,
+         transform: `scaleX(${offset < parentOffset ? -1 : 1})`,
+         zIndex: edgeZ
+     }}>
     <linearGradient bind:this={edgeGradient} id={`linear${depth},${offset}`} gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2={offset === parentOffset ? "0%" : "100%"} y2="100%">
         <stop offset="0%"   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"}   stop-color={colorLookup.edgePlaying}/>
         <stop offset={edgePercentage+"%"} stop-color={edgeColor}/>
     </linearGradient>
     <path d={`m 5 0 c 0 ${ch + 0.5} ${cw*2} ${ch + 0.5} ${cw*2} ${ch*2 + 1}`}
-          stroke={`url(#linear${depth},${offset})`} stroke-width="6px" fill="none" style={onSelectedPath ? "cursor: pointer" : ""} on:click={clickedEdge}/>
+          stroke={`url(#linear${depth},${offset})`} stroke-width="6px" fill="none" style={{cursor: onSelectedPath ? "pointer" : "initial"}} on:click={clickedEdge}/>
 </svg>

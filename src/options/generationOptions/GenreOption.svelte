@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
+    import type {Genre} from "../../constants";
     import {genreStore} from "../../state/settings";
     import {getContext} from "svelte";
     import Button from "../../buttons/Button.svelte";
 
-    export let text;
-    export let genre;
+    export let text: string;
+    export let genre: Genre;
 
     const emphasise = $genreStore[1] === genre;
 

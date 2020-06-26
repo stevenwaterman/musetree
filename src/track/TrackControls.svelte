@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import {preplayStore, autoScrollStore, splitStore, yScaleStore, autoPlayStore} from "../state/settings";
     import {play, stop, audioStatusStore} from "../audio/audioPlayer"
     import Button from "../buttons/Button.svelte";
@@ -10,15 +10,17 @@
     import {undoStore} from "../state/undo";
     import Tooltip from "../tooltips/Tooltip.svelte";
 
-    const reader = new FileReader();
-    reader.onload = async event => {
-        await load(root, event.target.result);
+    const reader: FileReader = new FileReader();
+    reader.onload = () => {
+        const result = reader.result;
+        if(result !== null) load(root, result as string);
     };
 
-    function loadClicked(file) {
+    function loadClicked(file: File) {
         reader.readAsText(file);
     }
 
+    let disallowSave: boolean;
     $: disallowSave = Object.keys($root.children).length === 0;
 </script>
 

@@ -1,22 +1,34 @@
-<script>
-  import {root} from "../state/trackTree";
+<script lang="ts">
+  import {root, toReadableNodeState} from "../state/trackTree";
+  import type {NodeStore, NodeState, TreeStore, BranchStore} from "../state/trackTree";
   import Button from "../buttons/Button.svelte";
+  import type {Readable} from "svelte/store";
 
-  export let nodeStore;
-  export let remove;
+  export let nodeStore: NodeStore;
+  export let remove: () => void;
 
-  $: state = $nodeStore;
+  let convertedNodeStore: Readable<NodeState>;
+  $: convertedNodeStore = toReadableNodeState(nodeStore);
+
+  let state: NodeState;
+  $: state = $convertedNodeStore;
+
+  let selected: boolean;
   $: selected = state.wasLastSelectedByParent;
+
+  let path: number[];
   $: path = state.path;
+
+  let index: number;
   $: index = path[path.length - 1];
 
   function select() {
     root.select(path);
   }
 
-  function preventDefaultRemove(event) {
+  function preventDefaultRemove(event: Event) {
     event.preventDefault();
-    remove(event);
+    remove();
   }
 </script>
 

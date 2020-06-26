@@ -1,6 +1,6 @@
 import {derived, Readable, Writable, writable} from "svelte/store";
 import {createEncodingStore, MusenetEncoding} from "./encoding";
-import {createSectionStore, deriveBranchSectionsStore, deriveRootSectionsStore, Section, SectionStore} from "./section";
+import {deriveBranchSectionsStore, deriveRootSectionsStore, Section, SectionStore} from "./section";
 import {arrayEqual, arrayEqualNullable, maybeDerived, unwrapStore} from "../utils";
 import {StateFor} from "./stores";
 import {
@@ -12,13 +12,11 @@ import {
     StoreSafePartDecorated_DecoratedState_Branch,
     StoreSafePartDecorated_DecoratedState_Root
 } from "./tree";
-import {createNotesStore, Notes} from "./notes";
 import {request} from "../broker";
 import {autoRequestStore, Config, configStore} from "./settings";
 import {undoStore} from "./undo";
-import {SerialisedBranch, SerialisedRoot, deriveSerialisedBranchStore, deriveSerialisedRootStore} from "./serialisation";
+import {deriveSerialisedBranchStore, deriveSerialisedRootStore} from "./serialisation";
 import {derivePlacementStore} from "./placement";
-import {ActiveNotes} from "../audio/decoder";
 
 type BaseStateDecoration = {
     pendingLoad: number;
@@ -128,7 +126,7 @@ let config: Config = null as any;
 configStore.subscribe(value => {config = value});
 
 const selectedStoreAndState: Readable<null | [BranchStore, BranchState]> = derived([root.selectedStore_2, selectedBranchStore], ([storeValue, stateValue]) => {
-    if(stateValue === null) return null;
+    if(storeValue === null || stateValue === null) return null;
     return [storeValue, stateValue];
 })
 
@@ -144,3 +142,7 @@ root.serialisedStore.subscribe((serialised: string) => {
         localStorage.setItem("autosave", serialised);
     }
 })
+
+export function toReadableNodeState(nodeStore: NodeStore): Readable<NodeState> {
+    return derived(nodeStore, (nodeState) => nodeState)
+}

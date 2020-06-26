@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import {
         genreStore,
         generationLengthStore,
@@ -32,10 +32,6 @@
 <style>
     h1 {
         margin-top: 0;
-    }
-
-    input {
-        margin: 0;
     }
 
     label {

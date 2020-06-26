@@ -1,61 +1,81 @@
-<script>
-    import SectionCanvas from "./SectionCanvas.svelte";
-    import {isScrollingStore, yScaleStore} from "../state/settings";
-    import {root} from "../state/trackTree";
-    import Timeline from "./Timeline.svelte";
-    import colorLookup from "../colors";
-    import {getPitchRange} from "./pitches";
+<script lang="ts">
+  import SectionCanvas from "./SectionCanvas.svelte";
+  import { isScrollingStore, yScaleStore } from "../state/settings";
+  import { root } from "../state/trackTree";
+  import Timeline from "./Timeline.svelte";
+  import colorLookup from "../colors";
+  import { getPitchRange } from "./pitches";
+  import type { Section } from "../state/section";
+  import type { Readable } from "svelte/store";
 
-    $: selectedSectionsStore = root.selectedSectionsStore;
-    $: selectedSections = $selectedSectionsStore;
+  let selectedSectionsStore: Readable<Section[]>;
+  $: selectedSectionsStore = root.selectedSectionsStore;
 
-    $: pitchRange = getPitchRange(selectedSections)
+  let selectedSections: Section[];
+  $: selectedSections = $selectedSectionsStore;
 
-    let viewport;
+  let pitchRange: {
+    minPitch: number;
+    maxPitch: number;
+  };
+  $: pitchRange = getPitchRange(selectedSections);
 
-    function scroll(sections) {
-        if(sections && sections.length) {
-            const lastSection = sections[sections.length - 1];
-            const startsAt = lastSection.startsAt;
-            setTimeout(() => {
-                viewport.scrollTop = startsAt * $yScaleStore;
-            }, 0);
-        }
+  let viewport: HTMLDivElement | undefined;
+
+  function scroll(sections: Section[]) {
+    if (sections && sections.length) {
+      const lastSection: Section = sections[sections.length - 1];
+      const startsAt: number = lastSection.startsAt;
+      setTimeout(() => {
+        if (viewport) viewport.scrollTop = startsAt * $yScaleStore;
+      }, 0);
     }
+  }
 
-    $: scroll(selectedSections);
+  $: scroll(selectedSections);
 </script>
 
 <style>
-    .container {
-        position: relative;
-        overflow-y: scroll;
-        scrollbar-color: #c3cee3 #1f292e;
-        height: 100%;
-    }
+  .container {
+    position: relative;
+    overflow-y: scroll;
+    scrollbar-color: #c3cee3 #1f292e;
+    height: 100%;
+  }
 
-    .container::-webkit-scrollbar {
-        width: 10px;
-    }
+  .container::-webkit-scrollbar {
+    width: 10px;
+  }
 
-    .container::-webkit-scrollbar-track {
-        background: #1f292e;
-    }
+  .container::-webkit-scrollbar-track {
+    background: #1f292e;
+  }
 
-    .container::-webkit-scrollbar-thumb {
-        background-color: #c3cee3;
-    }
+  .container::-webkit-scrollbar-thumb {
+    background-color: #c3cee3;
+  }
 
-    .placeholder {
-        text-align: center;
-    }
+  .placeholder {
+    text-align: center;
+  }
 </style>
 
-<div class="container" bind:this={viewport} on:wheel={() => isScrollingStore.set(false)} style={"background-color: " + colorLookup.bgDark}>
-    <Timeline/>
-    {#each selectedSections as section}
-        <SectionCanvas viewport={viewport} section={section} pitchMin={pitchRange.minPitch} pitchMax={pitchRange.maxPitch}/>
-    {:else}
-        <p class="placeholder">Right click the root to begin</p>
-    {/each}
+<div
+  class="container"
+  bind:this={viewport}
+  on:wheel={() => isScrollingStore.set(false)}
+  style={'background-color: ' + colorLookup.bgDark}>
+  <Timeline />
+  {#each selectedSections as section}
+    {#if viewport !== undefined}
+      <SectionCanvas
+        {viewport}
+        {section}
+        pitchMin={pitchRange.minPitch}
+        pitchMax={pitchRange.maxPitch} />
+    {/if}
+  {:else}
+    <p class="placeholder">Right click the root to begin</p>
+  {/each}
+
 </div>

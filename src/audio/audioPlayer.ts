@@ -12,15 +12,15 @@ import {combineSections} from "./audioCombiner";
 type AudioStatus_Base<TYPE extends string> = {
     type: TYPE;
 }
-type AudioStatus_Off = AudioStatus_Base<"off"> & {};
-type AudioStatus_Loading = AudioStatus_Base<"loading"> & {};
-type AudioStatus_Starting = AudioStatus_Base<"starting"> & {};
-type AudioStatus_On = AudioStatus_Base<"on"> & {
+export type AudioStatus_Off = AudioStatus_Base<"off"> & {};
+export type AudioStatus_Loading = AudioStatus_Base<"loading"> & {};
+export type AudioStatus_Starting = AudioStatus_Base<"starting"> & {};
+export type AudioStatus_On = AudioStatus_Base<"on"> & {
     started: number;
     offset: number;
     duration: number;
 };
-type AudioStatus = AudioStatus_Off | AudioStatus_Loading | AudioStatus_Starting | AudioStatus_On;
+export type AudioStatus = AudioStatus_Off | AudioStatus_Loading | AudioStatus_Starting | AudioStatus_On;
 
 const audioStatusStoreInternal: Writable<AudioStatus> = writable({type: "off"});
 export const audioStatusStore = audioStatusStoreInternal;

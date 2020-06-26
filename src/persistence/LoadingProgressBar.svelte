@@ -1,10 +1,18 @@
-<script>
+<script lang="ts">
     import colorLookup from "../colors";
     import {loadingProgressStore} from "./persistence";
+    import type {LoadingProgressState} from "./persistence";
 
+    let loadingState: LoadingProgressState;
     $: loadingState = $loadingProgressStore;
-    $: done = loadingState === null ? null : loadingState.done;
-    $: total = loadingState === null ? null : loadingState.total;
+
+    let done: number;
+    $: done = loadingState === null ? 0 : loadingState.done;
+
+    let total: number;
+    $: total = loadingState === null ? 0 : loadingState.total;
+
+    let percent: number;
     $: percent = 100 * (done || 0) / (total || 1);
 </script>
 
