@@ -11,11 +11,11 @@ const changelog: Changelog = [
   {
     version: [2, 19, 4],
     date: new Date(2020, 5, 27),
-    commitHash: "TODO",
+    commitHash: "5b2fadde7b459d6038369a24653d4886c4ac9a86",
     changes: [
-      "Big conversion of all svelte components to typescript, fixing small issues that were revealed in the process"
+      "Big conversion of all svelte components to typescript, fixing small issues that were revealed in the"
     ]
-  },
+  }
   {
     version: [2, 19, 3],
     date: new Date(2020, 5, 25),
