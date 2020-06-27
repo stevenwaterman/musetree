@@ -11,7 +11,7 @@ const changelog: Changelog = [
   {
     version: [2, 19, 4],
     date: new Date(2020, 5, 27),
-    commitHash: "5b2fadde7b459d6038369a24653d4886c4ac9a86",
+    commitHash: "c7a5d61693847b3002e349649f2b5cb0a6aff26e",
     changes: [
       "Big conversion of all svelte components to typescript, fixing small issues that were revealed in the"
     ]
