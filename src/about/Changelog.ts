@@ -15,7 +15,7 @@ const changelog: Changelog = [
     changes: [
       "Big conversion of all svelte components to typescript, fixing small issues that were revealed in the"
     ]
-  }
+  },
   {
     version: [2, 19, 3],
     date: new Date(2020, 5, 25),
