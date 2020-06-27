@@ -86,7 +86,7 @@
     </span>
     <Button
       on:click={showGenreModal}
-      style="font-size: 24px; padding: 0 4px 0 4px; margin: 0 0 0 8px;">
+      style={{fontSize: 24, padding: 0, paddingRight: 4, paddingLeft: 4, margin: 0, marginLeft: 8}}>
       ⚙
     </Button>
   </div>

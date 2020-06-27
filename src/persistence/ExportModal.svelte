@@ -130,7 +130,7 @@
     id="exportName"
     bind:value={name}
     type="text"
-    class={['leftMargin', 'dottedBorder']}
+    class={['leftMargin', 'dottedBorder'].join(" ")}
     style={toCss({ marginBottom: 0, ...lighterStyle })} />
 
   <Tooltip>
@@ -161,11 +161,9 @@
   <textarea
     bind:this={encodingArea}
     id="encoding"
-    class={['dottedBorder', 'leftMargin']}
+    class={['dottedBorder'].join(" ")}
     readonly
-    style={toCss(lighterStyle)}>
-    {encoding}
-  </textarea>
+    style={toCss({...lighterStyle, width: "100%", resize: "none"})}>{encoding}</textarea>
   <div
     class="copy"
     style={toCss({color: colorLookup.text , backgroundColor: colorLookup.bgDark + '99'})}

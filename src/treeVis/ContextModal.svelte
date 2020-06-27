@@ -155,16 +155,13 @@
       on:keydown={keyPressed}
       tabindex={0}>
       <Button on:click={loadMore}>
-        <u>R</u>
-        equest More
+        <u>R</u>equest More
       </Button>
       <Button on:click={openImportModal}>
-        <u>A</u>
-        dd Midi
+        <u>A</u>dd Midi
       </Button>
       <Button on:click={openDeleteModal}>
-        <u>D</u>
-        elete All
+        <u>D</u>elete All
       </Button>
     </div>
   {/if}
@@ -183,20 +180,16 @@
         on:keydown={keyPressed}
         tabindex={0}>
         <Button on:click={loadMore}>
-          <u>R</u>
-          equest More
+          <u>R</u>equest More
         </Button>
         <Button on:click={openImportModal}>
-          <u>A</u>
-          dd Midi
+          <u>A</u>dd Midi
         </Button>
         <Button on:click={openExportModal}>
-          <u>S</u>
-          ave Audio
+          <u>S</u>ave Audio
         </Button>
         <Button on:click={deleteBranch}>
-          <u>D</u>
-          elete Branch
+          <u>D</u>elete Branch
         </Button>
         <!--         TODO   <Button>Edit</Button>-->
       </div>

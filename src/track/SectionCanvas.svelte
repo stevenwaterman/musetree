@@ -22,7 +22,7 @@ import AboutModal from "../about/AboutModal.svelte"
   $: startsAt = section ? section.startsAt : null;
 
   let sectionDuration: number;
-  $: sectionDuration = section && startsAt ? section.endsAt - startsAt : 0;
+  $: sectionDuration = section !== null && startsAt !== null ? section.endsAt - startsAt : 0;
 
   let height: number;
   $: height = sectionDuration * $yScaleStore;
@@ -50,6 +50,9 @@ import AboutModal from "../about/AboutModal.svelte"
     const totalDuration: number = section.startsAt + addDuration;
     Audio.play(totalDuration);
   }
+
+  let svgStyle: JSX.CSSProperties;
+  $: svgStyle = toCss({ backgroundColor: colorLookup.bgLight }) as any;
 </script>
 
 <style>
@@ -75,7 +78,7 @@ import AboutModal from "../about/AboutModal.svelte"
 
 {#if notes !== null}
   <div
-    class={["sectionContainer", "borders"]}
+    class={["sectionContainer", "borders"].join(" ")}
     style={toCss({borderColor: colorLookup.border, height, top})}>
     <VisibilityGuard root={viewport} let:loaded>
       {#if loaded}
@@ -83,10 +86,10 @@ import AboutModal from "../about/AboutModal.svelte"
           viewBox={`${pitchMin} 0 ${pitchRange + 2} ${sectionDuration}`}
           width="100%"
           height={Math.floor(height - 1)}
-          style={{ backgroundColor: colorLookup.bgLight }}
+          style={svgStyle}
           class="sectionCanvas"
           preserveAspectRatio="none"
-          on:click={(event) => {}}>
+          on:click={play}>
           {#if noteEntries !== null}
             {#each noteEntries as [instrument, instrumentNotes], idx}
               {#if $allInstrumentsVisibility[instrument]}

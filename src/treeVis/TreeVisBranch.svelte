@@ -290,6 +290,12 @@
     }
     play(startsAt + progress * duration);
   }
+
+  let pathStyle: JSX.CSSProperties;
+  $: pathStyle = toCss({ cursor: onSelectedPath ? 'pointer' : 'initial' }) as any;
+
+  let lineStyle: JSX.CSSProperties;
+  $: lineStyle = toCss({ left: lineLeft, top: (depth - 1) * ch * 2 + 24, transform: `scaleX(${offset < parentOffset ? -1 : 1})`, zIndex: edgeZ }) as any;
 </script>
 
 <style>
@@ -377,7 +383,7 @@
   class="line"
   width={lineWidth}
   height={ch * 2 + 2}
-  style={{ left: lineLeft, top: (depth - 1) * ch * 2 + 24, transform: `scaleX(${offset < parentOffset ? -1 : 1})`, zIndex: edgeZ }}>
+  style={lineStyle}>
   <linearGradient
     bind:this={edgeGradient}
     id={`linear${depth},${offset}`}
@@ -395,6 +401,6 @@
     stroke={`url(#linear${depth},${offset})`}
     stroke-width="6px"
     fill="none"
-    style={{ cursor: onSelectedPath ? 'pointer' : 'initial' }}
+    style={pathStyle}
     on:click={clickedEdge} />
 </svg>

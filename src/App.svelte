@@ -37,6 +37,7 @@
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    position: fixed;
   }
 
   :global(a) {
@@ -61,7 +62,7 @@
     on:keypress={keyPressed}>
     {#if !$showSidebarStore}
       <div
-        style={toCss({ position: 'fixed', top: '0px', right: '8px', color: colorLookup.text, fontSize: '20pt', fontWeight: 600, opacity: 50, cursor: 'pointer', zIndex: 999 })}
+        style={toCss({ position: 'fixed', top: 8, right: 8, color: colorLookup.text, fontSize: 20, fontWeight: 600, opacity: 50, cursor: 'pointer', zIndex: 999 })}
         on:click|capture={() => showSidebarStore.set(true)}>
         &lt;
       </div>
@@ -81,7 +82,7 @@
       <div
         style={toCss({position: "relative", gridColumn: "3", gridRow: "1", overflowY: "auto", overflowX: "hidden", display: "flex", flexDirection: "column", backgroundColor: colorLookup.bgDark, borderLeft: `1px solid ${colorLookup.border}`, padding: 12})}>
         <div
-          style={toCss({position: "absolute", top: 0, left: 8, color: colorLookup.text, fontSize: 20, fontWeight: 600, opacity: 50, cursor: "pointer"})}
+          style={toCss({position: "absolute", top: 8, left: 8, color: colorLookup.text, fontSize: 20, fontWeight: 600, opacity: 50, cursor: "pointer"})}
           on:click={() => showSidebarStore.set(false)}>
           &gt;
         </div>
