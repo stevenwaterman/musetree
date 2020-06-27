@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
   {
+    version: [2, 19, 4],
+    date: new Date(2020, 5, 27),
+    commitHash: "TODO",
+    changes: [
+      "Big conversion of all svelte components to typescript, fixing small issues that were revealed in the process"
+    ]
+  },
+  {
     version: [2, 19, 3],
     date: new Date(2020, 5, 25),
     commitHash: "9c9d56baa297867b056e16e6d9abde8a94895f1d",
