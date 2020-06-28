@@ -48,8 +48,8 @@
   let endsAt: number | null;
   $: endsAt = sections === null ? null : sections[sections.length - 1].endsAt;
 
-  let songLength: string | null;
-  $: songLength = startsAt && endsAt ? (endsAt - startsAt).toFixed(1) : null;
+  let songLength: string;
+  $: songLength = startsAt !== null && endsAt !== null ? (endsAt - startsAt).toFixed(1) : "0.0";
 
   let numberOfTokens: number | null;
   $: numberOfTokens = sections ? getNumberOfTokens(sections) : null;

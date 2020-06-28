@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
   {
+    version: [2,19,5],
+    date: new Date(2020, 5, 28),
+    commitHash: "TODO",
+    changes: [
+      "Fix context menu placement in chrome",
+      "Fix track length in track info when 1 section long"
+    ]
+  },
+  {
     version: [2, 19, 4],
     date: new Date(2020, 5, 27),
     commitHash: "c7a5d61693847b3002e349649f2b5cb0a6aff26e",

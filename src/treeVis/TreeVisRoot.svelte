@@ -43,9 +43,10 @@
   let childPlacements: Array<[number, number]>;
   $: childPlacements = $placementStore;
 
-  function rightClick({ clientX, clientY }: MouseEvent) {
+  function rightClick(event: MouseEvent) {
+    console.log(event);
     contextModalStore.set({
-      coordinates: [clientX, clientY],
+      coordinates: [event.clientX, event.clientY],
       stores: {
         type: "root",
         nodeStore: root,
