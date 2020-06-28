@@ -11,7 +11,7 @@ const changelog: Changelog = [
   {
     version: [2,19,5],
     date: new Date(2020, 5, 28),
-    commitHash: "TODO",
+    commitHash: "2886957a38886ca02ef242d53898072400f53f59",
     changes: [
       "Fix context menu placement in chrome",
       "Fix track length in track info when 1 section long"
