@@ -123,7 +123,7 @@
   </div>
 
   <Button disabled={$undoStore.length === 0} on:click={undoStore.undo}>
-    Undo (z)
+    Undo (ctrl + z)
   </Button>
 
   <FileInput fileTypes=".mst" handleFile={loadClicked}>Load</FileInput>
