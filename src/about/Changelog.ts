@@ -11,7 +11,7 @@ const changelog: Changelog = [
   {
     version: [2,20,0],
     date: new Date(2020, 5, 30),
-    commitHash: "TODO",
+    commitHash: "c92c8e9ac167f5588ea61e0fbf87ee2a77b95d54",
     changes: [
       "Rework postprocessing of encodings to add min length, max length, and min note separation"
     ]
