@@ -88,7 +88,7 @@ export async function qualityRender(track: Section[]): Promise<AudioBuffer> {
       notes[instrument as Instrument].push(...newNotes);
     });
 
-  const ctx = new OfflineAudioContext(1, duration * sampleRate, sampleRate);
+  const ctx = new OfflineAudioContext(1, (duration + 5) * sampleRate, sampleRate);
 
   const gain = ctx.createGain();
   gain.gain.value = 0.0025;
