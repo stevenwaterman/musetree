@@ -13,7 +13,7 @@ const changelog: Changelog = [
   {
     version: [2,21,1],
     date: new Date(2020, 5, 30),
-    commitHash: "TODO",
+    commitHash: "b41f977d5f81bc9ed8f2e5106a9575a1530b9d3c",
     changes: [
       "Fixed postprocessing bugs",
       "Add midi import setTempo support"
