@@ -3,6 +3,7 @@ import { instruments, Instrument } from "../constants";
 import { maxNoteLengths, minNoteLengths, minNoteSeparation } from "./postProcessSettings";
 import { MusenetEncoding } from "../state/encoding";
 import { encode } from "./encoder";
+import { drumDuration } from "../audio/audioRender";
 
 export type ProcessedInstrumentNotes = CompleteNote[];
 export type ProcessedNotes = Record<Instrument, ProcessedInstrumentNotes>;
@@ -28,7 +29,7 @@ function sort<T extends Array<{ startTime: number }>>(notes: T): T {
 function minSeparation(instrument: Instrument, notes: ProcessedInstrumentNotes, active: InstrumentActiveNotes): [ProcessedInstrumentNotes, ProcessedInstrumentActiveNotes] {
   // Prevents notes from overlapping and leaves the specified gap between them. Shortens the first note to fit.
   const minGap: number = instrument === "drums" ? 0 : minNoteSeparation[instrument];
-  
+
   const noteEvents: Array<CompleteNote | IncompleteNote> = sort([...notes, ...Object.values(active).flat()]);
 
   const eventsPerPitch: Record<number, Array<CompleteNote | IncompleteNote>> = {};
@@ -71,24 +72,27 @@ function minSeparation(instrument: Instrument, notes: ProcessedInstrumentNotes, 
   return [processedNotes, processedActive];
 }
 
-function maxLength(instrument: Exclude<Instrument, "drums">, duration: number, notes: ProcessedInstrumentNotes, active: ProcessedInstrumentActiveNotes): [ProcessedInstrumentNotes, ProcessedInstrumentActiveNotes] {
+function maxLength(instrument: Instrument, duration: number, notes: ProcessedInstrumentNotes, active: ProcessedInstrumentActiveNotes): [ProcessedInstrumentNotes, ProcessedInstrumentActiveNotes] {
   // Adds a note stop when a note has been playing for too long.
-  const maxLength = maxNoteLengths[instrument];
-  if (maxLength === null) return [notes, active];
+  const maxLengthFunction: (pitch: number) => number | null = instrument === "drums" ? drumDuration : () => maxNoteLengths[instrument];
 
-  notes.forEach(note => note.endTime = Math.min(note.endTime, note.startTime + maxLength));
+  notes.forEach(note => {
+    const maxLength = maxLengthFunction(note.pitch);
+    if (maxLength !== null) note.endTime = Math.min(note.endTime, note.startTime + maxLength);
+  });
 
   const outputActive: ProcessedInstrumentActiveNotes = {};
   Object.values(active).forEach(note => {
     const pitch = note.pitch;
     const noteLength = duration - note.startTime;
-    if (noteLength > maxLength) {
+    const maxLength = maxLengthFunction(pitch);
+    if (maxLength !== null && noteLength > maxLength) {
       notes.push({
         ...note,
         type: "COMPLETE",
         endTime: note.startTime + maxLength
       });
-    } else { 
+    } else {
       outputActive[pitch] = note;
     }
   });
@@ -189,11 +193,9 @@ export function postProcess(decoded: Decoded): Processed {
     processingNotes = noOverlapNotes;
     let processedActive = noOverlapActive;
 
-    if (instrument !== "drums") {
-      const [maxLengthNotes, maxLengthActive] = maxLength(instrument, decoded.duration, processingNotes, processedActive);
-      processingNotes = maxLengthNotes;
-      processedActive = maxLengthActive;
-    }
+    const [maxLengthNotes, maxLengthActive] = maxLength(instrument, decoded.duration, processingNotes, processedActive);
+    processingNotes = maxLengthNotes;
+    processedActive = maxLengthActive;
 
     processingNotes = noBackwardsNotes(processingNotes);
 

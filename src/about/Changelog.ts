@@ -1,3 +1,5 @@
+import { minNoteLengths } from "../bridge/postProcessSettings";
+
 type ChangelogEntry = {
   version: [number, number, number],
   date: Date;
@@ -8,6 +10,15 @@ type ChangelogEntry = {
 type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
+  {
+    version: [2,21,1],
+    date: new Date(2020, 5, 30),
+    commitHash: "TODO",
+    changes: [
+      "Fixed postprocessing bugs",
+      "Add midi import setTempo support"
+    ]
+  },
   {
     version: [2,21,0],
     date: new Date(2020, 5, 30),

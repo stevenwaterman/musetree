@@ -1,6 +1,6 @@
 {
   "name": "svelte-app",
-  "version": "2.21.0",
+  "version": "2.21.1",
   "license": "MIT",
   "repository": "https://github.com/stevenwaterman/musetree",
   "scripts": {
@@ -29,7 +29,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "downloadjs": "^1.4.7",
-    "musenet-midi": "github:stevenwaterman/musenet-midi#46d228a461b83e70596f4b2ba921c0d45db94bbe",
+    "musenet-midi": "github:stevenwaterman/musenet-midi#cccd9d9d0d681a6e666fc59e29a2b03c586458d4",
     "panzoom": "^9.2.1",
     "react-style-object-to-css": "^1.1.2",
     "sirv-cli": "^0.4.5",

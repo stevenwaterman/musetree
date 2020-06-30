@@ -102,7 +102,7 @@ export function decode(encoded: MusenetEncoding, activeNotesAtStart: ProcessedAc
     const note: IncompleteNote = {
       type: "INCOMPLETE",
       startTime: time,
-      pitch,
+      pitch: Math.round(pitch),
       volume: volume as IncompleteNote["volume"]
     };
 
@@ -120,7 +120,7 @@ export function decode(encoded: MusenetEncoding, activeNotesAtStart: ProcessedAc
       notes[instrument].push({
         type: "UNSTARTED",
         endTime: time,
-        pitch
+        pitch: Math.round(pitch)
       });
       return;
     }
