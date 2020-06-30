@@ -10,7 +10,7 @@ import { Harp } from "./instruments/harp";
 import { Trumpet } from "./instruments/trumpet";
 import { Violin } from "./instruments/violin";
 import { Drums } from "./instruments/drums";
-import { Notes } from "../state/notes";
+import { ProcessedNotes, ProcessedActiveNotes } from "../bridge/postProcessor";
 
 export const AFTER_RELEASE = 5;
 
@@ -28,19 +28,20 @@ const synths: Record<Instrument, NotesPlayer> & { drums: Drums } = {
 };
 
 const sampleRate = 44100;
-export async function render(notes: Notes, duration: number): Promise<AudioBuffer> {
-  const ctx = new OfflineAudioContext(1, (duration + 2) * sampleRate, sampleRate);
+const extra = 0;
+export async function render(notes: ProcessedNotes, activeAtEnd: ProcessedActiveNotes, duration: number): Promise<AudioBuffer> {
+  const ctx = new OfflineAudioContext(1, (duration + extra) * sampleRate, sampleRate);
 
-  const gain = ctx.createGain();
-  gain.gain.value = 0.2;
+  const gain = ctx.createGain(); 
+  gain.gain.value = 0.0025;
   gain.connect(ctx.destination);
 
-  const promises = Object.values(synths).map(it => it.schedule(ctx, gain, notes));
+  const promises = Object.values(synths).map(it => it.schedule(ctx, gain, notes, activeAtEnd));
   await Promise.all(promises);
 
   return await ctx.startRendering();
 }
 
-export function drumDuration(token: number): number {
-  return synths.drums.durationOf(token);
+export function drumDuration(pitch: number): number | null {
+  return synths.drums.durationOf(pitch);
 }

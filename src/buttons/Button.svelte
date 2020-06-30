@@ -1,6 +1,5 @@
 <script lang="ts">
   import colorLookup from "../colors";
-  import AboutModal from "../about/AboutModal.svelte";
   import toCss from "react-style-object-to-css"
 
   export let disabled: boolean | undefined = undefined;

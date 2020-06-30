@@ -3,7 +3,6 @@
     maxResponseLengthStore,
     temperatureStore,
     autoRequestStore,
-    yScaleStore,
   } from "../../state/settings";
   import colorLookup from "../../colors";
   import Tooltip from "../../tooltips/Tooltip.svelte"

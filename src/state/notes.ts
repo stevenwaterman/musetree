@@ -2,57 +2,14 @@ import { derived, Readable, writable } from "svelte/store";
 import { SectionState, SectionStore } from "./section";
 import { Instrument, instruments } from "../constants";
 import { arrayEqual } from "../utils";
+import { ProcessedNotes } from "../bridge/postProcessor";
+import { CompleteNote, IncompleteNote } from "../bridge/decoder";
 
-export type CompleteNote = {
-  type: "COMPLETE";
+type NotesState = {notes: ProcessedNotes};
+type NotesStore = Readable<NotesState>;
 
-  /**
-   * Musenet Pitch
-   */
-  pitch: number;
-
-  /**
-   * Start time, in seconds, relative to the start of the section
-   */
-  startTime: number;
-
-  /**
-   * Duration, in seconds, relative to the start of the section
-   */
-  endTime: number;
-
-  /**
-   * Volume on a 0..1 scale (except piano where it's 0..1.5)
-   */
-  volume: number;
-};
-
-export type IncompleteNote = {
-  type: "INCOMPLETE";
-
-  /**
-   * Musenet Pitch
-   */
-  pitch: number;
-
-  /**
-   * Start time, in seconds, relative to the start of the section
-   */
-  startTime: number;
-
-  /**
-   * Volume on a 0..1 scale (except piano where it's 0..1.5)
-   */
-  volume: number;
-}
-
-export type Note = CompleteNote | IncompleteNote;
-export type Notes = Record<Instrument, Note[]>;
-export type NotesState = { notes: Notes; }
-export type NotesStore = Readable<NotesState>;
-
-export function createEmptyNotes(): Notes {
-  const notes = {} as Notes;
+export function createEmptyNotes(): ProcessedNotes {
+  const notes = {} as ProcessedNotes;
   instruments.forEach(instrument => notes[instrument] = []);
   return notes;
 }
@@ -61,15 +18,15 @@ export function createRootNotesStore(): NotesStore {
   return writable({ notes: createEmptyNotes() });
 }
 export function createBranchNotesStore(parent: NotesStore, sectionStore: SectionStore): NotesStore {
-  let lastParent: Notes = createEmptyNotes();
-  let lastChild: Notes = createEmptyNotes();
+  let lastParent: ProcessedNotes = createEmptyNotes();
+  let lastChild: ProcessedNotes = createEmptyNotes();
   return derived([parent, sectionStore], ([$parent, $sectionStore]: [NotesState, SectionState], set: (newValue: NotesState) => void) => {
     if (notesEquality($parent.notes, lastParent) && notesEquality($sectionStore.section.notes, lastChild)) return;
     lastParent = $parent.notes;
     lastChild = $sectionStore.section.notes;
-    const parentNotes: Notes = $parent.notes;
-    const childNotes: Notes = $sectionStore.section.notes;
-    const combinedNotes: Notes = createEmptyNotes();
+    const parentNotes: ProcessedNotes = $parent.notes;
+    const childNotes: ProcessedNotes = $sectionStore.section.notes;
+    const combinedNotes: ProcessedNotes = createEmptyNotes();
     instruments.forEach(instrument => {
       combinedNotes[instrument] = [...parentNotes[instrument], ...childNotes[instrument]];
     });
@@ -77,14 +34,14 @@ export function createBranchNotesStore(parent: NotesStore, sectionStore: Section
   }, { notes: createEmptyNotes() });
 }
 
-function notesEquality(a: Notes, b: Notes) {
+function notesEquality(a: ProcessedNotes, b: ProcessedNotes) {
   for (let instrument of ["bass", "drums", "guitar", "harp", "piano", "violin", "cello", "flute", "trumpet", "clarinet"]) {
     if (!arrayEqual(a[instrument as Instrument], b[instrument as Instrument], noteEquality)) return false;
   }
   return true;
 }
 
-function noteEquality(a: Note, b: Note) {
+function noteEquality(a: CompleteNote | IncompleteNote, b: CompleteNote | IncompleteNote) {
   return a.type === b.type &&
     a.pitch === b.pitch &&
     (a.type === "COMPLETE" ? a.endTime : undefined) === (b.type === "COMPLETE" ? b.endTime : undefined) &&

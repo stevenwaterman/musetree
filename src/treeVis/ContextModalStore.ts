@@ -1,5 +1,5 @@
 import { writable, Writable } from "svelte/store";
-import { BranchStore, NodeStore, root, TreeStore } from "../state/trackTree";
+import { BranchStore, NodeStore, TreeStore } from "../state/trackTree";
 
 type StoreConfig_Root = {
   type: "root";

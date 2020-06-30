@@ -1,4 +1,8 @@
 <script lang="ts">
+  import type {
+    ProcessedNotes,
+    ProcessedActiveNotes,
+  } from "../bridge/postProcessor";
   import { yScaleStore } from "../state/settings";
   import { instruments } from "../constants";
   import type { Instrument } from "../constants";
@@ -6,9 +10,8 @@
   import colorLookup, { allInstrumentsVisibility } from "../colors";
   import VisibilityGuard from "./VisibilityGuard.svelte";
   import type { Section } from "../state/section";
-  import type { Notes, Note } from "../state/notes";
-import AboutModal from "../about/AboutModal.svelte"
   import toCss from "react-style-object-to-css";
+  import type { CompleteNote, IncompleteNote } from "../bridge/decoder";
 
   export let viewport: HTMLDivElement;
   export let section: Section;
@@ -22,7 +25,8 @@ import AboutModal from "../about/AboutModal.svelte"
   $: startsAt = section ? section.startsAt : null;
 
   let sectionDuration: number;
-  $: sectionDuration = section !== null && startsAt !== null ? section.endsAt - startsAt : 0;
+  $: sectionDuration =
+    section !== null && startsAt !== null ? section.endsAt - startsAt : 0;
 
   let height: number;
   $: height = sectionDuration * $yScaleStore;
@@ -30,12 +34,23 @@ import AboutModal from "../about/AboutModal.svelte"
   let top: number;
   $: top = (startsAt || 0) * $yScaleStore;
 
-  let notes: Notes | null;
+  let notes: ProcessedNotes | null;
   $: notes = section ? section.notes : null;
 
-  let noteEntries: Array<[Instrument, Note[]]> | null;
-  $: noteEntries = notes
-    ? (Object.entries(notes) as Array<[Instrument, Note[]]>)
+  let activeNotes: ProcessedActiveNotes | null;
+  $: activeNotes = section ? section.activeNotesAtEnd : null;
+
+  let incompleteNoteEntries: Array<[Instrument, IncompleteNote[]]> | null;
+  $: incompleteNoteEntries = activeNotes
+    ? Object.entries(activeNotes).map(([instrument, pitchMap]) => [
+        instrument as Instrument,
+        Object.values(pitchMap),
+      ])
+    : null;
+
+  let completeNoteEntries: Array<[Instrument, CompleteNote[]]> | null;
+  $: completeNoteEntries = notes
+    ? (Object.entries(notes) as Array<[Instrument, CompleteNote[]]>)
     : null;
 
   function play(
@@ -78,8 +93,8 @@ import AboutModal from "../about/AboutModal.svelte"
 
 {#if notes !== null}
   <div
-    class={["sectionContainer", "borders"].join(" ")}
-    style={toCss({borderColor: colorLookup.border, height, top})}>
+    class={['sectionContainer', 'borders'].join(' ')}
+    style={toCss({ borderColor: colorLookup.border, height, top })}>
     <VisibilityGuard root={viewport} let:loaded>
       {#if loaded}
         <svg
@@ -90,15 +105,32 @@ import AboutModal from "../about/AboutModal.svelte"
           class="sectionCanvas"
           preserveAspectRatio="none"
           on:click={play}>
-          {#if noteEntries !== null}
-            {#each noteEntries as [instrument, instrumentNotes], idx}
+          {#if completeNoteEntries !== null}
+            {#each completeNoteEntries as [instrument, instrumentNotes], idx}
               {#if $allInstrumentsVisibility[instrument]}
                 {#each instrumentNotes as note}
                   <rect
                     x={note.pitch + idx / instruments.length}
                     width="1"
                     y={note.startTime}
-                    height={(note.type === 'COMPLETE' ? note.endTime : 1 * 1000 * 1000) - note.startTime}
+                    height={note.endTime - note.startTime}
+                    fill={colorLookup[instrument]}
+                    stroke={colorLookup.border}
+                    stroke-width="1px"
+                    vector-effect="non-scaling-stroke" />
+                {/each}
+              {/if}
+            {/each}
+          {/if}
+          {#if incompleteNoteEntries !== null}
+            {#each incompleteNoteEntries as [instrument, instrumentNotes], idx}
+              {#if $allInstrumentsVisibility[instrument]}
+                {#each instrumentNotes as note}
+                  <rect
+                    x={note.pitch + idx / instruments.length}
+                    width="1"
+                    y={note.startTime}
+                    height={1 * 1000 * 1000}
                     fill={colorLookup[instrument]}
                     stroke={colorLookup.border}
                     stroke-width="1px"

@@ -18,7 +18,6 @@
   import type { BranchStore, BranchState } from "../state/trackTree";
   import Tooltip from "../tooltips/Tooltip.svelte";
   import type { Readable } from "svelte/store";
-  import AboutModal from "../about/AboutModal.svelte"
   import toCss from "react-style-object-to-css"
 
   export let store: BranchStore;
@@ -247,7 +246,7 @@
     on:click={() => {
       const branch = $selectedBranchStore;
       if (branch !== null) {
-        console.log(JSON.stringify(branch.section.notes));
+        console.log(JSON.stringify(branch.section));
       }
     }}>
     Log

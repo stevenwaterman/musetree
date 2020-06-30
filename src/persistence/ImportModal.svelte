@@ -5,20 +5,16 @@
   import { fromMidi } from "musenet-midi";
   import { encodingToArray, encodingToString } from "../state/encoding";
   import type { MusenetEncoding } from "../state/encoding";
-  import { root, toReadableNodeState } from "../state/trackTree";
+  import { toReadableNodeState } from "../state/trackTree";
   import type {
     NodeStore,
     NodeState,
-    BranchState,
-    TreeState,
-    BranchStore,
   } from "../state/trackTree";
   import { loadMidi } from "./persistence";
   import colorLookup from "../colors";
   import examples from "./examples";
   import type { Readable } from "svelte/store";
   import type { Section } from "../state/section";
-  import AboutModal from "../about/AboutModal.svelte"
   import toCss from "react-style-object-to-css";
 
   const { close } = getContext("simple-modal");
@@ -34,6 +30,9 @@
   let section: Section | null;
   $: section =
     importUnderState.type === "root" ? null : importUnderState.section;
+
+  let sectionStartsAt: number;
+  $: sectionStartsAt = section === null ? 0 : section.startsAt;
 
   let sectionEndsAt: number;
   $: sectionEndsAt = section === null ? 0 : section.endsAt;
@@ -53,7 +52,12 @@
 
   async function importEncoding() {
     close();
-    await loadMidi(encodingArray, sectionEndsAt, importUnderStore);
+    await loadMidi(
+      encodingArray,
+      sectionStartsAt,
+      sectionEndsAt,
+      importUnderStore
+    );
   }
 
   const lighterStyle: JSX.CSSProperties = {

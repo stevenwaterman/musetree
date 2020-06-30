@@ -1,16 +1,16 @@
 import { derived, Readable, writable, Writable } from "svelte/store";
 import { MusenetEncoding } from "./encoding";
-import { Notes } from "./notes";
 import { BranchState, BranchStore, TreeState } from "./trackTree";
 import { unwrapStoreNonNull } from "../utils";
-import { ActiveNotes } from "../audio/decoder";
+import { DecodedActiveNotes } from "../bridge/decoder";
+import { ProcessedActiveNotes, ProcessedNotes } from "../bridge/postProcessor";
 
 export type Section = {
   encoding: MusenetEncoding;
   startsAt: number;
   endsAt: number;
-  notes: Notes;
-  activeNotesAtEnd: ActiveNotes;
+  notes: ProcessedNotes;
+  activeNotesAtEnd: ProcessedActiveNotes;
   audio: AudioBuffer;
 }
 export type SectionState = { section: Section; };

@@ -75,14 +75,16 @@ export class AhdsrEnvelope {
       this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
       this.decayNode.gain.setTargetAtTime(this.envelope.sustain, startTime + this.envelope.attack + this.envelope.hold, this.envelope.decay);
     } else {
-      const decayTime = -startTime - this.envelope.attack - this.envelope.hold
+      const decayTime = -startTime - this.envelope.attack - this.envelope.hold;
       const decayIntervals = decayTime / this.envelope.decay;
-      const startVolume = 1 - Math.pow(1 - Math.exp(-1), decayIntervals)
+      const expVolume = Math.exp(-decayIntervals);
+      const startVolume = expVolume * (1-this.envelope.sustain) + this.envelope.sustain;
       this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
       this.decayNode.gain.setValueAtTime(startVolume, 0);
       this.decayNode.gain.setTargetAtTime(this.envelope.sustain, 0, this.envelope.decay);
     }
 
+    this.releaseNode.gain.setValueAtTime(1, 0);
     this.releaseNode.gain.setTargetAtTime(0, releaseTime, this.envelope.release);
 
     return this;
@@ -141,7 +143,7 @@ export class AhdEnvelope {
     } else {
       const decayTime = -startTime - this.envelope.attack - this.envelope.hold
       const decayIntervals = decayTime / this.envelope.decay;
-      const startVolume = 1 - Math.pow(1 - Math.exp(-1), decayIntervals)
+      const startVolume = Math.exp(-decayIntervals);
       this.attackNode.gain.setValueAtTime(this.gain * volume, 0);
       this.decayNode.gain.setValueAtTime(startVolume, 0);
       this.decayNode.gain.setTargetAtTime(0, 0, this.envelope.decay);

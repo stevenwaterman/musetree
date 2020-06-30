@@ -5,7 +5,7 @@
     instrumentStores,
   } from "../../state/settings";
   import InstrumentCheckbox from "../InstrumentCheckbox.svelte";
-  import { genres, instrumentCategories } from "../../constants";
+  import { instrumentCategories } from "../../constants";
   import { getContext } from "svelte";
   import GenresModal from "./GenresModal.svelte";
   import Button from "../../buttons/Button.svelte";

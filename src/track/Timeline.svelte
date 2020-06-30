@@ -25,7 +25,6 @@
         if ($isScrollingStore) {
           node.scrollIntoView({
             block: "center",
-            behavior: "smooth",
           });
         }
       },

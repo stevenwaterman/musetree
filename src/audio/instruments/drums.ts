@@ -1,6 +1,7 @@
 import { InstrumentSynth } from "../nodes/InstrumentSynth";
 import { NoteSynth } from "../nodes/NoteSynth";
-import { Note } from "../../state/notes";
+import { CompleteNote, IncompleteNote } from "../../bridge/decoder";
+import { encode } from "../../bridge/encoder";
 
 export class Drums extends InstrumentSynth<"drums"> {
   private static ENCODINGS: number[] = [
@@ -91,8 +92,7 @@ export class Drums extends InstrumentSynth<"drums"> {
     await Promise.all(promises);
   };
 
-  async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
-    if (note.type === "COMPLETE") {
+  async loadNote(note: {pitch: number, startTime: number}, ctx: BaseAudioContext, destination: AudioNode) {
       const pitch = note.pitch;
       const sample = this.samples[pitch];
       if (sample === undefined) {
@@ -100,11 +100,16 @@ export class Drums extends InstrumentSynth<"drums"> {
         return;
       }
       await sample.loadNote(note, ctx, destination);
-    }
   };
 
-  durationOf(token: number): number {
-    const idx = Drums.ENCODINGS.indexOf(token);
+  async loadIncompleteNote(note: IncompleteNote, ctx: BaseAudioContext, destination: AudioNode) {
+    await this.loadNote(note, ctx, destination);
+  }
+
+  durationOf(pitch: number): number | null {
+    const encoding = pitch + Drums.ENCODING_OFFSET;
+    const idx = Drums.ENCODINGS.indexOf(encoding);
+    if(idx === -1) return null;
     return Drums.DURATIONS[idx];
   }
 }
@@ -113,9 +118,7 @@ class DrumSample implements NoteSynth {
   private static readonly OFFSET = 0.051;
   private readonly arrayBufferPromise: Promise<ArrayBuffer>;
   private audioBuffer: AudioBuffer = null as any;
-  private pitch: number;
   constructor(pitch: number) {
-    this.pitch = pitch;
     this.arrayBufferPromise = fetch(`drums/${pitch}.mp3`)
       .then(response => response.arrayBuffer())
   }
@@ -125,14 +128,20 @@ class DrumSample implements NoteSynth {
     this.audioBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
   }
 
-  async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
+  async loadNote({startTime}: {startTime: number}, ctx: BaseAudioContext, destination: AudioNode) {
     const gain = ctx.createGain();
-    gain.gain.value = 0.25;
+    gain.gain.value = 20;
     gain.connect(destination);
+
+    const offset = startTime < 0 ? -startTime : 0;
 
     const bufferSource = ctx.createBufferSource();
     bufferSource.buffer = this.audioBuffer;
     bufferSource.connect(gain);
-    bufferSource.start(note.startTime, DrumSample.OFFSET);
+    bufferSource.start(Math.max(0, startTime), offset + DrumSample.OFFSET);
+  }
+
+  async loadIncompleteNote(note: IncompleteNote, ctx: BaseAudioContext, destination: AudioNode) {
+    await this.loadNote(note, ctx, destination);
   }
 }

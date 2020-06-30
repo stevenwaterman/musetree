@@ -12,7 +12,7 @@ import {
   StoreSafePartDecorated_DecoratedState_Branch,
   StoreSafePartDecorated_DecoratedState_Root
 } from "./tree";
-import { request } from "../broker";
+import { request } from "../bridge/broker";
 import { autoRequestStore, Config, configStore } from "./settings";
 import { undoStore } from "./undo";
 import { deriveSerialisedBranchStore, deriveSerialisedRootStore } from "./serialisation";

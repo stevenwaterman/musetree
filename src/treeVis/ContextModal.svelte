@@ -7,7 +7,7 @@
   import Button from "../buttons/Button.svelte";
   import { configStore } from "../state/settings";
   import colorLookup, { modalOptions } from "../colors";
-  import { request } from "../broker";
+  import {request} from "../bridge/broker";
   import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
   import { toReadableNodeState } from "../state/trackTree";
   import type { NodeStore, NodeState, BranchStore } from "../state/trackTree";

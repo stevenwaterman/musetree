@@ -2,7 +2,7 @@ import { AhdEnvelope, AhdsrEnvelope, ENVELOPE_AHD, ENVELOPE_AHDSR } from "../nod
 import { InstrumentSynth } from "../nodes/InstrumentSynth";
 import { toFrequency } from "../utils";
 import { AFTER_RELEASE } from "../audioRender";
-import { CompleteNote, IncompleteNote, Note } from "../../state/notes";
+import { CompleteNote, IncompleteNote } from "../../bridge/decoder";
 
 export class Piano extends InstrumentSynth<"piano"> {
   protected instrument: "piano" = "piano";
@@ -18,11 +18,18 @@ export class Piano extends InstrumentSynth<"piano"> {
     this.harmonicWave = ctx.createPeriodicWave(real, imag);
   }
 
-  async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+  async loadNote(note: CompleteNote, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
     const node = new PianoNode(ctx, this.harmonicWave);
     node.frequencyParam.value = toFrequency(note.pitch);
     node.connect(destination);
     node.schedule(note);
+  }
+
+  async loadIncompleteNote(note: IncompleteNote, ctx: BaseAudioContext, destination: AudioNode): Promise<void> {
+    const node = new PianoNode(ctx, this.harmonicWave);
+    node.frequencyParam.value = toFrequency(note.pitch);
+    node.connect(destination);
+    node.scheduleIncomplete(note);
   }
 }
 
@@ -107,26 +114,29 @@ class PianoNode {
     return this;
   }
 
-  schedule(note: Note): void {
+  schedule(note: CompleteNote): void {
     this.idealFrequency.start(Math.max(0, note.startTime));
-    this.lowpassEnvelope.schedule(note.volume, note.startTime);
+    this.lowpassEnvelope.schedule(1, note.startTime);
 
-    const adjustedNote = {
-      ...note,
-      startTime: note.startTime
-    };
+    const stopTime1 = this.lowTricord.schedule(note);
+    const stopTime2 = this.midTricord.schedule(note);
+    const stopTime3 = this.highTricord.schedule(note);
+    const stopTime4 = this.hammer.schedule(note);
 
-    const stopTime1 = this.lowTricord.schedule(adjustedNote);
-    const stopTime2 = this.midTricord.schedule(adjustedNote);
-    const stopTime3 = this.highTricord.schedule(adjustedNote);
-    const stopTime4 = this.hammer.schedule(adjustedNote);
-
-    if (note.type === "COMPLETE") {
-      const stopTime = Math.max(stopTime1, stopTime2, stopTime3, stopTime4);
-      this.idealFrequency.stop(stopTime);
-    }
+    const stopTime = Math.max(stopTime1, stopTime2, stopTime3, stopTime4);
+    this.idealFrequency.stop(stopTime);
   }
-}
+
+  scheduleIncomplete(note: IncompleteNote): void {
+    this.idealFrequency.start(Math.max(0, note.startTime));
+    this.lowpassEnvelope.schedule(1, note.startTime);
+
+    this.lowTricord.scheduleIncomplete(note);
+    this.midTricord.scheduleIncomplete(note);
+    this.highTricord.scheduleIncomplete(note);
+    this.hammer.schedule(note);
+  }
+} 
 
 class TricordNode {
   private static readonly FUNDAMENTAL_VOLUME = 0.2;
@@ -185,12 +195,7 @@ class TricordNode {
     return this;
   }
 
-  schedule(note: Note): number {
-    if (note.type === "COMPLETE") return this.scheduleComplete(note);
-    return this.scheduleIncomplete(note);
-  }
-
-  scheduleComplete({ startTime, endTime: releaseTime, volume }: CompleteNote): number {
+  schedule({ startTime, endTime: releaseTime, volume }: CompleteNote): number {
     const fundamentalStopTime = releaseTime + AFTER_RELEASE * TricordNode.FUNDAMENTAL_ENVELOPE.release;
     this.fundamentalFrequency.start(Math.max(0, startTime));
     this.fundamentalFrequency.stop(fundamentalStopTime);
@@ -259,7 +264,7 @@ class HammerNode {
     return this;
   }
 
-  schedule({ startTime, volume }: Note): number {
+  schedule({ startTime, volume }: CompleteNote | IncompleteNote): number {
     const stopTime = startTime + HammerNode.ENVELOPE.hold + AFTER_RELEASE * HammerNode.ENVELOPE.decay;
     if (stopTime > 0) {
       this.frequency.start(Math.max(0, startTime));

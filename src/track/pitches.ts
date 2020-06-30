@@ -1,7 +1,11 @@
 import { Section } from "../state/section";
 
 export function getPitchRange(sections: Section[]): { minPitch: number, maxPitch: number } {
-  const pitches: number[] = sections.flatMap(section => Object.values(section.notes).flat()).map(note => note.pitch);
+  const pitches: number[] = [
+    ...sections.flatMap(section => Object.values(section.notes).flat()).map(note => note.pitch),
+    ...sections.flatMap(section => Object.values(section.activeNotesAtEnd).flatMap(active => Object.values(active)).map(note => note.pitch))
+  ];
+
   if (pitches.length) {
     const minPitch = Math.min(...pitches);
     const maxPitch = Math.max(...pitches);

@@ -7,7 +7,7 @@
     NodeState,
   } from "../state/trackTree";
   import { configStore } from "../state/settings";
-  import { request } from "../broker";
+  import {request} from "../bridge/broker";
   import colorLookup, { modalOptions } from "../colors";
   import ImportModal from "../persistence/ImportModal.svelte";
   import ExportModal from "../persistence/ExportModal.svelte";

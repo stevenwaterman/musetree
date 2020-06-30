@@ -1,5 +1,5 @@
-import { Notes } from "../../state/notes";
+import { ProcessedNotes, ProcessedActiveNotes } from "../../bridge/postProcessor";
 
 export interface NotesPlayer {
-  schedule(ctx: BaseAudioContext, destination: AudioNode, notes: Notes): Promise<void>;
+  schedule(ctx: BaseAudioContext, destination: AudioNode, notes: ProcessedNotes, activeNotesAtEnd: ProcessedActiveNotes): Promise<void>;
 }

@@ -3,7 +3,7 @@ import { InstrumentSynth } from "./InstrumentSynth";
 import { AhdsrEnvelope, ENVELOPE_AHDSR } from "./envelopes";
 import { toFrequency } from "../utils";
 import { AFTER_RELEASE } from "../audioRender";
-import { Note } from "../../state/notes";
+import { CompleteNote, IncompleteNote } from "../../bridge/decoder";
 
 export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
   protected abstract amplitudeGain: number;
@@ -17,7 +17,42 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
 
   async setup() { };
 
-  async loadNote(note: Note, ctx: BaseAudioContext, destination: AudioNode) {
+  async loadNote(note: CompleteNote, ctx: BaseAudioContext, destination: AudioNode) {
+    const freq = toFrequency(note.pitch);
+
+    const ampOsc = ctx.createOscillator();
+    ampOsc.type = this.amplitudeWave;
+    ampOsc.frequency.value = freq;
+    ampOsc.start(Math.max(0, note.startTime));
+    ampOsc.stop(note.endTime + AFTER_RELEASE * this.amplitudeEnvelope.release);
+
+    const ampGain = new AhdsrEnvelope(
+      ctx,
+      this.amplitudeGain,
+      this.amplitudeEnvelope,
+    );
+    ampOsc.connect(ampGain.input);
+    ampGain.connect(destination);
+    ampGain.schedule(note.volume, note.startTime, note.endTime);
+
+    const freqOsc = ctx.createOscillator();
+    freqOsc.type = this.frequencyWave;
+    freqOsc.frequency.value = freq * this.frequencyFrequencyMultiplier;
+    freqOsc.start(Math.max(0, note.startTime));
+    freqOsc.stop(note.endTime + AFTER_RELEASE * this.frequencyEnvelope.release);
+
+    const freqGain = new AhdsrEnvelope(
+      ctx,
+      this.frequencyGain,
+      this.frequencyEnvelope
+    );
+    freqOsc.connect(freqGain.input);
+    freqGain.connect(ampOsc.frequency);
+    freqGain.schedule(1, note.startTime, note.endTime);
+  }
+
+
+  async loadIncompleteNote(note: IncompleteNote, ctx: BaseAudioContext, destination: AudioNode) {
     const freq = toFrequency(note.pitch);
 
     const adjustedAmplitudeEnvelope: ENVELOPE_AHDSR = {
@@ -32,7 +67,6 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     ampOsc.type = this.amplitudeWave;
     ampOsc.frequency.value = freq;
     ampOsc.start(Math.max(0, note.startTime));
-    if (note.type === "COMPLETE") ampOsc.stop(note.endTime + AFTER_RELEASE * this.amplitudeEnvelope.release);
 
     const ampGain = new AhdsrEnvelope(
       ctx,
@@ -41,7 +75,7 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     );
     ampOsc.connect(ampGain.input);
     ampGain.connect(destination);
-    ampGain.schedule(note.volume, note.startTime, (note.type === "COMPLETE" ? note.endTime : 1 * 1000 * 1000));
+    ampGain.schedule(note.volume, note.startTime, 1 * 1000 * 1000);
 
     const adjustedFrequencyEnvelope: ENVELOPE_AHDSR = {
       attack: this.frequencyEnvelope.attack,
@@ -55,7 +89,6 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     freqOsc.type = this.frequencyWave;
     freqOsc.frequency.value = freq * this.frequencyFrequencyMultiplier;
     freqOsc.start(Math.max(0, note.startTime));
-    if (note.type === "COMPLETE") freqOsc.stop(note.endTime + AFTER_RELEASE * this.frequencyEnvelope.release);
 
     const freqGain = new AhdsrEnvelope(
       ctx,
@@ -64,6 +97,6 @@ export abstract class FmSynth<I extends Instrument> extends InstrumentSynth<I> {
     );
     freqOsc.connect(freqGain.input);
     freqGain.connect(ampOsc.frequency);
-    freqGain.schedule(1, note.startTime, (note.type === "COMPLETE" ? note.endTime : 1 * 1000 * 1000));
+    freqGain.schedule(1, note.startTime, 1 * 1000 * 1000);
   }
 }

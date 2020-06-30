@@ -1,6 +1,6 @@
 import { Section } from "../state/section";
-import { CompleteNote } from "../state/notes";
 import { Instrument, instruments } from "../constants";
+import { CompleteNote } from "../bridge/decoder";
 
 export function getNumberOfNotes(sections: Section[]): number {
   return sections.map(getNumberOfNotesOneSection).reduce((a, b) => a + b, 0);

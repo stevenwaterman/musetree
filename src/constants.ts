@@ -10,18 +10,6 @@ export type Instrument =
   | "trumpet"
   | "clarinet";
 export const instruments: Instrument[] = ["bass", "drums", "guitar", "harp", "piano", "violin", "cello", "flute", "trumpet", "clarinet"];
-export const maxInstrumentLengths: Record<Instrument, number> = {
-  bass: 5,
-  drums: 10,
-  guitar: 5,
-  harp: 5,
-  piano: 10,
-  violin: 10,
-  cello: 10,
-  flute: 10,
-  trumpet: 10,
-  clarinet: 10
-}
 
 export const instrumentCategories = [
   "bass",

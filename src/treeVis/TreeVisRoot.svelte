@@ -7,11 +7,11 @@
   import ImportModal from "../persistence/ImportModal.svelte";
   import { configStore } from "../state/settings";
   import { getContext } from "svelte";
-  import { request } from "../broker";
   import DeleteConfirmationModal from "./DeleteConfirmationModal.svelte";
   import { audioStatusStore } from "../audio/audioPlayer";
   import type { Readable } from "svelte/store"
   import toCss from "react-style-object-to-css";
+  import {request} from "../bridge/broker";
 
   export let treeContainer: HTMLDivElement;
 
@@ -44,7 +44,6 @@
   $: childPlacements = $placementStore;
 
   function rightClick(event: MouseEvent) {
-    console.log(event);
     contextModalStore.set({
       coordinates: [event.clientX, event.clientY],
       stores: {
