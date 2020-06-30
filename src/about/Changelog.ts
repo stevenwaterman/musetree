@@ -9,6 +9,15 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
   {
+    version: [2,20,1],
+    date: new Date(2020, 5, 30),
+    commitHash: "TODO",
+    changes: [
+      "Fixed behaviour when clicking on tree view edge",
+      "Fixed space bar to play/pause"
+    ]
+  },
+  {
     version: [2,20,0],
     date: new Date(2020, 5, 30),
     commitHash: "c92c8e9ac167f5588ea61e0fbf87ee2a77b95d54",

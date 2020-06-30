@@ -53,13 +53,14 @@
   }
 </style>
 
+<svelte:body on:keypress|preventDefault={keyPressed}/>
+
 <Modal>
   <AutoSaveController />
   <ModalController />
   <div
     class="grid"
-    style={toCss({ color: colorLookup.text, gridTemplateColumns: `${$splitStore}fr ${100 - $splitStore}fr ${$showSidebarStore ? '300px' : ''}` })}
-    on:keypress={keyPressed}>
+    style={toCss({ color: colorLookup.text, gridTemplateColumns: `${$splitStore}fr ${100 - $splitStore}fr ${$showSidebarStore ? '300px' : ''}` })} >
     {#if !$showSidebarStore}
       <div
         style={toCss({ position: 'fixed', top: 8, right: 8, color: colorLookup.text, fontSize: 20, fontWeight: 600, opacity: 50, cursor: 'pointer', zIndex: 999 })}

@@ -268,11 +268,11 @@
   });
 
   function clickedEdge(event: any) {
-    //TODO don't use any
+    console.log(event);
     if (!onSelectedPath) return;
 
-    const clickX: number = event.layerX;
-    const clickY: number = event.layerY;
+    const clickX: number = event.offsetX;
+    const clickY: number = event.offsetY;
     const width: number = event.target.viewportElement.clientWidth;
     const height: number = event.target.viewportElement.clientHeight;
 
