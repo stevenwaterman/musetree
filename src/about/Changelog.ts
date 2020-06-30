@@ -11,7 +11,7 @@ const changelog: Changelog = [
   {
     version: [2,21,0],
     date: new Date(2020, 5, 30),
-    commitHash: "TODO",
+    commitHash: "428bfe02120286f505472c2ef0e5b9b63ffb3281",
     changes: [
       "Add export high-quality MuseTree wav"
     ]
