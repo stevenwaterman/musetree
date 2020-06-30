@@ -4,6 +4,7 @@ import { Section } from "../state/section";
 import { combineSections } from "../audio/audioCombiner";
 import toWav from "audiobuffer-to-wav";
 import { toMidi } from "musenet-midi";
+import { qualityRender } from "../audio/audioRender";
 
 export type AudioFormat = "ogg" | "wav" | "mp3" | "midi";
 
@@ -26,6 +27,13 @@ export async function downloadMuseNetAudio(encoding: MusenetEncoding, format: Au
       .then(() => { success = true })
       .catch(() => { success = false });
   }
+}
+
+export async function downloadHighQualityMuseTreeAudio(track: Section[], name: string) {
+  const buffer = await qualityRender(track);
+  const wav = toWav(buffer);
+  const array = new Uint8Array(wav);
+  download(array, `${name}.wav`);
 }
 
 export async function downloadMuseTreeAudio(track: Section[], name: string) {

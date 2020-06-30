@@ -9,6 +9,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
   {
+    version: [2,21,0],
+    date: new Date(2020, 5, 30),
+    commitHash: "TODO",
+    changes: [
+      "Add export high-quality MuseTree wav"
+    ]
+  },
+  {
     version: [2,20,1],
     date: new Date(2020, 5, 30),
     commitHash: "23f2870c102322266555b9412176c0a867be4478",

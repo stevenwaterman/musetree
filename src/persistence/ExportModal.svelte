@@ -7,6 +7,7 @@
     downloadMuseTreeAudio,
     downloadMuseNetAudio,
     downloadMidiAudio,
+downloadHighQualityMuseTreeAudio,
   } from "./export";
   import colorLookup from "../colors";
   import download from "downloadjs";
@@ -176,10 +177,17 @@
 <div class="grid">
   <span>
     <b style={toCss({ color: colorLookup.text })}>Recommended:</b>
+    Audio as it sounds elsewhere in the app, re-rendered as one section to prevent issues on section boundaries
+  </span>
+  <Button on:click={() => downloadHighQualityMuseTreeAudio($selectedSectionsStore, name)}>
+    MuseTree (High Quality .wav)
+  </Button>
+
+  <span>
     Audio as it sounds elsewhere in the app
   </span>
   <Button on:click={() => downloadMuseTreeAudio($selectedSectionsStore, name)}>
-    MuseTree (.wav)
+    MuseTree (Fast Render .wav)
   </Button>
 
   <span>
