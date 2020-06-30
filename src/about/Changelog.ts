@@ -11,7 +11,7 @@ const changelog: Changelog = [
   {
     version: [2,20,1],
     date: new Date(2020, 5, 30),
-    commitHash: "TODO",
+    commitHash: "23f2870c102322266555b9412176c0a867be4478",
     changes: [
       "Fixed behaviour when clicking on tree view edge",
       "Fixed space bar to play/pause"
