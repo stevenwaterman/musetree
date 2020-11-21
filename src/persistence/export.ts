@@ -25,7 +25,7 @@ export async function downloadMuseNetAudio(encoding: MusenetEncoding, format: Au
       .then(res => res.blob())
       .then(blob => download(blob, `${name}.${format}`))
       .then(() => { success = true })
-      .catch(() => { success = false });
+      .catch(() => { success = true }); // Temporary change to stop the retry logic see issue #88
   }
 }
 
