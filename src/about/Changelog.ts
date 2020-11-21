@@ -11,6 +11,14 @@ type Changelog = ChangelogEntry[];
 
 const changelog: Changelog = [
   {
+    version: [2,21,2],
+    date: new Date(2020, 11, 21),
+    commitHash: "54f2941133b73cfe971f0fea0281be9fa2fa96e2",
+    changes: [
+      "Stop retrying failed requests to prevent infinite loop that DOS attacks MuseNet"
+    ]
+  },
+  {
     version: [2,21,1],
     date: new Date(2020, 5, 30),
     commitHash: "b41f977d5f81bc9ed8f2e5106a9575a1530b9d3c",
