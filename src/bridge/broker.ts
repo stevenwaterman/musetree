@@ -44,7 +44,7 @@ async function requestInternal(config: Config, store: NodeStore, prevEncoding: M
       data
     })
       .then((res: AxiosResponse<ResponseData>) => res.data.completions)
-      .catch(() => null);
+      .catch(() => []); // Temporary change to stop the retry logic see issue #88
   }
   const promises = response.map((completion: Completion) => parseCompletion(completion, truncatedEncoding, prevActiveNotesAtEnd, prevSectionStart, prevSectionEnd));
   return Promise.all(promises)
