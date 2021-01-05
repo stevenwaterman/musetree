@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.4",
     "downloadjs": "^1.4.7",
     "musenet-midi": "github:stevenwaterman/musenet-midi#cccd9d9d0d681a6e666fc59e29a2b03c586458d4",
