@@ -1,6 +1,11 @@
-FROM node:16.1.0-alpine3.11
-WORKDIR /usr/src/app
+FROM httpd:2.4
+RUN apt-get update
+RUN apt-get install curl git zip nano -y
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
+RUN apt-get install --yes nodejs
+RUN node -v
+RUN npm -v
 COPY . .
 RUN npm i
-EXPOSE 5000
-CMD ["npm", "run" ,"start:dev"]
+RUN npm run build
+COPY ./public/ /usr/local/apache2/htdocs/
