@@ -8,4 +8,4 @@ RUN npm -v
 COPY . .
 RUN npm i
 RUN npm run build
-COPY ./public/ /usr/local/apache2/htdocs/
+RUN cp ./public/ /usr/local/apache2/htdocs/
