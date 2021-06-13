@@ -47,3 +47,12 @@ MuseTree is still in an early state.
 Any and all contributions are welcome!
 Please have a look at the [issue list](https://github.com/stevenwaterman/musetree/issues) and have a go at fixing one, or add more!
 I'm friendly, I promise.]
+
+**Using Docker**
+
+Using it with Docker is as easy as running this command:
+
+* `docker run -p 8080:80 skillcrafter/musetree`
+
+It is based on the httpd:2.4 image.
+Future Plans are to support Nginx and some other Webserver.
