@@ -58,8 +58,9 @@
       target: EventTarget & SVGSVGElement;
     }
   ) {
-    const rect: { top: number } = event.target.getBoundingClientRect();
-    const y: number = event.clientY - rect.top;
+    const rect: { top: number; left: number } =
+      event.target.getBoundingClientRect();
+    const y: number = event.clientX - rect.left;
     const fraction: number = y / height;
     const addDuration: number = sectionDuration * fraction;
     const totalDuration: number = section.startsAt + addDuration;
@@ -70,71 +71,36 @@
   $: svgStyle = toCss({ backgroundColor: colorLookup.bgLight }) as any;
 </script>
 
-<style>
-  .sectionCanvas {
-    position: relative;
-    cursor: pointer;
-  }
-
-  .sectionContainer {
-    width: 100%;
-    position: absolute;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    flex-grow: 0;
-    left: 0;
-  }
-
-  .borders {
-    border-right: 1px solid;
-    border-bottom: 1px solid;
-  }
-</style>
-
 {#if notes !== null}
   <div
-    class={['sectionContainer', 'borders'].join(' ')}
-    style={toCss({ borderColor: colorLookup.border, height, top })}>
+    class={["sectionContainer", "borders"].join(" ")}
+    style={toCss({ borderColor: colorLookup.border })}
+  >
     <VisibilityGuard root={viewport} let:loaded>
       {#if loaded}
         <svg
-          viewBox={`${pitchMin} 0 ${pitchRange + 2} ${sectionDuration}`}
-          width="100%"
-          height={Math.floor(height - 1)}
+          viewBox={`0 ${pitchMin} ${sectionDuration} ${pitchRange + 2}`}
+          width={Math.floor(height - 1)}
+          height="100%"
           style={svgStyle}
           class="sectionCanvas"
           preserveAspectRatio="none"
-          on:click={play}>
+          on:click={play}
+        >
           {#if completeNoteEntries !== null}
             {#each completeNoteEntries as [instrument, instrumentNotes], idx}
               {#if $allInstrumentsVisibility[instrument]}
                 {#each instrumentNotes as note}
                   <rect
-                    x={note.pitch + idx / instruments.length}
-                    width="1"
-                    y={note.startTime}
-                    height={note.endTime - note.startTime}
+                    x={note.startTime}
+                    width={note.endTime - note.startTime}
+                    y={note.pitch + idx / instruments.length}
+                    height="1"
                     fill={colorLookup[instrument]}
                     stroke={colorLookup.border}
                     stroke-width="1px"
-                    vector-effect="non-scaling-stroke" />
-                {/each}
-              {/if}
-            {/each}
-          {/if}
-          {#if incompleteNoteEntries !== null}
-            {#each incompleteNoteEntries as [instrument, instrumentNotes], idx}
-              {#if $allInstrumentsVisibility[instrument]}
-                {#each instrumentNotes as note}
-                  <rect
-                    x={note.pitch + idx / instruments.length}
-                    width="1"
-                    y={note.startTime}
-                    height={1 * 1000 * 1000}
-                    fill={colorLookup[instrument]}
-                    stroke={colorLookup.border}
-                    stroke-width="1px"
-                    vector-effect="non-scaling-stroke" />
+                    vector-effect="non-scaling-stroke"
+                  />
                 {/each}
               {/if}
             {/each}
@@ -144,3 +110,21 @@
     </VisibilityGuard>
   </div>
 {/if}
+
+<style>
+  .sectionCanvas {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .sectionContainer {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+
+  .borders {
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+  }
+</style>

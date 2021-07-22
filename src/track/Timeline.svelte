@@ -13,7 +13,7 @@
     { offset: startTime, duration: endTime }: AudioStatus_On
   ) {
     const transTime: number = endTime - startTime;
-    const style = ((node as unknown) as ElementCSSInlineStyle).style;
+    const style = (node as unknown as ElementCSSInlineStyle).style;
     return {
       duration: transTime * 1000,
       tick: (t: number) => {
@@ -21,10 +21,10 @@
         const endPx: number = endTime * $yScaleStore;
         const transPx: number = endPx - startPx;
         const y: number = startPx + t * transPx;
-        style.top = `${y}px`;
+        style.left = `${y}px`;
         if ($isScrollingStore) {
           node.scrollIntoView({
-            block: "center",
+            inline: "center",
           });
         }
       },
@@ -50,32 +50,33 @@
   });
 </script>
 
+<div
+  bind:this={element}
+  on:introend={() => {
+    hidden = true;
+  }}
+  class="anchor"
+>
+  <div class="line" {hidden} />
+</div>
+
 <style>
   .anchor {
     position: relative;
     top: 0;
-    height: 0;
-    width: 100%;
+    height: 100%;
+    width: 2px;
     z-index: 2;
     pointer-events: none;
   }
 
   .line {
     position: absolute;
-    height: 2px;
-    width: 100%;
+    height: 100%;
+    width: 2px;
     z-index: 2;
     background-color: rgba(255, 255, 255, 0.5);
     pointer-events: none;
     margin: 0 -1.5px;
   }
 </style>
-
-<div
-  bind:this={element}
-  on:introend={() => {
-    hidden = true;
-  }}
-  class="anchor">
-  <div class="line" {hidden} />
-</div>

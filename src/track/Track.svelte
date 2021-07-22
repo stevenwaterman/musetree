@@ -6,8 +6,8 @@
   import colorLookup from "../colors";
   import { getPitchRange } from "./pitches";
   import type { Section } from "../state/section";
-  import type { Readable } from "svelte/store"
-  import toCss from "react-style-object-to-css"
+  import type { Readable } from "svelte/store";
+  import toCss from "react-style-object-to-css";
 
   let selectedSectionsStore: Readable<Section[]>;
   $: selectedSectionsStore = root.selectedSectionsStore;
@@ -28,7 +28,7 @@
       const lastSection: Section = sections[sections.length - 1];
       const startsAt: number = lastSection.startsAt;
       setTimeout(() => {
-        if (viewport) viewport.scrollTop = startsAt * $yScaleStore;
+        if (viewport) viewport.scrollLeft = startsAt * $yScaleStore;
       }, 0);
     }
   }
@@ -36,10 +36,35 @@
   $: scroll(selectedSections);
 </script>
 
+<div
+  class="container"
+  bind:this={viewport}
+  on:wheel={() => isScrollingStore.set(false)}
+  style={toCss({
+    backgroundColor: colorLookup.bgDark,
+  })}
+>
+  <Timeline />
+  {#each selectedSections as section}
+    {#if viewport !== undefined}
+      <SectionCanvas
+        {viewport}
+        {section}
+        pitchMin={pitchRange.minPitch}
+        pitchMax={pitchRange.maxPitch}
+      />
+    {/if}
+  {:else}
+    <p class="placeholder">Right click the root to begin</p>
+  {/each}
+</div>
+
 <style>
   .container {
     position: relative;
-    overflow-y: scroll;
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
     scrollbar-color: #c3cee3 #1f292e;
     height: 100%;
   }
@@ -60,23 +85,3 @@
     text-align: center;
   }
 </style>
-
-<div
-  class="container"
-  bind:this={viewport}
-  on:wheel={() => isScrollingStore.set(false)}
-  style={toCss({backgroundColor: colorLookup.bgDark})}>
-  <Timeline />
-  {#each selectedSections as section}
-    {#if viewport !== undefined}
-      <SectionCanvas
-        {viewport}
-        {section}
-        pitchMin={pitchRange.minPitch}
-        pitchMax={pitchRange.maxPitch} />
-    {/if}
-  {:else}
-    <p class="placeholder">Right click the root to begin</p>
-  {/each}
-
-</div>

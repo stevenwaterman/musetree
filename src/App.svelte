@@ -31,12 +31,122 @@
   }
 </script>
 
+<svelte:body on:keypress={keyPressed} />
+
+<Modal>
+  <AutoSaveController />
+  <ModalController />
+  <div
+    class="grid"
+    style={toCss({
+      color: colorLookup.text,
+      gridTemplateColumns: `${$splitStore}fr ${100 - $splitStore}fr ${
+        $showSidebarStore ? "300px" : ""
+      }`,
+    })}
+  >
+    {#if !$showSidebarStore}
+      <div
+        style={toCss({
+          position: "fixed",
+          top: 8,
+          right: 8,
+          color: colorLookup.text,
+          fontSize: 20,
+          fontWeight: 600,
+          opacity: 50,
+          cursor: "pointer",
+          zIndex: 999,
+        })}
+        on:click|capture={() => showSidebarStore.set(true)}
+      >
+        &lt;
+      </div>
+    {/if}
+    <div
+      class="track"
+      style={toCss({
+        gridColumn: "span 2",
+        gridRow: "2",
+        minHeight: 0,
+        display: $splitStore === 0 ? "none" : "initial",
+      })}
+    >
+      <Track />
+    </div>
+    <div
+      style={toCss({
+        position: "relative",
+        gridColumn: "span 2",
+        gridRow: "1",
+        minHeight: 0,
+        display: $splitStore === 100 ? "none" : "initial",
+      })}
+    >
+      <TreeVis />
+    </div>
+    <div
+      style={toCss({ gridColumn: "1 / span 3", gridRow: "3", minHeight: 0 })}
+    >
+      <TrackControls />
+    </div>
+    {#if $showSidebarStore}
+      <div
+        style={toCss({
+          position: "relative",
+          gridColumn: "3",
+          gridRow: "span 2",
+          overflowY: "auto",
+          overflowX: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: colorLookup.bgDark,
+          borderLeft: `1px solid ${colorLookup.border}`,
+          padding: 12,
+        })}
+      >
+        <div
+          style={toCss({
+            position: "absolute",
+            top: 8,
+            left: 8,
+            color: colorLookup.text,
+            fontSize: 20,
+            fontWeight: 600,
+            opacity: 50,
+            cursor: "pointer",
+          })}
+          on:click={() => showSidebarStore.set(false)}
+        >
+          &gt;
+        </div>
+        <h1
+          style={toCss({
+            textAlign: "center",
+            color: colorLookup.text,
+            margin: 0,
+          })}
+        >
+          Options
+        </h1>
+        <GenerationOptions />
+        <DisplayOptions />
+        <TrackInfo />
+      </div>
+    {/if}
+  </div>
+</Modal>
+
 <style>
   .grid {
     display: grid;
-    grid-template-rows: 1fr 46px;
+    grid-template-rows: 1fr 1fr 46px;
     height: 100vh;
     width: 100vw;
+  }
+
+  .track {
+    overflow: hidden;
   }
 
   :global(body) {
@@ -60,100 +170,3 @@
     color: #c3e88d;
   }
 </style>
-
-<svelte:body on:keypress={keyPressed} />
-
-<Modal>
-  <AutoSaveController />
-  <ModalController />
-  <div
-    class="grid"
-    style={toCss({
-      color: colorLookup.text,
-      gridTemplateColumns: `${$splitStore}fr ${100 - $splitStore}fr ${
-        $showSidebarStore ? '300px' : ''
-      }`,
-    })}>
-    {#if !$showSidebarStore}
-      <div
-        style={toCss({
-          position: 'fixed',
-          top: 8,
-          right: 8,
-          color: colorLookup.text,
-          fontSize: 20,
-          fontWeight: 600,
-          opacity: 50,
-          cursor: 'pointer',
-          zIndex: 999,
-        })}
-        on:click|capture={() => showSidebarStore.set(true)}>
-        &lt;
-      </div>
-    {/if}
-    <div
-      style={toCss({
-        gridColumn: '1',
-        gridRow: '1',
-        minHeight: 0,
-        display: $splitStore === 0 ? 'none' : 'initial',
-      })}>
-      <Track />
-    </div>
-    <div
-      style={toCss({
-        position: 'relative',
-        gridColumn: '2',
-        gridRow: '1',
-        minHeight: 0,
-        display: $splitStore === 100 ? 'none' : 'initial',
-      })}>
-      <TreeVis />
-    </div>
-    <div
-      style={toCss({ gridColumn: '1 / span 3', gridRow: '2', minHeight: 0 })}>
-      <TrackControls />
-    </div>
-    {#if $showSidebarStore}
-      <div
-        style={toCss({
-          position: 'relative',
-          gridColumn: '3',
-          gridRow: '1',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: colorLookup.bgDark,
-          borderLeft: `1px solid ${colorLookup.border}`,
-          padding: 12,
-        })}>
-        <div
-          style={toCss({
-            position: 'absolute',
-            top: 8,
-            left: 8,
-            color: colorLookup.text,
-            fontSize: 20,
-            fontWeight: 600,
-            opacity: 50,
-            cursor: 'pointer',
-          })}
-          on:click={() => showSidebarStore.set(false)}>
-          &gt;
-        </div>
-        <h1
-          style={toCss({
-            textAlign: 'center',
-            color: colorLookup.text,
-            margin: 0,
-          })}>
-          Options
-        </h1>
-        <GenerationOptions />
-        <DisplayOptions />
-        <TrackInfo />
-      </div>
-    {/if}
-  </div>
-</Modal>
