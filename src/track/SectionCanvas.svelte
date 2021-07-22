@@ -94,7 +94,8 @@
                   <rect
                     x={note.startTime}
                     width={note.endTime - note.startTime}
-                    y={note.pitch + idx / instruments.length}
+                    y={pitchMax -
+                      (note.pitch - pitchMin + idx / instruments.length)}
                     height="1"
                     fill={colorLookup[instrument]}
                     stroke={colorLookup.border}
