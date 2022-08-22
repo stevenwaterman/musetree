@@ -72,8 +72,8 @@ export async function load(tree: TreeStore, json: string) {
       await addToTree(tree, child);
     }
   }).catch(reason => {
-    if ("cancelled"! in reason) console.log(`promise rejected, reason: ${reason}`);
-    else cancelled = true;
+    console.log(`promise rejected, reason: ${JSON.stringify(reason)}, ${reason}`);
+    cancelled = true;
   })
 
   loadingProgressStore.set(null);
@@ -92,8 +92,8 @@ export async function loadMidi(encoding: MusenetEncoding, sectionStartsAt: numbe
   await loadingMidiPromise.then((sectionStore: SectionStore) => {
     importUnderStore.addChild(sectionStore)
   }).catch(reason => {
-    if ("cancelled"! in reason) console.log(`promise rejected, reason: ${reason}`);
-    else cancelled = true;
+    console.log(`promise rejected, reason: ${JSON.stringify(reason)}, ${reason}`);
+    cancelled = true;
   })
 
   loadingProgressStore.set(null);

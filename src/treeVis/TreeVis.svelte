@@ -10,7 +10,7 @@
 
   let container: HTMLDivElement;
 
-  afterUpdate(() => {
+afterUpdate(() => {
     const pan: PanZoom = panzoom(container, {
       minZoom: 0.1,
       maxZoom: 2,
